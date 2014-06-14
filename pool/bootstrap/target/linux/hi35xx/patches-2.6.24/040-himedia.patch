@@ -1,0 +1,12 @@
+diff -urNd linux-2.6.24/drivers/char/Makefile linux-2.6.24-hi3515/drivers/char/Makefile
+--- linux-2.6.24/drivers/char/Makefile	2008-01-25 06:58:37.000000000 +0800
++++ linux-2.6.24-hi3515/drivers/char/Makefile	2010-03-16 10:41:12.000000000 +0800
+@@ -11,7 +11,7 @@
+ 
+ obj-$(CONFIG_LEGACY_PTYS)	+= pty.o
+ obj-$(CONFIG_UNIX98_PTYS)	+= pty.o
+-obj-y				+= misc.o
++obj-y				+= misc.o himedia.o
+ obj-$(CONFIG_VT)		+= vt_ioctl.o vc_screen.o consolemap.o \
+ 				   consolemap_deftbl.o selection.o keyboard.o
+ obj-$(CONFIG_HW_CONSOLE)	+= vt.o defkeymap.o

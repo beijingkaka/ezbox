@@ -1,0 +1,11 @@
+--- freeswitch-1.0.6.orig/libs/sofia-sip/libsofia-sip-ua/sdp/sdp.c	2010-06-30 13:54:59.039079468 +0800
++++ freeswitch-1.0.6/libs/sofia-sip/libsofia-sip-ua/sdp/sdp.c	2010-06-30 13:58:32.311074877 +0800
+@@ -1469,7 +1469,7 @@
+ 
+   if (a->m_proto != b->m_proto)
+     return a->m_proto < b->m_proto ? -1 : 1;
+-  if (a->m_proto == sdp_media_x)
++  if (a->m_proto == sdp_proto_x)
+     if ((rv = su_strcmp(a->m_proto_name, b->m_proto_name)))
+       return rv;
+ 

@@ -1,0 +1,33 @@
+--- emc2-20110530/src/hal/drivers/mesa-hostmot2/mesa_7i64.c	2011-06-04 13:00:05.819901294 +0800
++++ emc2-20110530/src/hal/drivers/mesa-hostmot2/mesa_7i64.c	2011-06-04 13:00:17.903940592 +0800
+@@ -16,6 +16,8 @@
+ //    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+ //
+ 
++#include <linux/slab.h>
++
+ #include "rtapi_math.h"
+ #include "hal/drivers/mesa-hostmot2/hostmot2.h"
+ 
+--- emc2-20110530/src/hal/drivers/mesa-hostmot2/mesa_8i20.c	2011-06-04 12:56:31.079900741 +0800
++++ emc2-20110530/src/hal/drivers/mesa-hostmot2/mesa_8i20.c	2011-06-04 12:57:10.866929246 +0800
+@@ -17,6 +17,8 @@
+ //    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+ //
+ 
++#include <linux/slab.h>
++
+ #include "rtapi_math.h"
+ #include "hal/drivers/mesa-hostmot2/hostmot2.h"
+ 
+--- emc2-20110530/src/hal/drivers/mesa-hostmot2/mesa_other_sserial.c	2011-06-04 13:01:47.991900400 +0800
++++ emc2-20110530/src/hal/drivers/mesa-hostmot2/mesa_other_sserial.c	2011-06-04 13:02:00.266919279 +0800
+@@ -16,6 +16,8 @@
+ //    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+ //
+ 
++#include <linux/slab.h>
++
+ #include "rtapi_math.h"
+ #include "hal/drivers/mesa-hostmot2/hostmot2.h"
+ 

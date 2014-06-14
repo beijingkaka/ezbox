@@ -1,0 +1,17 @@
+# basic packages
+c:package/boot/grub2/grub2-2.00:package/boot/grub2
+c:package/utils/busybox/busybox-1.19.4:package/utils/busybox
+c:package/utils/e2fsprogs/e2fsprogs-1.42.4:package/utils/e2fsprogs
+c:package/libs/libjson-c/libjson-c-0.11:package/libs/libjson-c
+c:package/libs/libnl/libnl-3.2.21:package/libs/libnl
+c:package/libs/libpcap/libpcap-1.5.3:package/libs/libpcap
+c:package/libs/libreadline/libreadline-6.2:package/libs/libreadline
+c:package/libs/ncurses/ncurses-5.9:package/libs/ncurses
+c:package/libs/openssl/openssl-1.0.1e:package/libs/openssl
+c:package/libs/zlib/zlib-1.2.8:package/libs/zlib
+c:package/network/services/dropbear/dropbear-2013.59:package/network/services/dropbear
+c:package/network/utils/iptables/iptables-1.4.20:package/network/utils/iptables
+c:package/system/udev/udev-173:package/system/udev
+c:package/utils/util-linux/util-linux-2.21.2:package/utils/util-linux
+# basic target
+d:target/linux/generic/base-files/init:target/linux/generic/base-files/init

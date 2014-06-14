@@ -1,0 +1,280 @@
+diff -urNd linux-2.6.24/arch/arm/boot/compressed/head.S linux-2.6.24-hi3515/arch/arm/boot/compressed/head.S
+--- linux-2.6.24/arch/arm/boot/compressed/head.S	2008-01-25 06:58:37.000000000 +0800
++++ linux-2.6.24-hi3515/arch/arm/boot/compressed/head.S	2010-03-16 10:41:03.000000000 +0800
+@@ -395,12 +395,13 @@
+ 		mov	r9, r0, lsr #18
+ 		mov	r9, r9, lsl #18		@ start of RAM
+ 		add	r10, r9, #0x10000000	@ a reasonable RAM size
++		mvncs   r10, #0			@ check overflow by chanjinn
+ 		mov	r1, #0x12
+ 		orr	r1, r1, #3 << 10
+ 		add	r2, r3, #16384
+-1:		cmp	r1, r9			@ if virt > start of RAM
++1:		cmp	r1, r9			@ if virt >= start of RAM
+ 		orrhs	r1, r1, #0x0c		@ set cacheable, bufferable
+-		cmp	r1, r10			@ if virt > end of RAM
++		cmp	r1, r10			@ if virt >= end of RAM
+ 		bichs	r1, r1, #0x0c		@ clear cacheable, bufferable
+ 		str	r1, [r0], #4		@ 1:1 mapping
+ 		add	r1, r1, #1048576
+diff -urNd linux-2.6.24/arch/arm/boot/compressed/misc.c linux-2.6.24-hi3515/arch/arm/boot/compressed/misc.c
+--- linux-2.6.24/arch/arm/boot/compressed/misc.c	2008-01-25 06:58:37.000000000 +0800
++++ linux-2.6.24-hi3515/arch/arm/boot/compressed/misc.c	2010-03-16 10:41:03.000000000 +0800
+@@ -68,7 +68,7 @@
+ #define putc(ch)	icedcc_putc(ch)
+ #define flush()	do { } while (0)
+ #endif
+-
++#if 0
+ static void putstr(const char *ptr)
+ {
+ 	char c;
+@@ -81,7 +81,7 @@
+ 
+ 	flush();
+ }
+-
++#endif
+ #endif
+ 
+ #define __ptr_t void *
+diff -urNd linux-2.6.24/arch/arm/boot/Makefile linux-2.6.24-hi3515/arch/arm/boot/Makefile
+--- linux-2.6.24/arch/arm/boot/Makefile	2008-01-25 06:58:37.000000000 +0800
++++ linux-2.6.24-hi3515/arch/arm/boot/Makefile	2010-03-16 10:41:03.000000000 +0800
+@@ -59,10 +59,12 @@
+ 
+ endif
+ 
++uimage_address_ae = $(shell printf 0x%08X $(shell expr `printf %u $(ZRELADDR)` + `printf %u 0x7F8000`))
++
+ quiet_cmd_uimage = UIMAGE  $@
+       cmd_uimage = $(CONFIG_SHELL) $(MKIMAGE) -A arm -O linux -T kernel \
+-		   -C none -a $(ZRELADDR) -e $(ZRELADDR) \
+-		   -n 'Linux-$(KERNELRELEASE)' -d $< $@
++                   -C none -a $(uimage_address_ae) -e $(uimage_address_ae) \
++                   -n 'Linux-$(KERNELRELEASE)' -d $< $@
+ 
+ $(obj)/uImage:	$(obj)/zImage FORCE
+ 	$(call if_changed,uimage)
+diff -urNd linux-2.6.24/arch/arm/Kconfig linux-2.6.24-hi3515/arch/arm/Kconfig
+--- linux-2.6.24/arch/arm/Kconfig	2008-01-25 06:58:37.000000000 +0800
++++ linux-2.6.24-hi3515/arch/arm/Kconfig	2010-03-16 10:41:04.000000000 +0800
+@@ -8,6 +8,7 @@
+ config ARM
+ 	bool
+ 	default y
++	select HAVE_ARCH_KGDB
+ 	select RTC_LIB
+ 	select SYS_SUPPORTS_APM_EMULATION
+ 	help
+@@ -27,11 +28,15 @@
+ 
+ config GENERIC_TIME
+ 	bool
+-	default n
++	default y
+ 
+ config GENERIC_CLOCKEVENTS
+ 	bool
+-	default n
++	default y
++
++config STACKTRACE_SUPPORT
++	bool
++	default y
+ 
+ config MMU
+ 	bool
+@@ -127,6 +132,9 @@
+ config FIQ
+ 	bool
+ 
++config HISILICON_ARM926ejs
++	bool
++
+ config ARCH_MTD_XIP
+ 	bool
+ 
+@@ -409,8 +417,17 @@
+ 	help
+ 	  Support for TI's OMAP platform (OMAP1 and OMAP2).
+ 
++config ARCH_hi3515v100
++	bool "hi3515v100 media processor"
++	select HISILICON_ARM926ejs
++	select ARM_AMBA
++	select EMBEDDED
++	help
++	  This enables support for system based on the Hisilicon hi3515v100 series media proccessor
++
+ endchoice
+ 
++source "arch/arm/mach-hi3515v100/Kconfig"
+ source "arch/arm/mach-clps711x/Kconfig"
+ 
+ source "arch/arm/mach-ep93xx/Kconfig"
+@@ -537,7 +554,7 @@
+ 	bool
+ 
+ config PCI
+-	bool "PCI support" if ARCH_INTEGRATOR_AP || ARCH_VERSATILE_PB || ARCH_IXP4XX || ARCH_KS8695 || MACH_ARMCORE
++	bool "PCI support" if ARCH_INTEGRATOR_AP || ARCH_VERSATILE_PB || ARCH_IXP4XX || ARCH_KS8695 || MACH_ARMCORE || ARCH_HI3511 || ARCH_hi3515v100
+ 	help
+ 	  Find out whether you have a PCI motherboard. PCI is the name of a
+ 	  bus system, i.e. the way the CPU talks to the other stuff inside
+@@ -618,18 +635,7 @@
+ 	  accounting to be spread across the timer interval, preventing a
+ 	  "thundering herd" at every timer tick.
+ 
+-config PREEMPT
+-	bool "Preemptible Kernel (EXPERIMENTAL)"
+-	depends on EXPERIMENTAL
+-	help
+-	  This option reduces the latency of the kernel when reacting to
+-	  real-time or interactive events by allowing a low priority process to
+-	  be preempted even if it is in kernel mode executing a system call.
+-	  This allows applications to run more reliably even when the system is
+-	  under load.
+-
+-	  Say Y here if you are building a kernel for a desktop, embedded
+-	  or real-time system.  Say N if you are unsure.
++source kernel/Kconfig.preempt
+ 
+ config NO_IDLE_HZ
+ 	bool "Dynamic tick timer"
+@@ -716,7 +722,7 @@
+ 		   ARCH_OMAP || ARCH_P720T || ARCH_PXA_IDP || \
+ 		   ARCH_SA1100 || ARCH_SHARK || ARCH_VERSATILE || \
+ 		   ARCH_AT91 || MACH_TRIZEPS4 || ARCH_DAVINCI || \
+-		   ARCH_KS8695
++		   ARCH_KS8695 || HISILICON_ARM926EJ
+ 	help
+ 	  If you say Y here, the LEDs on your machine will be used
+ 	  to provide useful information about your current system status.
+@@ -730,7 +736,7 @@
+ 
+ config LEDS_TIMER
+ 	bool "Timer LED" if (!ARCH_CDB89712 && !ARCH_OMAP) || \
+-			    OMAP_OSK_MISTRAL || MACH_OMAP_H2 \
++			    OMAP_OSK_MISTRAL || MACH_OMAP_hi3520v100 \
+ 			    || MACH_OMAP_PERSEUS2
+ 	depends on LEDS
+ 	depends on !GENERIC_CLOCKEVENTS
+@@ -749,7 +755,7 @@
+ config LEDS_CPU
+ 	bool "CPU usage LED" if (!ARCH_CDB89712 && !ARCH_EBSA110 && \
+ 			!ARCH_OMAP) \
+-			|| OMAP_OSK_MISTRAL || MACH_OMAP_H2 \
++			|| OMAP_OSK_MISTRAL || MACH_OMAP_hi3520v100 \
+ 			|| MACH_OMAP_PERSEUS2
+ 	depends on LEDS
+ 	help
+@@ -867,7 +873,7 @@
+ 
+ endmenu
+ 
+-if (ARCH_SA1100 || ARCH_INTEGRATOR || ARCH_OMAP || ARCH_IMX )
++if (ARCH_SA1100 || ARCH_INTEGRATOR || ARCH_OMAP || ARCH_IMX || HISILICON_ARM926EJ)
+ 
+ menu "CPU Frequency scaling"
+ 
+diff -urNd linux-2.6.24/arch/arm/kernel/entry-armv.S linux-2.6.24-hi3515/arch/arm/kernel/entry-armv.S
+--- linux-2.6.24/arch/arm/kernel/entry-armv.S	2008-01-25 06:58:37.000000000 +0800
++++ linux-2.6.24-hi3515/arch/arm/kernel/entry-armv.S	2010-03-16 10:41:00.000000000 +0800
+@@ -14,11 +14,14 @@
+  *  Note:  there is a StrongARM bug in the STMIA rn, {regs}^ instruction that causes
+  *  it to save wrong values...  Be aware!
+  */
+-
+ #include <asm/memory.h>
+ #include <asm/glue.h>
+ #include <asm/vfpmacros.h>
++#ifndef CONFIG_HI_PRIO_IRQ
+ #include <asm/arch/entry-macro.S>
++#else
++#include <asm/arch/interrupt-arm.S>
++#endif
+ #include <asm/thread_notify.h>
+ 
+ #include "entry-header.S"
+@@ -28,14 +31,27 @@
+  */
+ 	.macro	irq_handler
+ 	get_irqnr_preamble r5, lr
++#ifndef CONFIG_HI_PRIO_IRQ
+ 1:	get_irqnr_and_base r0, r6, r5, lr
++#else
++1:	get_irqnr_and_base r0, r6, r5, lr
++#endif
+ 	movne	r1, sp
+ 	@
+ 	@ routine called with r0 = irq number, r1 = struct pt_regs *
+ 	@
+ 	adrne	lr, 1b
+-	bne	asm_do_IRQ
+-
++#ifndef CONFIG_HI_PRIO_IRQ
++	bne     asm_do_IRQ
++#else	
++	stmdb   sp!, {r0,r1,r5,lr}
++	mov	r0, r5
++	bl	hi_disable_vic_prio		@ call hi_disable_vic_prio fixed by chanjinn
++	ldmia   sp!, {r0,r1,r5,lr}
++	bl	asm_do_IRQ
++	bl	hi_enable_vic_prio		@ call hi_enable_vic_prio fixed by chanjinn
++#endif
++	
+ #ifdef CONFIG_SMP
+ 	/*
+ 	 * XXX
+diff -urNd linux-2.6.24/arch/arm/Makefile linux-2.6.24-hi3515/arch/arm/Makefile
+--- linux-2.6.24/arch/arm/Makefile	2008-01-25 06:58:37.000000000 +0800
++++ linux-2.6.24-hi3515/arch/arm/Makefile	2010-03-16 10:41:05.000000000 +0800
+@@ -139,6 +139,7 @@
+  machine-$(CONFIG_ARCH_KS8695)     := ks8695
+   incdir-$(CONFIG_ARCH_MXC)	   := mxc
+  machine-$(CONFIG_ARCH_MX3)	   := mx3
++ machine-$(CONFIG_ARCH_hi3515v100)      := hi3515v100
+ 
+ ifeq ($(CONFIG_ARCH_EBSA110),y)
+ # This is what happens if you forget the IOCS16 line.
+diff -urNd linux-2.6.24/arch/arm/mm/Kconfig linux-2.6.24-hi3515/arch/arm/mm/Kconfig
+--- linux-2.6.24/arch/arm/mm/Kconfig	2008-01-25 06:58:37.000000000 +0800
++++ linux-2.6.24-hi3515/arch/arm/mm/Kconfig	2010-03-16 10:41:06.000000000 +0800
+@@ -171,8 +171,8 @@
+ # ARM926T
+ config CPU_ARM926T
+ 	bool "Support ARM926T processor"
+-	depends on ARCH_INTEGRATOR || ARCH_VERSATILE_PB || MACH_VERSATILE_AB || ARCH_OMAP730 || ARCH_OMAP16XX || MACH_REALVIEW_EB || ARCH_PNX4008 || ARCH_NETX || CPU_S3C2412 || ARCH_AT91SAM9260 || ARCH_AT91SAM9261 || ARCH_AT91SAM9263 || ARCH_AT91SAM9RL || ARCH_NS9XXX || ARCH_DAVINCI
+-	default y if ARCH_VERSATILE_PB || MACH_VERSATILE_AB || ARCH_OMAP730 || ARCH_OMAP16XX || ARCH_PNX4008 || ARCH_NETX || CPU_S3C2412 || ARCH_AT91SAM9260 || ARCH_AT91SAM9261 || ARCH_AT91SAM9263 || ARCH_AT91SAM9RL || ARCH_NS9XXX || ARCH_DAVINCI
++	depends on ARCH_INTEGRATOR || ARCH_VERSATILE_PB || MACH_VERSATILE_AB || ARCH_OMAP730 || ARCH_OMAP16XX || MACH_REALVIEW_EB || ARCH_PNX4008 || ARCH_NETX || CPU_S3C2412 || ARCH_AT91SAM9260 || ARCH_AT91SAM9261 || ARCH_AT91SAM9263 || ARCH_AT91SAM9RL || ARCH_NS9XXX || ARCH_DAVINCI || HISILICON_ARM926ejs
++	default y if ARCH_VERSATILE_PB || MACH_VERSATILE_AB || ARCH_OMAP730 || ARCH_OMAP16XX || ARCH_PNX4008 || ARCH_NETX || CPU_S3C2412 || ARCH_AT91SAM9260 || ARCH_AT91SAM9261 || ARCH_AT91SAM9263 || ARCH_AT91SAM9RL || ARCH_NS9XXX || ARCH_DAVINCI || HISILICON_ARM926ejs
+ 	select CPU_32v5
+ 	select CPU_ABRT_EV5TJ
+ 	select CPU_CACHE_VIVT
+@@ -345,7 +345,7 @@
+ # ARMv6
+ config CPU_V6
+ 	bool "Support ARM V6 processor"
+-	depends on ARCH_INTEGRATOR || MACH_REALVIEW_EB || ARCH_OMAP2 || ARCH_MX3
++	depends on ARCH_INTEGRATOR || MACH_REALVIEW_EB || ARCH_OMAP2 || ARCH_MX3 
+ 	default y if ARCH_MX3
+ 	select CPU_32v6
+ 	select CPU_ABRT_EV6
+diff -urNd linux-2.6.24/arch/arm/tools/mach-types linux-2.6.24-hi3515/arch/arm/tools/mach-types
+--- linux-2.6.24/arch/arm/tools/mach-types	2008-01-25 06:58:37.000000000 +0800
++++ linux-2.6.24-hi3515/arch/arm/tools/mach-types	2010-03-16 10:41:07.000000000 +0800
+@@ -396,7 +396,6 @@
+ mp1x			ARCH_MP1X		MP1X			379
+ at91rm9200tb		ARCH_AT91RM9200TB	AT91RM9200TB		380
+ adsvgx			ARCH_ADSVGX		ADSVGX			381
+-omap_h2			MACH_OMAP_H2		OMAP_H2			382
+ pelee			ARCH_PELEE		PELEE			383
+ e740			MACH_E740		E740			384
+ iq80331			ARCH_IQ80331		IQ80331			385
+@@ -1367,3 +1366,5 @@
+ csb726			MACH_CSB726		CSB726			1359
+ tik27			MACH_TIK27		TIK27			1360
+ mx_uc7420		MACH_MX_UC7420		MX_UC7420		1361
++hi3515v100	        ARCH_hi3515v100		hi3515v100		387
++

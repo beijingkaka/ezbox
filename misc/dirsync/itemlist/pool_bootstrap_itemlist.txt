@@ -1,0 +1,50 @@
+#########################
+# first move the modified
+# files to tmp/ directory
+#########################
+#########################
+# next do the diff action
+#########################
+#########################
+# package/ directory
+#########################
+f:package/boot/grub2/grub2-2.00/|package/boot/grub2/
+f:package/boot/uboot-lantiq/u-boot-2013.01/|package/boot/uboot-lantiq/
+f:package/devel/binutils/binutils/|package/devel/binutils/
+f:package/devel/gdb/gdb-7.5/|package/devel/gdb/
+f:package/devel/oprofile/oprofile-0.9.7/|package/devel/oprofile/
+f:package/devel/trace-cmd/trace-cmd-v2.2.1/|package/devel/trace-cmd/
+f:package/devel/valgrind/valgrind-3.8.1/|package/devel/valgrind/
+f:package/kernel/mac80211/mac80211-2014-01-23.1/|package/kernel/mac80211/
+f:package/libs/libjson-c/libjson-c-0.11/|package/libs/libjson-c/
+f:package/libs/libnl/libnl-3.2.21/|package/libs/libnl/
+f:package/libs/libnl-tiny/libnl-tiny-0.1/|package/libs/libnl-tiny/
+f:package/libs/libpcap/libpcap-1.5.3/|package/libs/libpcap/
+f:package/libs/ncurses/ncurses-5.9/|package/libs/ncurses/
+f:package/libs/openssl/openssl-1.0.1e/|package/libs/openssl/
+f:package/libs/uclibc++/uclibc++-0.2.4/|package/libs/uclibc++/
+f:package/libs/zlib/zlib-1.2.8/|package/libs/zlib/
+f:package/network/services/dnsmasq/dnsmasq-2.66/|package/network/services/dnsmasq/
+f:package/network/services/dropbear/dropbear-2013.59/|package/network/services/dropbear/
+f:package/network/services/hostapd/hostapd-20131120/|package/network/services/hostapd/
+f:package/network/services/ppp/ppp-2.4.5/|package/network/services/ppp/
+f:package/network/utils/iproute2/iproute2-3.11.0/|package/network/utils/iproute2/
+f:package/network/utils/iptables/iptables-1.4.20/|package/network/utils/iptables/
+f:package/network/utils/iw/iw-3.14/|package/network/utils/iw/
+f:package/network/utils/wireless-tools/wireless-tools-29/|package/network/utils/wireless-tools/
+f:package/system/udev/udev-173/|package/system/udev/
+f:package/utils/busybox/busybox-1.19.4/|package/utils/busybox/
+f:package/utils/e2fsprogs/e2fsprogs-1.42.4/|package/utils/e2fsprogs/
+f:package/utils/fuse/fuse-2.9.0/|package/utils/fuse/
+f:package/utils/lua/lua-5.1.5/|package/utils/lua/
+f:package/utils/util-linux/util-linux-2.21.2/|package/utils/util-linux/
+#########################
+# target/linux/ directory
+#########################
+d:target/linux/ar71xx/
+d:target/linux/brcm47xx/
+d:target/linux/lantiq/
+d:target/linux/ramips/
+d:target/linux/uml/
+d:target/linux/x86/
+d:target/linux/x86_64/

@@ -1,0 +1,92 @@
+    ezbox embedded-system study platform
+
+==
+Package Content
+==
+1. bootstrap/ :
+  The bootstrap/ directory contains build tools to construct a bootstrap system for ezbox.
+  The major part of build tools is from openwrt project(https://dev.openwrt.org/wiki)
+
+2. distro/ :
+  The distro/ directory contains distribution-related packages.
+  Each distribution has its own purpose, and contains different packages.
+
+3. misc/ :
+  This directory stores a lot of nothing, may be removed :-)
+
+4. realtime/ :
+  This directory contains real-time patches for Linux kernel.
+
+5. scripts/ :
+  This directory contains scripts used by building system.
+
+==
+Quick Start
+==
+  The ezbox sample build is a kuafu distro on ar71xx board.
+
+1. Copy the default.mk.sample to BASE_DIR
+	cp default.mk.sample ../default.mk
+
+2. Start to build the kuafu distro
+	make kuafu
+
+3. Check the build log in BASE_DIR
+	cat ../XXX-kuafu-ar71xx-build.log
+
+==
+Build Instructions
+==
+1. Before building the target system for ezbox, you should select a distro and symbol link the target arch to bootstrap/target/linux directory. Following examples will use distro kuafu and target CPU is ar7240.
+	1) Copy bootstrap system source tree to a working directory
+		rm -rf bootstrap.ar71xx
+		cp -af bootstrap bootstrap.ar71xx
+
+	2) Symbol link target
+		ln -s `pwd`/distro/kuafu/target/linux/ar71xx bootstrap.ar71xx/target/linux/ar71xx
+
+	3) Use distro default packages
+		cp distro/kuafu/feeds.conf bootstrap.ar71xx/feeds.conf
+
+	4) Use default config for the target distro
+		cp distro/kuafu/configs/defconfig-ar71xx bootstrap.ar71xx/.config
+
+2. Set environment variables
+	1) Set target device type
+		export DEVICE_TYPE=ezbox
+
+	2) Set target arch
+		export ARCH=mips
+
+3. Enter working directory and start build
+	1) Goto bootstrap.ar71xx/ directory
+		cd bootstrap.ar71xx/
+
+	2) Get target distro default packages
+		./scripts/feeds update -a
+
+	3) Install all target distro default packages
+		./scripts/feeds install -a
+
+	4) Generate fresh config file
+		make ARCH=mips oldconfig
+
+	5) Start build, and record output to build.txt
+		make DEVICE_TYPE=ezbox V=99 2>&1 | tee build.log
+
+==
+CPU Architecture Settings.
+==
+1. ar71xx
+	export ARCH=mips
+
+2. brcm47xx
+	export ARCH=mipsel
+
+3. x86
+	export ARCH=i386
+==
+Known issues
+==
+1. Please set LD_LIBRARY_PATH if it can't find correct libraries for building host tools.
+  $ export LD_LIBRARY_PATH="/path/to/your/staging/host/lib:$LD_LIBRARY_PATH"

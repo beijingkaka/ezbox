@@ -1,0 +1,44 @@
+menu "Board Features"
+
+config HISILICON_KCONSOLE
+	int "Kernel console( 0 => UART0, 1 => UART1)"
+	range 0 1
+	default 0
+	help
+	  Select uart port as the default console used by kernel
+
+config HISILICON_EDB_LEVEL
+	int "Kernel Early-Debug Level( 0~254, 255 => Disable Early-Debug)"
+	range 0 255
+	default 255
+	help
+	  Set the debug level of Early-Debug, low level will cause more debug message
+
+config DEFAULT_MPLLIN
+	int "Main XTAL clock"
+	default 24000000
+	help
+	  OSC clock of chip on board, whitch is the input of Main PLL
+
+config DEFAULT_BUSCLK
+	int "Default AHB rate"
+	default 2000000000
+	help
+	  Default AHB clock rate
+
+config CPUCLK_MULTI
+	int "ARMCore clock scale"
+	range 1 3 
+	default 3
+	help
+	  ARMCore clock is 1 or 2 times of the AHB clock.
+
+config HISILICON_GPIO_CPU_LED
+	int "GPIO for CPU Led"
+	depends on LEDS_CPU
+	range 0 199
+	default 16
+	help
+	  One GPIO used to ctrol a LED, whitch used to show the useage of CPU
+endmenu
+

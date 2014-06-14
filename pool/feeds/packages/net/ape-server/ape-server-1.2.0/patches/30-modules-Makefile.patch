@@ -1,0 +1,11 @@
+--- ape-server-1.2.0.orig/modules/Makefile	2012-07-21 00:45:59.173616057 +0800
++++ ape-server-1.2.0/modules/Makefile	2012-07-21 00:45:19.313617734 +0800
+@@ -24,6 +24,7 @@
+ 
+ modules: libape-spidermonkey.c
+ 
+-	$(CC) $(CFLAGS) -Wl,-soname,libmod_spidermonkey.so -o lib/libmod_spidermonkey.so libape-spidermonkey.c -I../deps/js/src/dist/include/ -L../deps/js/src/ -ljs_static -lstdc++ $(MYSQL_FLAGS)
++	#$(CC) $(CFLAGS) -Wl,-soname,libmod_spidermonkey.so -o lib/libmod_spidermonkey.so libape-spidermonkey.c -I../deps/js/src/dist/include/ -L../deps/js/src/ -ljs_static -lstdc++ $(MYSQL_FLAGS)
++	$(CC) $(CFLAGS) -shared -fPIC -rdynamic -Wl,-soname,libmod_spidermonkey.so -o lib/libmod_spidermonkey.so libape-spidermonkey.c $(LDFLAGS)
+ 	
+ endif

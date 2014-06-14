@@ -1,0 +1,62 @@
+--- microwin-20110110/src/drivers/scr_fb.c	2011-02-10 15:45:37.000000000 +0800
++++ microwin-20110110/src/drivers/scr_fb.c	2011-02-14 13:31:08.000000000 +0800
+@@ -49,7 +49,27 @@
+ static void fb_setpalette(PSD psd,int first, int count, MWPALENTRY *palette);
+ 
+ SCREENDEVICE	scrdev = {
+-	0, 0, 0, 0, 0, 0, 0, NULL, 0, NULL, 0, 0, 0, 0, 0, 0,
++	/* shared header with MWIMAGEHDR*/
++	0,	/* flags; */
++	0,	/* xvirtres; */
++	0,	/* yvirtres; */
++	0,	/* planes; */
++	0,	/* bpp; */
++	0,	/* data_format; */
++	0,	/* pitch; */
++	NULL,	/* addr; */
++	0,	/* palsize; */
++	NULL,	/* palette; */
++	0,	/* transcolor; */
++	/* end of shared header*/
++
++	0,	/* xres; */
++	0,	/* yres; */
++	0,	/* size; */
++	0,	/* ncolors; */
++	0,	/* pixtype; */
++
++	/* driver entry points*/
+ 	gen_fonts,
+ 	fb_open,
+ 	fb_close,
+@@ -60,7 +80,29 @@
+ 	gen_freememgc,
+ 	gen_setportrait,
+ 	NULL,				/* Update*/
+-	NULL				/* PreSelect*/
++	NULL,				/* PreSelect*/
++	0,	/* portrait; */
++	NULL,	/* orgsubdriver; */
++	NULL,	/* left_subdriver; */
++	NULL,	/* right_subdriver; */
++	NULL,	/* down_subdriver; */
++	/* SUBDRIVER functions*/
++	NULL,	/* (*DrawPixel) */
++	NULL,	/* (*ReadPixel) */
++	NULL,	/* (*DrawHorzLine) */
++	NULL,	/* (*DrawVertLine) */
++	NULL,	/* (*FillRect) */
++	NULL,	/* (*BlitFallback) */
++	0,	/* FrameBlit; */
++	0,	/* FrameStretchBlit; */
++	0,	/* BlitCopyMaskMonoByteMSB; */
++	0,	/* BlitCopyMaskMonoByteLSB; */
++	0,	/* BlitCopyMaskMonoWordMSB; */
++	0,	/* BlitBlendMaskAlphaByte; */
++	0,	/* BlitCopyRGBA8888; */
++	0,	/* BlitSrcOverRGBA8888; */
++	0,	/* BlitCopyRGB888; */
++	0	/* BlitStretchRGBA8888; */
+ };
+ 
+ /* framebuffer info defaults for emulator*/

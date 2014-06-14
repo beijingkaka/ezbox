@@ -1,0 +1,31 @@
+--- emc2-20110530/src/configure.in	2011-06-08 17:20:46.587656610 +0800
++++ emc2-20110530/src/configure.in	2011-06-08 17:21:02.076654127 +0800
+@@ -1167,9 +1167,13 @@
+ 	    [],
+ 	    [HAVE_XINERAMA=no])
+ 
+-if test "x$HAVE_XINERAMA" = "xno"; then
+-    AC_MSG_ERROR([Xinerama library or headers not found])
+-fi
++if test "x$HAVE_XINERAMA" = "xno"; then
++    AC_MSG_WARN([Xinerama library or headers not found])
++else
++    XINERAMA_LIBS="-lXinerama"
++fi
++AC_SUBST([HAVE_XINERAMA])
++AC_SUBST([XINERAMA_LIBS])
+ 
+ # check for Xaw, that is needed for emc2/src/emc/usr_intf/xemc.cc
+ 
+--- emc2-20110530/src/Makefile.inc.in	2011-06-08 17:37:46.567650914 +0800
++++ emc2-20110530/src/Makefile.inc.in	2011-06-08 17:39:00.518663769 +0800
+@@ -88,6 +88,9 @@
+ MANDB = @MANDB@
+ HIDRAW_H_USABLE = @HIDRAW_H_USABLE@
+ 
++HAVE_XINERAMA = @HAVE_XINERAMA@
++XINERAMA_LIBS = @XINERAMA_LIBS@
++
+ # deps for xemc
+ CFLAGS_X = @X_CFLAGS@
+ XLIBS = @XAW_LIBS@

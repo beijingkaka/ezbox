@@ -1,0 +1,72 @@
+--- a/arch/arm/Kconfig	2011-09-27 12:28:37.549056014 +0800
++++ b/arch/arm/Kconfig	2011-09-27 13:02:38.639052523 +0800
+@@ -705,6 +705,15 @@
+ 	help
+ 	  Support for Broadcom's BCMRing platform.
+ 
++config ARCH_HI3515V100
++	bool "HI3515V100 media processor"
++	select CPU_ARM926T
++	select GENERIC_TIME
++	select GENERIC_CLOCKEVENTS
++	select ARM_AMBA
++	help
++	  This enables support for system based on the Hisilicon HI3515V100 series media proccessor
++
+ endchoice
+ 
+ source "arch/arm/mach-clps711x/Kconfig"
+@@ -715,6 +724,8 @@
+ 
+ source "arch/arm/mach-gemini/Kconfig"
+ 
++source "arch/arm/mach-hi3515v100/Kconfig"
++
+ source "arch/arm/mach-integrator/Kconfig"
+ 
+ source "arch/arm/mach-iop32x/Kconfig"
+@@ -935,7 +946,8 @@
+ 	bool
+ 
+ config PCI
+-	bool "PCI support" if ARCH_INTEGRATOR_AP || ARCH_VERSATILE_PB || ARCH_IXP4XX || ARCH_KS8695 || MACH_ARMCORE
++	bool "PCI support" if ARCH_INTEGRATOR_AP || ARCH_VERSATILE_PB || ARCH_IXP4XX || ARCH_KS8695 || MACH_ARMCORE ||\
++		ARCH_HI3511 || ARCH_HI3515V100
+ 	help
+ 	  Find out whether you have a PCI motherboard. PCI is the name of a
+ 	  bus system, i.e. the way the CPU talks to the other stuff inside
+--- a/arch/arm/Makefile	2011-09-27 12:43:14.739068663 +0800
++++ b/arch/arm/Makefile	2011-09-27 12:46:14.649056078 +0800
+@@ -126,6 +126,7 @@
+ machine-$(CONFIG_ARCH_EP93XX)		:= ep93xx
+ machine-$(CONFIG_ARCH_GEMINI)		:= gemini
+ machine-$(CONFIG_ARCH_H720X)		:= h720x
++machine-$(CONFIG_ARCH_HI3515V100)	:= hi3515v100
+ machine-$(CONFIG_ARCH_INTEGRATOR)	:= integrator
+ machine-$(CONFIG_ARCH_IOP13XX)		:= iop13xx
+ machine-$(CONFIG_ARCH_IOP32X)		:= iop32x
+--- a/arch/arm/tools/mach-types	2011-09-27 12:20:47.199057088 +0800
++++ b/arch/arm/tools/mach-types	2011-09-27 12:22:48.389056286 +0800
+@@ -3320,3 +3320,4 @@
+ icong			MACH_ICONG		ICONG			3334
+ rover_g8		MACH_ROVER_G8		ROVER_G8		3335
+ t5388p			MACH_T5388P		T5388P			3336
++hi3515v100		ARCH_HI3515V100		HI3515V100		3337
+--- a/arch/arm/boot/compressed/misc.c	2011-09-27 16:29:07.679052358 +0800
++++ b/arch/arm/boot/compressed/misc.c	2011-09-27 16:32:40.059073756 +0800
+@@ -90,6 +90,7 @@
+ #define putc(ch)	icedcc_putc(ch)
+ #endif
+ 
++#if 0
+ static void putstr(const char *ptr)
+ {
+ 	char c;
+@@ -102,6 +103,7 @@
+ 
+ 	flush();
+ }
++#endif
+ 
+ #endif
+ 

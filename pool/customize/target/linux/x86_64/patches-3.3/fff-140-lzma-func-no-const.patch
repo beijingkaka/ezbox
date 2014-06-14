@@ -1,0 +1,22 @@
+--- linux-3.3.8.orig/include/linux/lzma/LzFind.h	2013-02-03 07:34:20.592987572 +0800
++++ linux-3.3.8/include/linux/lzma/LzFind.h	2013-02-03 07:31:17.752979992 +0800
+@@ -87,7 +87,7 @@
+   Mf_GetPointerToCurrentPos_Func GetPointerToCurrentPos;
+   Mf_GetMatches_Func GetMatches;
+   Mf_Skip_Func Skip;
+-} IMatchFinder;
++} __no_const IMatchFinder;
+ 
+ void MatchFinder_CreateVTable(CMatchFinder *p, IMatchFinder *vTable);
+ 
+--- linux-3.3.8/include/linux/lzma/Types.h	2013-02-03 07:33:06.308984492 +0800
++++ linux-3.3.8/include/linux/lzma/Types.h	2013-02-03 07:31:46.300981175 +0800
+@@ -139,7 +139,7 @@
+   size_t (*Write)(void *p, const void *buf, size_t size);
+     /* Returns: result - the number of actually written bytes.
+        (result < size) means error */
+-} ISeqOutStream;
++} __no_const ISeqOutStream;
+ 
+ typedef enum
+ {

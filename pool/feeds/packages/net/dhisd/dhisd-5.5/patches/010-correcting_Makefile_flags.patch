@@ -1,0 +1,30 @@
+diff -urNd dhisd-5.5.orig/Makefile dhisd-5.5/Makefile
+--- dhisd-5.5.orig/Makefile	2008-05-22 22:14:08.000000000 +0800
++++ dhisd-5.5/Makefile	2012-10-03 02:03:09.347683558 +0800
+@@ -24,12 +24,12 @@
+ # SUCH DAMAGE.
+ #
+ 
+-CC=gcc
++CC?=gcc
+ 
+-MYSQL_INCLUDE=	-I/usr/local/include/mysql -I/usr/local/mysql/include \
++MYSQL_INCLUDE?=	-I/usr/local/include/mysql -I/usr/local/mysql/include \
+ 		-I/usr/local/mysql/include/mysql
+ 
+-MYSQL_LIBDIR=	-L/usr/local/lib/mysql -L/usr/local/mysql/lib \
++MYSQL_LIBDIR?=	-L/usr/local/lib/mysql -L/usr/local/mysql/lib \
+ 		-L/usr/local/mysql/lib/mysql
+ 
+ WFLAGS=-Wall -Wstrict-prototypes -Wpointer-arith \
+@@ -39,8 +39,8 @@
+ # Possible CFLAGS: -g -O3 -DDONT_FORK
+ #
+ 
+-CFLAGS= -O3 $(WFLAGS) -I. -I/usr/local/include # $(MYSQL_INCLUDE) -DWITH_MYSQL=1
+-LFLAGS= -L/usr/local/lib # $(MYSQL_LIBDIR)
++CFLAGS?= -O3 $(WFLAGS) -I. -I/usr/local/include # $(MYSQL_INCLUDE) -DWITH_MYSQL=1
++LFLAGS?=
+ 
+ # For System V (Solaris) add -lnsl and -lsocket
+ # For MySQL support add -lmysqlclient

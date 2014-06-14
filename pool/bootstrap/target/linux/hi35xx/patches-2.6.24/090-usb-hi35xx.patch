@@ -1,0 +1,21 @@
+diff -urNd linux-2.6.24/drivers/usb/Kconfig linux-2.6.24-hi3515/drivers/usb/Kconfig
+--- linux-2.6.24/drivers/usb/Kconfig	2008-01-25 06:58:37.000000000 +0800
++++ linux-2.6.24-hi3515/drivers/usb/Kconfig	2010-03-16 10:41:13.000000000 +0800
+@@ -41,6 +41,8 @@
+ 	default y if PPC_MPC52xx
+ 	# MIPS:
+ 	default y if SOC_AU1X00
++	# ARM:
++	default y if ARM
+ 	# more:
+ 	default PCI
+ 
+@@ -49,6 +51,8 @@
+ 	boolean
+ 	default y if PPC_83xx
+ 	default y if SOC_AU1200
++	# ARM:
++	default y if ARM
+ 	default PCI
+ 
+ # ARM SA1111 chips have a non-PCI based "OHCI-compatible" USB host interface.

@@ -1,0 +1,86 @@
+if ARCH_SOLOS
+
+menu "Solos Implementations"
+
+comment "Solos Chip Type"
+
+choice
+	prompt "Solos Chip Type Selection"
+
+config ARCH_SOLOS_GALLUS
+	bool "Solos 45xx (Gallus)"
+
+config ARCH_SOLOSW_GALLUS
+	bool "Solos-W 46xx"
+
+endchoice
+
+comment "Pin Configuration"
+
+choice
+	prompt "Solos 45xx (Gallus)" if ARCH_SOLOS_GALLUS
+	depends ARCH_SOLOS_GALLUS
+
+config ARCH_SOLOS_228PIN
+	bool "Solos 4510 (228-pin) " if ARCH_SOLOS_GALLUS
+	depends on ARCH_SOLOS_GALLUS
+
+config ARCH_SOLOS_376PIN
+	bool "Solos 4515 (376-pin) " if ARCH_SOLOS_GALLUS
+	depends on ARCH_SOLOS_GALLUS
+
+endchoice
+
+choice
+	prompt "Solos 46xx" if ARCH_SOLOSW_GALLUS
+	depends ARCH_SOLOSW_GALLUS
+
+config ARCH_SOLOS_208PIN
+	bool "Solos 4610 (208-pin) " if ARCH_SOLOSW_GALLUS
+	depends on ARCH_SOLOSW_GALLUS
+
+config ARCH_SOLOS_324PIN
+	bool "Solos 4615 (324-pin) " if ARCH_SOLOSW_GALLUS
+	depends on ARCH_SOLOSW_GALLUS
+
+endchoice
+
+endmenu
+        
+
+menu "Solos board type"
+	
+comment "Solos Board Type"
+
+config MACH_SOLOS_GALLUSBU
+	bool "Gallus Bring-up Board"
+	depends on ARCH_SOLOS_GALLUS || ARCH_SOLOSW_GALLUS
+	help
+          Gallus bring-up board support. Say Y here if you
+          have such a board.
+
+config MACH_SOLOS_AEP
+        bool "Gallus AEP Prototyping System" 
+        depends on ARCH_SOLOS_GALLUS || ARCH_SOLOSW_GALLUS
+        help
+           If you need to look at the help this is the wrong
+           board.
+
+config SOLOS_SPI
+	bool "Gallus SPI bus support" 
+	default y
+	depends on ARCH_SOLOS_GALLUS || ARCH_SOLOSW_GALLUS
+	help
+	   Support for the SPI bus on Gallus. You need this for SPI flash
+	   or to talk to some voice SLICs.	
+config SOLOS_MINIMUM_CODE
+        bool "Minimum Kernel Code"
+        default y
+	depends on ARCH_SOLOS_GALLUS || ARCH_SOLOSW_GALLUS
+        help
+          Comment out some of the functionlity of Linux Kernel for code
+          optimization 
+endmenu
+
+
+endif

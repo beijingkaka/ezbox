@@ -1,0 +1,34 @@
+--- emc2-20110131/src/Makefile	2011-02-05 18:32:00.173217755 +0800
++++ emc2-20110131/src/Makefile	2011-02-05 18:33:44.473217567 +0800
+@@ -395,11 +395,11 @@
+ 	@echo "'make setuid' is not needed for the simulator"
+ else
+ setuid:
+-	chown root ../bin/emc_module_helper
++	#chown root ../bin/emc_module_helper
+ 	chmod 4750 ../bin/emc_module_helper
+-	chown root ../bin/pci_write
++	#chown root ../bin/pci_write
+ 	chmod 4750 ../bin/pci_write
+-	chown root ../bin/pci_read
++	#chown root ../bin/pci_read
+ 	chmod 4750 ../bin/pci_read
+ endif
+ 
+@@ -411,12 +411,12 @@
+ ../include/%.hh: %.hh
+ 	-cp $^ $@
+ 
+-DIR=install -d -m 0755 -o root
+-FILE=install -m 0644 -o root
++DIR=install -d -m 0755
++FILE=install -m 0644
+ TREE=cp -dR
+ CONFIGFILE=install -m 0644
+-EXE=install -m 0755 -o root
+-SETUID=install -m 4755 -o root
++EXE=install -m 0755
++SETUID=install -m 4755
+ GLOB=$(wildcard $(1))
+ 
+ ifeq ($(RUN_IN_PLACE),yes)

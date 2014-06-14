@@ -1,0 +1,4 @@
+#FIXME: we need copy it to the workspace
+
+# target
+l:target/linux/x86/Makefile-2.6.35:target/linux/x86/Makefile

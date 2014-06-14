@@ -1,0 +1,26 @@
+--- js-1.8.5.orig/js/src/configure.in	2012-07-20 17:08:29.980933098 +0800
++++ js-1.8.5/js/src/configure.in	2012-07-20 17:09:08.184931492 +0800
+@@ -358,8 +358,8 @@
+ #       is built.
+ #     - $target (in its correct usage) is for compilers who generate code for a
+ #       different platform than $host, so it would not be used by Mozilla.
+-if test "$target" != "$host"; then
+-    echo "cross compiling from $host to $target"
++if test "$target" != "$build"; then
++    echo "cross compiling from $build to $target"
+ 
+     _SAVE_CC="$CC"
+     _SAVE_CFLAGS="$CFLAGS"
+--- js-1.8.5.orig/js/src/configure	2012-07-20 17:08:29.980933098 +0800
++++ js-1.8.5/js/src/configure	2012-07-20 17:09:08.184931492 +0800
+@@ -1182,8 +1182,8 @@
+ #       is built.
+ #     - $target (in its correct usage) is for compilers who generate code for a
+ #       different platform than $host, so it would not be used by Mozilla.
+-if test "$target" != "$host"; then
+-    echo "cross compiling from $host to $target"
++if test "$target" != "$build"; then
++    echo "cross compiling from $build to $target"
+ 
+     _SAVE_CC="$CC"
+     _SAVE_CFLAGS="$CFLAGS"

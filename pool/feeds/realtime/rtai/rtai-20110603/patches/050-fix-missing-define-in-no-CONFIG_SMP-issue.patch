@@ -1,0 +1,19 @@
+--- rtai/addons/rtdm/xn.h	2011-07-21 17:50:29.178531870 +0800
++++ rtai/addons/rtdm/xn.h	2011-07-21 17:52:47.168530467 +0800
+@@ -227,6 +227,16 @@
+ #define DEFINE_XNLOCK(lock)
+ #define DEFINE_PRIVATE_XNLOCK(lock)
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,20)
++#define DECLARE_WORK_NODATA(f, n)       DECLARE_WORK(f, n, NULL)
++#define DECLARE_WORK_FUNC(f)            void f(void *cookie)
++#define DECLARE_DELAYED_WORK_NODATA(n, f) DECLARE_DELAYED_WORK(n, f, NULL)
++#else /* >= 2.6.20 */
++#define DECLARE_WORK_NODATA(f, n)       DECLARE_WORK(f, n)
++#define DECLARE_WORK_FUNC(f)            void f(struct work_struct *work)
++#define DECLARE_DELAYED_WORK_NODATA(n, f) DECLARE_DELAYED_WORK(n, f)
++#endif /* >= 2.6.20 */
++
+ #define xnlock_init(lock)                   do { } while(0)
+ #define xnlock_get(lock)                    rtai_cli()
+ #define xnlock_put(lock)                    rtai_sti()

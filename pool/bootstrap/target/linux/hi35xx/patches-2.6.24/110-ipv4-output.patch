@@ -1,0 +1,36 @@
+diff -urNd linux-2.6.24/net/ipv4/ip_output.c linux-2.6.24-hi3515/net/ipv4/ip_output.c
+--- linux-2.6.24/net/ipv4/ip_output.c	2008-01-25 06:58:37.000000000 +0800
++++ linux-2.6.24-hi3515/net/ipv4/ip_output.c	2010-03-16 10:41:03.000000000 +0800
+@@ -89,6 +89,7 @@
+ {
+ 	iph->check = 0;
+ 	iph->check = ip_fast_csum((unsigned char *)iph, iph->ihl);
++	barrier();
+ }
+ 
+ /* dev_loopback_xmit for use with netfilter. */
+@@ -462,6 +463,7 @@
+ 	if (skb_shinfo(skb)->frag_list) {
+ 		struct sk_buff *frag;
+ 		int first_len = skb_pagelen(skb);
++		int truesizes = 0;
+ 
+ 		if (first_len - hlen > mtu ||
+ 		    ((first_len - hlen) & 7) ||
+@@ -485,7 +487,7 @@
+ 				sock_hold(skb->sk);
+ 				frag->sk = skb->sk;
+ 				frag->destructor = sock_wfree;
+-				skb->truesize -= frag->truesize;
++				truesizes += frag->truesize;
+ 			}
+ 		}
+ 
+@@ -496,6 +498,7 @@
+ 		frag = skb_shinfo(skb)->frag_list;
+ 		skb_shinfo(skb)->frag_list = NULL;
+ 		skb->data_len = first_len - skb_headlen(skb);
++		skb->truesize -= truesizes;
+ 		skb->len = first_len;
+ 		iph->tot_len = htons(first_len);
+ 		iph->frag_off = htons(IP_MF);

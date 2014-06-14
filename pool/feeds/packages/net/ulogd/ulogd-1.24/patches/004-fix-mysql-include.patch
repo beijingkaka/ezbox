@@ -1,0 +1,22 @@
+--- ulogd-1.24-old/configure.in	2012-09-21 00:28:07.211062194 +0800
++++ ulogd-1.24-new/configure.in	2012-09-21 00:28:58.707062533 +0800
+@@ -44,7 +44,7 @@
+ fi
+ mysqldir=""
+ AC_MSG_CHECKING(for MySQL files)
+-for d in $dir/bin /usr/bin /usr/local/bin /usr/local/mysql/bin /opt/mysql/bin /opt/packages/mysql/bin
++for d in $dir/bin
+ do
+         if test -f $d/mysql_config
+ 	then
+--- ulogd-1.24-old/configure	2012-09-21 00:35:52.703062451 +0800
++++ ulogd-1.24-new/configure	2012-09-21 00:36:17.435062624 +0800
+@@ -1709,7 +1709,7 @@
+ mysqldir=""
+ echo $ac_n "checking for MySQL files""... $ac_c" 1>&6
+ echo "configure:1712: checking for MySQL files" >&5
+-for d in $dir/bin /usr/bin /usr/local/bin /usr/local/mysql/bin /opt/mysql/bin /opt/packages/mysql/bin
++for d in $dir/bin
+ do
+         if test -f $d/mysql_config
+ 	then

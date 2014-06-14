@@ -1,0 +1,24 @@
+diff -urNd linux-2.6.24/drivers/mtd/nand/Kconfig linux-2.6.24-hi3515/drivers/mtd/nand/Kconfig
+--- linux-2.6.24/drivers/mtd/nand/Kconfig	2008-01-25 06:58:37.000000000 +0800
++++ linux-2.6.24-hi3515/drivers/mtd/nand/Kconfig	2010-03-16 10:41:13.000000000 +0800
+@@ -305,5 +305,10 @@
+ 	help
+ 	  These two (and possibly other) Alauda-based cardreaders for
+ 	  SmartMedia and xD allow raw flash access.
++config MTD_HINAND 
++	tristate "Support for HINAND"
++	depends on MTD_NAND
++	help
++           Support for generic platform NAND driver
+ 
+ endif # MTD_NAND
+diff -urNd linux-2.6.24/drivers/mtd/nand/Makefile linux-2.6.24-hi3515/drivers/mtd/nand/Makefile
+--- linux-2.6.24/drivers/mtd/nand/Makefile	2008-01-25 06:58:37.000000000 +0800
++++ linux-2.6.24-hi3515/drivers/mtd/nand/Makefile	2010-03-16 10:41:13.000000000 +0800
+@@ -29,5 +29,6 @@
+ obj-$(CONFIG_MTD_NAND_BASLER_EXCITE)	+= excite_nandflash.o
+ obj-$(CONFIG_MTD_NAND_PLATFORM)		+= plat_nand.o
+ obj-$(CONFIG_MTD_ALAUDA)		+= alauda.o
++obj-$(CONFIG_MTD_HINAND)                += hinand.o
+ 
+ nand-objs := nand_base.o nand_bbt.o

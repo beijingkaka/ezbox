@@ -1,0 +1,13 @@
+--- linux-3.3.8.orig/drivers/char/random.c	2013-02-02 15:37:05.196989875 +0800
++++ linux-3.3.8/drivers/char/random.c	2013-02-02 15:38:49.940994218 +0800
+@@ -534,8 +534,8 @@
+ 		input_rotate += i ? 7 : 14;
+ 	}
+ 
+-	ACCESS_ONCE(r->input_rotate) = input_rotate;
+-	ACCESS_ONCE(r->add_ptr) = i;
++	ACCESS_ONCE_RW(r->input_rotate) = input_rotate;
++	ACCESS_ONCE_RW(r->add_ptr) = i;
+ 	smp_wmb();
+ 
+ 	if (out)

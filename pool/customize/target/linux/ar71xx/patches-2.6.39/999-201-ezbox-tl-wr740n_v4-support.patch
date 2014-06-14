@@ -1,0 +1,37 @@
+--- a/arch/mips/ar71xx/machtype.h	2011-08-31 15:16:56.308713575 +0800
++++ b/arch/mips/ar71xx/machtype.h	2011-08-31 15:17:34.848716439 +0800
+@@ -70,6 +70,7 @@
+ 	AR71XX_MACH_AP96,	/* Atheros AP96 */
+ 	AR71XX_MACH_UBNT_UNIFI, /* Unifi */
+ 	AR71XX_MACH_DB120,      /* Atheros DB120 (AR934x based) */
++	AR71XX_MACH_EZBOX_TL_WR740N_V4,	/* EZBOX on TL-WR740N v4 */
+ };
+ 
+ #endif /* _AR71XX_MACHTYPE_H */
+--- a/arch/mips/ar71xx/Kconfig	2011-08-31 15:13:46.238716549 +0800
++++ b/arch/mips/ar71xx/Kconfig	2011-08-31 15:16:14.488712657 +0800
+@@ -351,6 +351,17 @@
+ 	select AR71XX_DEV_LEDS_GPIO
+ 	default n
+ 
++config AR71XX_MACH_EZBOX_TL_WR740N_V4
++	bool "EZBOX on TL-WR740N v4 support"
++	select SOC_AR724X
++	select AR71XX_DEV_M25P80
++	select AR71XX_DEV_AP91_PCI if PCI
++	select AR71XX_DEV_GPIO_BUTTONS
++	select AR71XX_DEV_LEDS_GPIO
++	select AR71XX_NVRAM
++	select AR71XX_UBOOT_ENV
++	default n
++
+ endmenu
+ 
+ config SOC_AR71XX
+--- a/arch/mips/ar71xx/Makefile	2011-08-31 15:13:52.358716232 +0800
++++ b/arch/mips/ar71xx/Makefile	2011-08-31 15:16:47.978718691 +0800
+@@ -66,3 +66,4 @@
+ obj-$(CONFIG_AR71XX_MACH_WZR_HP_G300NH)	+= mach-wzr-hp-g300nh.o
+ obj-$(CONFIG_AR71XX_MACH_WZR_HP_AG300H)	+= mach-wzr-hp-ag300h.o
+ obj-$(CONFIG_AR71XX_MACH_ZCN_1523H)	+= mach-zcn-1523h.o
++obj-$(CONFIG_AR71XX_MACH_EZBOX_TL_WR740N_V4)	+= mach-ezbox-tl-wr740n_v4.o

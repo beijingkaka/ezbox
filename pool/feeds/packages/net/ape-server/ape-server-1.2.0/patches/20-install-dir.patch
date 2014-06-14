@@ -1,0 +1,17 @@
+--- ape-server-1.2.0.orig/Makefile	2012-07-21 00:21:33.897677679 +0800
++++ ape-server-1.2.0/Makefile	2012-07-21 00:22:43.757674740 +0800
+@@ -17,11 +17,11 @@
+ 	#$(CC) $(CFLAGS) $(SRC) -o $(EXEC) $(LFLAGS) ./deps/udns-0.0.9/libudns.a -I ./deps/udns-0.0.9/
+ 	$(CC) $(CFLAGS) $(SRC) -o $(EXEC) $(LFLAGS)
+ install: 
+-	install -d $(bindir)
+-	install -m 755 $(EXEC) $(bindir)
++	install -d $(DESTDIR)$(bindir)
++	install -m 755 $(EXEC) $(DESTDIR)$(bindir)
+ 
+ uninstall:
+-	$(RM) $(bindir)/aped
++	$(RM) $(DESTDIR)$(bindir)/aped
+ 
+ clean:
+ 	$(RM) $(EXEC)

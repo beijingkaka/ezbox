@@ -1,0 +1,30 @@
+--- dhis-client-5.5.orig/Makefile
++++ dhis-client-5.5/Makefile
+@@ -24,14 +24,15 @@
+ # SUCH DAMAGE.
+ #
+ 
+-CC=cc
++CC?=cc
+ 
+ #
+ # For password mode only (no QRC), remove the -DQRC=1 statement 
+ # CFLAGS=-I/usr/local/include -Wall 
+-CFLAGS=-I/usr/local/include -DQRC=1 -Wall 
++CFLAGS?=-Wall -O2 -pipe
++CFLAGS+=-DQRC=1
+ 
+-LFLAGS=-L/usr/local/lib
++LFLAGS?=
+ 
+ # For password mode only (no QRC), comment the following line and keep LIBS 
+ # empty.
+@@ -43,7 +44,7 @@
+ 
+ RM=rm -f
+ 
+-all:	dhid genkeys
++all:	dhid #genkeys
+ 
+ dhid:	conf.o network.o main.o
+ 	$(CC) $(LFLAGS) -o dhid conf.o network.o main.o $(LIBS)

@@ -1,0 +1,180 @@
+diff -urNd linux-2.6.24/drivers/serial/amba-pl011.c linux-2.6.24-hi3515/drivers/serial/amba-pl011.c
+--- linux-2.6.24/drivers/serial/amba-pl011.c	2008-01-25 06:58:37.000000000 +0800
++++ linux-2.6.24-hi3515/drivers/serial/amba-pl011.c	2010-03-16 10:41:13.000000000 +0800
+@@ -52,7 +52,7 @@
+ 
+ #include <asm/io.h>
+ #include <asm/sizes.h>
+-
++#include <asm/arch/hardware.h>
+ #define UART_NR			14
+ 
+ #define SERIAL_AMBA_MAJOR	204
+@@ -132,8 +132,12 @@
+ 				uap->port.icount.parity++;
+ 			else if (ch & UART011_DR_FE)
+ 				uap->port.icount.frame++;
+-			if (ch & UART011_DR_OE)
+-				uap->port.icount.overrun++;
++			if (ch & UART011_DR_OE){                                                                                                                  
++				writew(0, uap->port.membase + UART01x_RSR);          
++      			ch &= 0xf7;                                                                                                 
++				uap->port.icount.overrun++;                                                        
++			}                                                                                                              
++
+ 
+ 			ch &= uap->port.read_status_mask;
+ 
+@@ -314,6 +318,32 @@
+ 	spin_unlock_irqrestore(&uap->port.lock, flags);
+ }
+ 
++#ifdef CONFIG_CONSOLE_POLL
++static int pl010_get_poll_char(struct uart_port *port)
++{
++	struct uart_amba_port *uap = (struct uart_amba_port *)port;
++	unsigned int status;
++
++	do {
++		status = readw(uap->port.membase + UART01x_FR);
++	} while (status & UART01x_FR_RXFE);
++
++	return readw(uap->port.membase + UART01x_DR);
++}
++
++static void pl010_put_poll_char(struct uart_port *port,
++			 unsigned char ch)
++{
++	struct uart_amba_port *uap = (struct uart_amba_port *)port;
++
++	while (readw(uap->port.membase + UART01x_FR) & UART01x_FR_TXFF)
++		barrier();
++
++	writew(ch, uap->port.membase + UART01x_DR);
++}
++
++#endif /* CONFIG_CONSOLE_POLL */
++
+ static int pl011_startup(struct uart_port *port)
+ {
+ 	struct uart_amba_port *uap = (struct uart_amba_port *)port;
+@@ -332,7 +362,7 @@
+ 	/*
+ 	 * Allocate the IRQ
+ 	 */
+-	retval = request_irq(uap->port.irq, pl011_int, 0, "uart-pl011", uap);
++	retval = request_irq(uap->port.irq, pl011_int, IRQF_SHARED, "uart-pl011", uap);
+ 	if (retval)
+ 		goto clk_dis;
+ 
+@@ -572,6 +602,10 @@
+ 	.request_port	= pl010_request_port,
+ 	.config_port	= pl010_config_port,
+ 	.verify_port	= pl010_verify_port,
++#ifdef CONFIG_CONSOLE_POLL
++	.poll_get_char = pl010_get_poll_char,
++	.poll_put_char = pl010_put_poll_char,
++#endif
+ };
+ 
+ static struct uart_amba_port *amba_ports[UART_NR];
+@@ -722,7 +756,10 @@
+ 		goto out;
+ 	}
+ 
+-	base = ioremap(dev->res.start, PAGE_SIZE);
++	/* I've mapped all io-space yet */
++	/* base = ioremap(dev->res.start, PAGE_SIZE); */
++	base = (void*)IO_ADDRESS(dev->res.start);
++
+ 	if (!base) {
+ 		ret = -ENOMEM;
+ 		goto free;
+@@ -797,11 +834,78 @@
+ 	.remove		= pl011_remove,
+ };
+ 
++static int reset_uart_bandrate(void)
++{
++	int i;
++	struct clk *clk = clk_get(NULL,"UARTCLK");
++
++	for (i = 0; i < ARRAY_SIZE(amba_ports); i++)
++	{
++		unsigned int quot, lcrh, bandrate ;
++
++		struct uart_amba_port *uap = amba_ports[i];
++		if (amba_ports[i] == NULL)
++			continue;
++		if( (uap->port.uartclk/MHZ) == 0)
++			continue;
++
++		lcrh	= readw(uap->port.membase + UART011_LCRH);
++		quot	= (readw(uap->port.membase + UART011_FBRD) & 0x3f) |
++				(readw(uap->port.membase + UART011_IBRD) << 6);
++		bandrate = uap->port.uartclk*4/quot;
++
++		uap->port.uartclk = clk_get_rate(clk);
++
++		quot = uap->port.uartclk*4/bandrate;
++
++		writew(quot & 0x3f, uap->port.membase + UART011_FBRD);
++		writew(quot >> 6, uap->port.membase + UART011_IBRD);
++		writew(lcrh, uap->port.membase + UART011_LCRH);
++	}
++
++	return 0;
++}
++
++#include <linux/amba/clcd.h>
++#include <asm/arch/system.h>
++#include <asm/arch/clock.h>
++
++static int uart_clock_notifier(struct clk *clk, 
++		unsigned int cmd, unsigned long wparam, unsigned long lparam)
++{
++	int ret = 0;
++	struct clk *p;
++
++	switch(cmd) {
++	case HISILICON_CLK_REGISTER:
++	case HISILICON_CLK_PARENT_SETRATE:
++		p = clk_get_parent(clk);
++		if(p)
++			clk->rate = clk_get_rate(p)/2;
++	//	reset_uart_bandrate();
++		break;
++
++	default:
++		ret =  hisilicon_clk_default_notifier(clk, cmd, wparam, lparam);
++		break;
++	}
++
++	return ret;
++}
++
++static struct clk uart_clk = {
++	.name	= "UARTCLK",
++	.rate	= 0,
++	//.notifier = uart_clock_notifier,
++	//.parent_name = "BUSCLK",
++};
++
+ static int __init pl011_init(void)
+ {
+ 	int ret;
+ 	printk(KERN_INFO "Serial: AMBA PL011 UART driver\n");
+-
++	uart_clk.rate = get_ahbclk_hw()/2; 
++	clk_register(&uart_clk);
+ 	ret = uart_register_driver(&amba_reg);
+ 	if (ret == 0) {
+ 		ret = amba_driver_register(&pl011_driver);
+@@ -813,6 +917,7 @@
+ 
+ static void __exit pl011_exit(void)
+ {
++	clk_unregister(&uart_clk);
+ 	amba_driver_unregister(&pl011_driver);
+ 	uart_unregister_driver(&amba_reg);
+ }

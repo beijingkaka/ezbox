@@ -1,0 +1,22 @@
+--- a/arch/mips/ar71xx/Kconfig	2011-08-31 14:52:53.608718258 +0800
++++ b/arch/mips/ar71xx/Kconfig	2011-08-31 14:53:13.878713367 +0800
+@@ -428,6 +428,9 @@
+ config AR71XX_NVRAM
+ 	def_bool n
+ 
++config AR71XX_UBOOT_ENV
++	def_bool n
++
+ config AR71XX_PCI_ATH9K_FIXUP
+ 	def_bool n
+ 
+--- a/arch/mips/ar71xx/Makefile	2011-08-31 14:54:28.138714312 +0800
++++ b/arch/mips/ar71xx/Makefile	2011-08-31 14:54:47.628713935 +0800
+@@ -26,6 +26,7 @@
+ obj-$(CONFIG_AR71XX_DEV_USB)		+= dev-usb.o
+ 
+ obj-$(CONFIG_AR71XX_NVRAM)		+= nvram.o
++obj-$(CONFIG_AR71XX_UBOOT_ENV)		+= uboot-env.o
+ obj-$(CONFIG_AR71XX_PCI_ATH9K_FIXUP)	+= pci-ath9k-fixup.o
+ 
+ obj-$(CONFIG_AR71XX_MACH_AP121)		+= mach-ap121.o

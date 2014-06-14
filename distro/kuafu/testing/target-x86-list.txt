@@ -1,0 +1,6 @@
+#FIXME: we need copy it to the workspace
+
+# target
+c:target/linux/x86:target/linux/x86
+c:package/boot/grub2/grub2-2.00:package/boot/grub2
+c:package/utils/busybox/busybox-1.19.4:package/utils/busybox

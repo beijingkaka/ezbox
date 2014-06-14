@@ -1,0 +1,38 @@
+#
+# For a description of the syntax of this configuration file,
+# see scripts/kbuild/config-language.txt.
+#
+
+menu "ezcfg Network Interfaces"
+
+config EZCFG_EZBOX_ETH_LAN_NIC
+	bool "LAN Ethernet interface"
+	default y
+	help
+	  Enable LAN side Ethernet interface.
+
+config EZCFG_EZBOX_WIFI_LAN_NIC
+	bool "LAN Wifi interface"
+	default y
+	help
+	  Enable LAN side Wifi interface.
+
+config EZCFG_EZBOX_BR_LAN_NIC
+	bool "LAN bridge interface"
+	default y
+	help
+	  Enable LAN side bridge interface.
+
+config EZCFG_EZBOX_LAN_NIC
+	bool "LAN network interface"
+	default y
+	help
+	  Enable LAN side network interface.
+
+config EZCFG_EZBOX_WAN_NIC
+	bool "WAN network interface"
+	default y
+	help
+	  Enable WAN side network interface.
+
+endmenu

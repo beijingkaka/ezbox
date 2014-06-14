@@ -1,0 +1,11 @@
+--- emc2-20110329/src/emc/rs274ngc/interp_internal.hh	2011-03-30 13:46:39.794639816 +0800
++++ emc2-20110329/src/emc/rs274ngc/interp_internal.hh	2011-03-30 13:46:55.802640085 +0800
+@@ -18,7 +18,7 @@
+ #include <stdio.h>
+ #include "canon.hh"
+ #include "emcpos.h"
+-#include "libintl.h"
++#include <libintl.h>
+ #define _(s) gettext(s)
+ 
+ /**********************/

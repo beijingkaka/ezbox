@@ -1,0 +1,6 @@
+menu "Configuration"
+	depends on PACKAGE_ezcfg
+
+source "package/ezcfg/config/Config.in"
+
+endmenu

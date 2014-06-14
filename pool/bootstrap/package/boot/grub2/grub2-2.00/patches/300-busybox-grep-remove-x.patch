@@ -1,0 +1,11 @@
+--- a/util/grub-install.in	2013-05-17 13:25:31.618976000 +0800
++++ b/util/grub-install.in	2013-05-17 13:31:32.757407000 +0800
+@@ -629,7 +629,7 @@
+ 
+ if [ "x${devabstraction_module}" = "x" ] ; then
+     if [ x"${install_device}" != x ]; then
+-      if echo "${install_device}" | grep -qx "(.*)" ; then
++      if echo "${install_device}" | grep -q "(.*)" ; then
+         install_drive="${install_device}"
+       else
+         install_drive="`"$grub_probe" --device-map="${device_map}" --target=drive --device "${install_device}"`" || exit 1

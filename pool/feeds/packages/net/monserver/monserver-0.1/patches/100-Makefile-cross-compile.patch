@@ -1,0 +1,21 @@
+--- monserver-0.1.orig/Makefile	2012-07-16 10:22:17.345633781 +0800
++++ monserver-0.1/Makefile	2012-07-16 10:23:25.253630925 +0800
+@@ -1,5 +1,5 @@
+-CFLAGS=-g -O2 -Wall -Wextra -Isrc -pthread -rdynamic -DNDEBUG $(OPTFLAGS) -D_FILE_OFFSET_BITS=64 -I /usr/include/lua5.1
+-LIBS=-lzmq -ldl -llua5.1 $(OPTLIBS)
++CFLAGS?=-g -O2 -Wall -Wextra -Isrc -pthread -rdynamic -DNDEBUG $(OPTFLAGS) -D_FILE_OFFSET_BITS=64 -I /usr/include/lua5.1
++LIBS?=-lzmq -ldl -llua5.1 $(OPTLIBS)
+ PREFIX?=/usr/local
+ 
+ get_objs = $(addsuffix .o,$(basename $(wildcard $(1))))
+@@ -30,8 +30,8 @@
+ 
+ build/libm2.a: CFLAGS += -fPIC
+ build/libm2.a: build ${LIB_OBJ}
+-	ar rcs $@ ${LIB_OBJ}
+-	ranlib $@
++	$(AR) rcs $@ ${LIB_OBJ}
++	$(RANLIB) $@
+ 
+ build:
+ 	@mkdir -p build

@@ -1,0 +1,14 @@
+--- emc2-20110131/src/Makefile	2011-02-05 19:35:26.926217859 +0800
++++ emc2-20110131/src/Makefile	2011-02-05 21:12:22.725238509 +0800
+@@ -514,9 +514,11 @@
+ 	$(EXE) $(TCL_BIN) $(DESTDIR)$(tcldir)/bin
+ 	$(FILE) ../tcl/scripts/balloon.tcl ../tcl/scripts/emchelp.tcl $(DESTDIR)$(tcldir)/scripts
+ 	$(EXE) ../tcl/scripts/Set_Coordinates.tcl $(DESTDIR)$(tcldir)/scripts
++ifeq ($(BUILD_PYTHON),yes)
+ 	$(FILE) ../share/emc/stepconf.glade $(DESTDIR)$(prefix)/share/emc
+ 	$(FILE) ../share/emc/touchy.glade $(DESTDIR)$(prefix)/share/emc
+ 	$(FILE) ../share/emc/pncconf.glade $(DESTDIR)$(prefix)/share/emc
++endif
+ 	$(FILE) ../configs/common/emc.nml $(DESTDIR)$(prefix)/share/emc
+ 	$(FILE) ../src/emc/usr_intf/pncconf/pncconf-help/*.txt $(DESTDIR)$(prefix)/share/emc/pncconf/pncconf-help
+ 	$(FILE) ../src/emc/usr_intf/pncconf/pncconf-help/*.png $(DESTDIR)$(prefix)/share/emc/pncconf/pncconf-help

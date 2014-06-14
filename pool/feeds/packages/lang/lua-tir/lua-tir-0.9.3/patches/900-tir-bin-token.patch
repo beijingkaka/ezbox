@@ -1,0 +1,12 @@
+diff -urNd tir-0.9.3-3/bin/tir Tir.git/bin/tir
+--- tir-0.9.3-3/bin/tir	2011-07-08 14:37:40.000000000 +0800
++++ Tir.git/bin/tir	2012-07-13 12:00:22.549981263 +0800
+@@ -20,7 +20,7 @@
+     local last_opt = nil
+ 
+     for i, opt in ipairs(arg) do
+-        local token = opt:match("\-+([a-z\-]+)")
++        local token = opt:match("%-+([a-z%-]+)")
+ 
+         if token then
+             last_opt = token

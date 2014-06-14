@@ -1,0 +1,40 @@
+diff -urNd xorg-server-1.10.2.orig/hw/kdrive/linux/keyboard.c xorg-server-1.10.2/hw/kdrive/linux/keyboard.c
+--- xorg-server-1.10.2.orig/hw/kdrive/linux/keyboard.c	2010-09-12 05:22:58.000000000 +0800
++++ xorg-server-1.10.2/hw/kdrive/linux/keyboard.c	2011-06-27 10:26:00.380634645 +0800
+@@ -134,7 +134,7 @@
+    for the core X keyboard protocol has to be AT-scancode based so that it
+    corresponds to the Xkb keymap.
+ */
+-#if 0
++#if 1
+ static unsigned char at2lnx[] =
+ {
+ 	0x0,    /* no valid scancode */
+@@ -219,8 +219,9 @@
+ static void
+ readKernelMapping(KdKeyboardInfo *ki)
+ {
+-#if 0
++#if 1
+     KeySym	    *k;
++    KeySym	    keySyms_map[KD_MAX_LENGTH * KD_MAX_WIDTH];
+     int		    i, j;
+     struct kbentry  kbe;
+     int		    minKeyCode, maxKeyCode;
+@@ -235,14 +236,13 @@
+     minKeyCode = NR_KEYS;
+     maxKeyCode = 0;
+     row = 0;
+-    ki->keySyms.mapWidth = KD_MAX_WIDTH;
+     for (i = 0; i < NR_KEYS && row < KD_MAX_LENGTH; ++i)
+     {
+         kbe.kb_index = LNX_KEY_INDEX(i);
+ 
+-        k = ki->keySyms.map + row * ki->keySyms.mapWidth;
++        k = keySyms_map + row * KD_MAX_WIDTH;
+ 
+-	for (j = 0; j < ki->keySyms.mapWidth; ++j)
++	for (j = 0; j < KD_MAX_WIDTH; ++j)
+ 	{
+ 	    unsigned short kval;
+ 

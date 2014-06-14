@@ -1,0 +1,307 @@
+diff -urNd linux-2.6.24/drivers/usb/host/ohci-hcd.c linux-2.6.24-hi3515/drivers/usb/host/ohci-hcd.c
+--- linux-2.6.24/drivers/usb/host/ohci-hcd.c	2008-01-25 06:58:37.000000000 +0800
++++ linux-2.6.24-hi3515/drivers/usb/host/ohci-hcd.c	2010-03-16 10:41:13.000000000 +0800
+@@ -1048,6 +1048,9 @@
+ #define SSB_OHCI_DRIVER		ssb_ohci_driver
+ #endif
+ 
++#include "ohci-hi3515v100.c"
++#define PLATFORM_DRIVER		ohci_hcd_hi3515v100_driver
++
+ #if	!defined(PCI_DRIVER) &&		\
+ 	!defined(PLATFORM_DRIVER) &&	\
+ 	!defined(OF_PLATFORM_DRIVER) &&	\
+@@ -1057,6 +1060,38 @@
+ #error "missing bus glue for ohci-hcd"
+ #endif
+ 
++static struct resource ohci_res[] = {
++	[0] = {
++		.start = REG_BASE_OHCI,
++		.end   = REG_BASE_OHCI + REG_OHCI_IOSIZE - 1,
++		.flags = IORESOURCE_MEM,
++	},
++	[1] = {
++		.start = INTNR_OHCI,
++		.end   = INTNR_OHCI,
++		.flags = IORESOURCE_IRQ,
++	},
++};
++
++static void usb_ohci_platdev_release (struct device *dev)
++{
++	/* These don't need to do anything because the pdev structures are
++	 * statically allocated. */
++}
++
++static struct platform_device ohci_platdev= {
++	.name	= OHCI_DEV_NAME,
++	.id	= 0,
++	.dev	= {
++		.platform_data	= NULL,
++		.dma_mask = (u64*)~0,
++		.coherent_dma_mask = (u64)~0,
++		.release = usb_ohci_platdev_release,
++	},
++	.num_resources = ARRAY_SIZE(ohci_res),
++	.resource	= ohci_res,
++};
++
+ static int __init ohci_hcd_mod_init(void)
+ {
+ 	int retval = 0;
+@@ -1104,6 +1139,21 @@
+ 		goto error_ssb;
+ #endif
+ 
++	retval = platform_device_register(&ohci_platdev);
++	if (retval < 0) {
++		printk("%s->%d, platform_device_register fail.\n", __FUNCTION__, __LINE__);
++#ifdef PLATFORM_DRIVER
++		platform_driver_unregister(&PLATFORM_DRIVER);
++#endif
++#ifdef PCI_DRIVER
++		pci_unregister_driver(&PCI_DRIVER);
++#endif
++#ifdef PS3_SYSTEM_BUS_DRIVER
++		ps3_ohci_driver_unregister(&PS3_SYSTEM_BUS_DRIVER);
++#endif
++		return retval;
++	}
++
+ 	return retval;
+ 
+ 	/* Error path */
+@@ -1154,6 +1204,9 @@
+ #ifdef PS3_SYSTEM_BUS_DRIVER
+ 	ps3_ohci_driver_unregister(&PS3_SYSTEM_BUS_DRIVER);
+ #endif
++
++	platform_device_unregister(&ohci_platdev);
++
+ }
+ module_exit(ohci_hcd_mod_exit);
+ 
+diff -urNd linux-2.6.24/drivers/usb/host/ohci-hi3515v100.c linux-2.6.24-hi3515/drivers/usb/host/ohci-hi3515v100.c
+--- linux-2.6.24/drivers/usb/host/ohci-hi3515v100.c	1970-01-01 08:00:00.000000000 +0800
++++ linux-2.6.24-hi3515/drivers/usb/host/ohci-hi3515v100.c	2010-03-16 10:41:13.000000000 +0800
+@@ -0,0 +1,219 @@
++
++#include <linux/platform_device.h>
++
++#define	OHCI_DEV_NAME	"hi3515v100-ohci"
++#define	REG_BASE_OHCI	0x100a0000
++#define	REG_OHCI_IOSIZE	PAGE_ALIGN(0x10000)
++#define	INTNR_OHCI	22
++
++extern int usb_disabled(void);
++
++/*-------------------------------------------------------------------------*/
++
++static void hi3515v100_start_ohc(struct platform_device *dev)
++{
++}
++
++static void hi3515v100_stop_ohc(struct platform_device *dev)
++{
++}
++
++/*-------------------------------------------------------------------------*/
++
++/**
++ * usb_hcd_hi3515v100_probe - initialize hisilicon-based HCDs
++ * Context: !in_interrupt()
++ *
++ * Allocates basic resources for this USB host controller, and
++ * then invokes the start() method for the HCD associated with it
++ * through the hotplug entry's driver_data.
++ *
++ */
++int usb_hcd_hi3515v100_probe (const struct hc_driver *driver,
++			  struct platform_device *dev)
++{
++	int retval;
++	struct usb_hcd *hcd;
++
++    if (dev->resource[1].flags != IORESOURCE_IRQ) {
++		pr_debug("resource[1] is not IORESOURCE_IRQ");
++		return -ENOMEM;
++	}
++
++	hcd = usb_create_hcd(driver, &dev->dev, "hisilicon");
++	if (!hcd)
++		return -ENOMEM;
++	hcd->rsrc_start = dev->resource[0].start;
++	hcd->rsrc_len = dev->resource[0].end - dev->resource[0].start + 1;
++
++	if (!request_mem_region(hcd->rsrc_start, hcd->rsrc_len, hcd_name)) {
++		pr_debug("request_mem_region failed");
++		retval = -EBUSY;
++		goto err1;
++	}
++	
++	hcd->regs = ioremap(hcd->rsrc_start, hcd->rsrc_len);
++	if (!hcd->regs) {
++		pr_debug("ioremap failed");
++		retval = -ENOMEM;
++		goto err2;
++	}
++
++	hi3515v100_start_ohc(dev);
++	ohci_hcd_init(hcd_to_ohci(hcd));
++	
++	//printk("%s irq num =%d\n",__FUNCTION__,dev->resource[1].start);
++	retval = usb_add_hcd(hcd, dev->resource[1].start, IRQF_DISABLED | IRQF_SHARED);	
++	
++	if (retval == 0)
++		return retval;
++	hi3515v100_stop_ohc(dev);
++	iounmap(hcd->regs);
++ err2:
++	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
++ err1:
++ 	//printk("in put_hc\n");
++	usb_put_hcd(hcd);
++	return retval;
++}
++
++/* may be called without controller electrically present */
++/* may be called with controller, bus, and devices active */
++
++/**
++ * usb_hcd_hi3515v100_remove - shutdown processing for hisilicon-based HCDs
++ * @dev: USB Host Controller being removed
++ * Context: !in_interrupt()
++ *
++ * Reverses the effect of usb_hcd_hi3515v100_probe(), first invoking
++ * the HCD's stop() method.  It is always called from a thread
++ * context, normally "rmmod", "apmd", or something similar.
++ *
++ */
++void usb_hcd_hi3515v100_remove(struct usb_hcd *hcd, struct platform_device *dev)
++{
++	usb_remove_hcd(hcd);
++	hi3515v100_stop_ohc(dev);
++	iounmap(hcd->regs);
++	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
++	usb_put_hcd(hcd);
++}
++
++static int __devinit
++ohci_hisilicon_start (struct usb_hcd *hcd)
++{
++	struct ohci_hcd	*ohci = hcd_to_ohci (hcd);
++	int		ret;
++
++	ohci_dbg (ohci, "ohci_hisilicon_start, ohci:%p", ohci);
++	if ((ret = ohci_init(ohci)) < 0)
++		return ret;
++
++	if ((ret = ohci_run (ohci)) < 0) {
++		err ("can't start %s", hcd->self.bus_name);
++		//printk("can't start\n");
++		ohci_stop (hcd);
++		return ret;
++	}
++	return 0;
++}
++
++/*-------------------------------------------------------------------------*/
++
++static const struct hc_driver ohci_hi3515v100_hc_driver = {
++	.description =		hcd_name,
++	.product_desc =		OHCI_DEV_NAME,
++	.hcd_priv_size =	sizeof(struct ohci_hcd),
++
++	/*
++	 * generic hardware linkage
++	 */
++	.irq =			ohci_irq,
++	.flags =		HCD_USB11 | HCD_MEMORY,
++
++	/*
++	 * basic lifecycle operations
++	 */
++//	.reset=			ohci_init,
++	.start =		ohci_hisilicon_start,
++#ifdef	CONFIG_PM
++	/* suspend:		ohci_h2v100_suspend,  -- tbd */
++	/* resume:		ohci_h2v100_resume,   -- tbd */
++#endif /*CONFIG_PM*/
++	.stop =			ohci_stop,
++	.shutdown =		ohci_shutdown,
++	.start_port_reset =	ohci_start_port_reset,
++
++	/*
++	 * managing i/o requests and associated device resources
++	 */
++	.urb_enqueue =		ohci_urb_enqueue,
++	.urb_dequeue =		ohci_urb_dequeue,
++	.endpoint_disable =	ohci_endpoint_disable,
++
++	/*
++	 * scheduling support
++	 */
++	.get_frame_number =	ohci_get_frame,
++
++	/*
++	 * root hub support
++	 */
++	.hub_status_data =	ohci_hub_status_data,
++	.hub_control =		ohci_hub_control,
++	.hub_irq_enable		= ohci_rhsc_enable,
++};
++
++/*-------------------------------------------------------------------------*/
++
++
++static int ohci_hcd_hi3515v100_drv_probe(struct platform_device *pdev)
++{
++	int ret;
++
++	pr_debug ("In ohci_hcd_hi3515v100_drv_probe");
++
++	if (usb_disabled())
++		return -ENODEV;
++
++	ret = usb_hcd_hi3515v100_probe(&ohci_hi3515v100_hc_driver, pdev);
++	return ret;
++}
++
++static int ohci_hcd_hi3515v100_drv_remove(struct platform_device *pdev)
++{
++	struct usb_hcd *hcd = platform_get_drvdata(pdev);
++
++	usb_hcd_hi3515v100_remove(hcd, pdev);
++	return 0;
++}
++
++/*TBD*/
++/*static int ohci_hcd_hisilicon_drv_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct usb_hcd *hcd = dev_get_drvdata(dev);
++
++	return 0;
++}
++static int ohci_hcd_hisilicon_drv_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct usb_hcd *hcd = dev_get_drvdata(dev);
++
++	return 0;
++}
++*/
++
++static struct platform_driver ohci_hcd_hi3515v100_driver = {
++	.probe = ohci_hcd_hi3515v100_drv_probe,
++	.remove = ohci_hcd_hi3515v100_drv_remove,
++	.shutdown = usb_hcd_platform_shutdown,
++	/*.suspend      = , */
++	/*.resume       = , */
++	.driver = {
++		.name = OHCI_DEV_NAME,
++		.bus = &platform_bus_type
++	}
++};
++

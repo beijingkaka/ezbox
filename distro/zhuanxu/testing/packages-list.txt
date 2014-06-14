@@ -1,0 +1,70 @@
+# c:lang/python/python-2.7.3:lang/python
+# c:lang/python-libxml2/python-libxml2-2.7.8:lang/python-libxml2
+c:libs/alsa-lib/alsa-lib-1.0.24.1:libs/alsa-lib
+# c:libs/check/check-0.9.8:libs/check
+c:libs/expat/expat-2.0.1:libs/expat
+# c:libs/freetype/freetype-2.3.12:libs/freetype
+c:libs/gettext-full/gettext-full-0.18.1.1:libs/gettext-full
+# c:libs/glib2/glib2-2.26.1:libs/glib2
+c:libs/gmp/gmp-4.3.1:libs/gmp
+c:libs/gnutls/gnutls-2.8.6:libs/gnutls
+c:libs/intltool/intltool-0.40:libs/intltool
+c:libs/libcap/libcap-2.22:libs/libcap
+c:libs/libcgroup/libcgroup-0.38:libs/libcgroup
+c:libs/libgcrypt/libgcrypt-1.5.0:libs/libgcrypt
+c:libs/libgpg-error/libgpg-error-1.9:libs/libgpg-error
+c:libs/libiconv-full/libiconv-full-1.11.1:libs/libiconv-full
+c:libs/libnetfilter-conntrack/libnetfilter-conntrack-0.9.1:libs/libnetfilter-conntrack
+c:libs/libnfnetlink/libnfnetlink-1.0.0:libs/libnfnetlink
+c:libs/libpthread-stubs/libpthread-stubs-0.1:libs/libpthread-stubs
+c:libs/libsndfile/libsndfile-1.0.25:libs/libsndfile
+# c:libs/libvirt/libvirt-1.0.2:libs/libvirt
+# c:libs/libxml2/libxml2-2.7.8:libs/libxml2
+c:libs/popt/popt-1.7:libs/popt
+c:libs/speex/speex-1.2rc1:libs/speex
+c:net/aoetools/aoetools-32:net/aoetools
+c:net/conntrack-tools/conntrack-tools-1.0.0:net/conntrack-tools
+c:sound/pulseaudio/pulseaudio-3.0:sound/pulseaudio
+c:utils/apparmor/apparmor-2.8.1:utils/apparmor
+c:utils/cryptsetup/cryptsetup-1.4.1:utils/cryptsetup
+c:utils/lxc/lxc-2013-05-16:utils/lxc
+c:utils/lvm2/lvm2-2.02.91:utils/lvm2
+# c:utils/qemu/qemu-1.1.1:utils/qemu
+# c:Xorg/lib/libdrm/libdrm-2.4.19:xorg/libdrm
+# c:Xorg/lib/mesa/mesa-7.9:xorg/mesa
+# c:Xorg/lib/pixman/pixman-0.16.2:xorg/pixman
+# c:Xorg/xorg/app/xkbcomp/xkbcomp-1.1.1:xorg/xkbcomp
+# c:Xorg/xorg/data/xkeyboard-config/xkeyboard-config-2.3:xorg/xkeyboard-config
+# c:Xorg/xorg/lib/libfontenc/libfontenc-1.0.5:xorg/libfontenc
+# c:Xorg/xorg/lib/libX11/libX11-1.4.3:xorg/libX11
+# c:Xorg/xorg/lib/libXau/libXau-1.0.6:xorg/libXau
+# c:Xorg/xorg/lib/libXdamage/libXdamage-1.1.2:xorg/libXdamage
+# c:Xorg/xorg/lib/libXext/libXext-1.3.0:xorg/libXext
+# c:Xorg/xorg/lib/libXfixes/libXfixes-4.0.4:xorg/libXfixes
+# c:Xorg/xorg/lib/libXfont/libXfont-1.4.3:xorg/libXfont
+# c:Xorg/xorg/lib/libXxf86vm/libXxf86vm-1.1.0:xorg/libXxf86vm
+# c:Xorg/xorg/lib/libXv/libXv-1.0.6:xorg/libXv
+# c:Xorg/xorg/lib/libxkbfile/libxkbfile-1.0.6:xorg/libxkbfile
+# c:Xorg/xorg/lib/xtrans/xtrans-1.2.6:xorg/xtrans
+# c:Xorg/xorg/proto/bigreqsproto/bigreqsproto-1.1.1:xorg/bigreqsproto
+# c:Xorg/xorg/proto/calibrateproto/calibrateproto-git:xorg/calibrateproto
+# c:Xorg/xorg/proto/compositeproto/compositeproto-0.4.2:xorg/compositeproto
+# c:Xorg/xorg/proto/damageproto/damageproto-1.2.1:xorg/damageproto
+# c:Xorg/xorg/proto/dri2proto/dri2proto-2.3:xorg/dri2proto
+# c:Xorg/xorg/proto/fixesproto/fixesproto-5.0:xorg/fixesproto
+# c:Xorg/xorg/proto/fontsproto/fontsproto-2.1.1:xorg/fontsproto
+# c:Xorg/xorg/proto/inputproto/inputproto-2.0.2:xorg/inputproto
+# c:Xorg/xorg/proto/kbproto/kbproto-2.0.2:xorg/kbproto
+# c:Xorg/xorg/proto/randrproto/randrproto-1.3.2:xorg/randrproto
+# c:Xorg/xorg/proto/renderproto/renderproto-0.11.1:xorg/renderproto
+# c:Xorg/xorg/proto/resourceproto/resourceproto-1.2.0:xorg/resourceproto
+# c:Xorg/xorg/proto/scrnsaverproto/scrnsaverproto-1.2.0:xorg/scrnsaverproto
+# c:Xorg/xorg/proto/xcmiscproto/xcmiscproto-1.2.1:xorg/xcmiscproto
+# c:Xorg/xorg/proto/xextproto/xextproto-7.2.0:xorg/xextproto
+# c:Xorg/xorg/proto/xf86dgaproto/xf86dgaproto-2.1:xorg/xf86dgaproto
+# c:Xorg/xorg/proto/xf86driproto/xf86driproto-2.1.1:xorg/xf86driproto
+# c:Xorg/xorg/proto/xf86vidmodeproto/xf86vidmodeproto-2.3:xf86vidmodeproto
+# c:Xorg/xorg/proto/xineramaproto/xineramaproto-1.2.1:xorg/xineramaproto
+# c:Xorg/xorg/proto/xproto/xproto-7.0.21:xorg/xproto
+# c:Xorg/xorg/proto/videoproto/videoproto-2.3.1:xorg/videoproto
+# c:Xorg/xorg/xserver/xorg-server/xorg-xserver-1.10.2:xorg/xorg-server

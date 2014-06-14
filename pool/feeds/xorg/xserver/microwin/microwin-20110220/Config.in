@@ -1,0 +1,49 @@
+menu "Nano-X Feature Support"
+depends on PACKAGE_microwin
+
+choice
+	prompt "Machine Type"
+	default NANOX_MACH_GENERIC
+
+config NANOX_MACHINE_GENERIC
+	bool "Generic"
+	help
+	  Please select it if you don't know which is your machine.
+
+config NANOX_MACHINE_VIRTUALBOX
+	bool "VirtualBox"
+	depends on TARGET_x86
+	help
+	  Please select it if you run Nano-X on VirtualBox VM.
+
+config NANOX_MACHINE_COLINUX
+	bool "CoLinux"
+	depends on TARGET_x86
+	help
+	  Please select it if you run Nano-X on CoLinux VM.
+
+endchoice
+
+choice
+	prompt "Mouse Device"
+	default NANOX_MOUSE_NONE
+
+config NANOX_MOUSE_NONE
+	bool "None"
+	help
+	  Please select it if you don't have a mouse device on Nano-X.
+
+endchoice
+
+choice
+	prompt "Keyboard Device"
+	default NANOX_KEYBOARD_NONE
+
+config NANOX_KEYBOARD_NONE
+	bool "None"
+	help
+	  Please select it if you don't have a keyboard device on Nano-X.
+
+endchoice
+
+endmenu

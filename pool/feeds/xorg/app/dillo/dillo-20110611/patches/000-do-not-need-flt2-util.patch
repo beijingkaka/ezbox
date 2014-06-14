@@ -1,0 +1,22 @@
+--- dillo-rcc974615ae39.orig/configure.in	2009-03-09 15:40:08.000000000 +0100
++++ dillo-rcc974615ae39/configure.in	2009-03-09 15:52:42.000000000 +0100
+@@ -114,11 +114,15 @@
+ dnl
+ dnl For debugging and to be user friendly
+ AC_MSG_CHECKING([FLTK2])
+-if sh -c "fltk2-config --version" >/dev/null 2>&1
++AC_ARG_WITH(fltk2-config,
++  AC_HELP_STRING([--with-fltk2-config],
++    [fltk2 package config (default: fltk2-config)]),
++  [FLTK2_CONFIG=$withval], [FLTK2_CONFIG="fltk2-config"])
++if sh -c "$FLTK2_CONFIG --version" >/dev/null 2>&1
+ then AC_MSG_RESULT(yes)
+-     LIBFLTK_CXXFLAGS=`fltk2-config --cxxflags`
+-     LIBFLTK_CFLAGS=`fltk2-config --cflags`
+-     LIBFLTK_LIBS=`fltk2-config --ldflags`
++     LIBFLTK_CXXFLAGS=`$FLTK2_CONFIG --cxxflags`
++     LIBFLTK_CFLAGS=`$FLTK2_CONFIG --cflags`
++     LIBFLTK_LIBS=`$FLTK2_CONFIG --ldflags`
+ else AC_MSG_RESULT(no)
+      AC_MSG_ERROR(FLTK2 must be installed!)
+ fi

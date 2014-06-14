@@ -1,0 +1,14 @@
+--- libxml2-2.7.8.orig/Makefile.am	2013-02-17 01:56:57.061850521 +0800
++++ libxml2-2.7.8/Makefile.am	2013-02-17 01:57:10.489849956 +0800
+@@ -2,9 +2,9 @@
+ 
+ ACLOCAL_AMFLAGS = -I m4
+ 
+-SUBDIRS = include . doc example xstc @PYTHON_SUBDIR@
++SUBDIRS = include . xstc @PYTHON_SUBDIR@
+ 
+-DIST_SUBDIRS = include . doc example python xstc
++DIST_SUBDIRS = include . python xstc
+ 
+ INCLUDES = -I$(top_builddir)/include -I@srcdir@/include @THREAD_CFLAGS@ @Z_CFLAGS@ 
+ 

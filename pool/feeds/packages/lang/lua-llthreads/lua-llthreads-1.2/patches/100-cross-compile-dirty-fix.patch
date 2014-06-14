@@ -1,0 +1,11 @@
+--- lua-llthreads-1.2.orig/CMakeLists.txt	2012-07-13 13:56:58.433687056 +0800
++++ lua-llthreads-1.2/CMakeLists.txt	2012-07-13 13:55:18.245691269 +0800
+@@ -23,7 +23,7 @@
+ ## Lua 5.1.x
+ include(FindLua51)
+ if(NOT ${LUA51_FOUND})
+-    message(FATAL_ERROR "The FindLua51 module could not find lua :-(")
++    #message(FATAL_ERROR "The FindLua51 module could not find lua :-(")
+ endif()
+ if(WIN32)
+ 	set(COMMON_CFLAGS "${COMMON_CFLAGS} -I${LUA_INCLUDE_DIR}")

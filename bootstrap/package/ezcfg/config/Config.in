@@ -1,0 +1,63 @@
+#
+# For a description of the syntax of this configuration file,
+# see scripts/kbuild/config-language.txt.
+#
+
+menu "ezcfg Settings"
+
+choice
+	prompt "Target Distro"
+	default EZCFG_EZBOX_DISTRO_KUAFU
+	help
+	  Please select your target ezbox distro.
+
+config EZCFG_EZBOX_DISTRO_KUAFU
+	bool "Kuafu"
+	help
+	  ezbox Kuafu distro is for Linux embedded-system study purpose.
+
+config EZCFG_EZBOX_DISTRO_HUANGDI
+	bool "Huangdi"
+	help
+	  ezbox Huangdi distro is an all-in-one system.
+
+config EZCFG_EZBOX_DISTRO_JINGWEI
+	bool "Jingwei"
+	help
+	  ezbox Jingwei distro is for VoIP service gateway.
+
+config EZCFG_EZBOX_DISTRO_QIAOCHUI
+	bool "Qiaochui"
+	help
+	  ezbox Qiaochui distro is for CNC machine control.
+
+config EZCFG_EZBOX_DISTRO_LILOU
+	bool "Lilou"
+	help
+	  ezbox LiLou distro is for intelligent home security system.
+
+config EZCFG_EZBOX_DISTRO_FUXI
+	bool "Fuxi"
+	help
+	  ezbox Fuxi distro is for intelligent host keeper system.
+
+config EZCFG_EZBOX_DISTRO_ZHUANXU
+	bool "Zhuanxu"
+	help
+	  ezbox Zhuanxu distro is for virtual private server.
+
+endchoice
+
+config EZCFG_EZBOX_SYSUP
+	bool "Static /init"
+	default n
+	help
+	  Use static linked /init for system up.
+
+endmenu
+
+comment "Network Interfaces"
+source "package/ezcfg/config/nic/Config.in"
+
+comment "Utilities"
+source "package/ezcfg/config/igrs/Config.in"

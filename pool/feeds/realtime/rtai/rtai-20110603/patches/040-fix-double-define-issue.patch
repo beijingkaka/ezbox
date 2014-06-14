@@ -1,0 +1,24 @@
+diff -urNd rtai.orig/base/arch/i386/calibration/smi-module.c rtai/base/arch/i386/calibration/smi-module.c
+--- rtai.orig/base/arch/i386/calibration/smi-module.c	2010-09-10 00:13:41.000000000 +0800
++++ rtai/base/arch/i386/calibration/smi-module.c	2011-07-19 17:50:40.558271351 +0800
+@@ -52,7 +52,7 @@
+ #define PCI_DEVICE_ID_INTEL_ICH8_4  0x2815
+ #endif
+ #ifndef PCI_DEVICE_ID_INTEL_ICH10_1
+-#define #define PCI_DEVICE_ID_INTEL_ICH10_1  0x3a16 
++#define PCI_DEVICE_ID_INTEL_ICH10_1  0x3a16 
+ #endif
+ 
+ 
+diff -urNd rtai.orig/base/arch/x86_64/calibration/smi-module.c rtai/base/arch/x86_64/calibration/smi-module.c
+--- rtai.orig/base/arch/x86_64/calibration/smi-module.c	2010-09-10 01:16:17.000000000 +0800
++++ rtai/base/arch/x86_64/calibration/smi-module.c	2011-07-19 17:50:53.208270066 +0800
+@@ -52,7 +52,7 @@
+ #define PCI_DEVICE_ID_INTEL_ICH8_4  0x2815
+ #endif
+ #ifndef PCI_DEVICE_ID_INTEL_ICH10_1
+-#define #define PCI_DEVICE_ID_INTEL_ICH10_1  0x3a16 
++#define PCI_DEVICE_ID_INTEL_ICH10_1  0x3a16 
+ #endif
+ 
+ 

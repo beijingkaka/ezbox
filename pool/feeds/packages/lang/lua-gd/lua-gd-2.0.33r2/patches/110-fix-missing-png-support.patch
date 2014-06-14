@@ -1,0 +1,13 @@
+--- lua-gd-2.0.33r2.orig/luagd.c	2012-07-12 19:09:48.459780762 +0800
++++ lua-gd-2.0.33r2/luagd.c	2012-07-12 19:10:23.663782221 +0800
+@@ -2162,8 +2162,10 @@
+     { "createFromGif",          LgdImageCreateFromGif },
+     { "createFromGifStr",       LgdImageCreateFromGifPtr },
+ #endif
++#ifdef GD_PNG
+     { "createFromPng",          LgdImageCreateFromPng },
+     { "createFromPngStr",       LgdImageCreateFromPngPtr },
++#endif
+     { "createFromGd",           LgdImageCreateFromGd },
+     { "createFromGdStr",        LgdImageCreateFromGdPtr },
+     { "createFromGd2",          LgdImageCreateFromGd2 },

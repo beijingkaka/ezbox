@@ -1,0 +1,11 @@
+--- lua-gd-2.0.33r2.orig/Makefile	2012-07-12 19:12:38.587787815 +0800
++++ lua-gd-2.0.33r2/Makefile	2012-07-12 19:12:49.059788249 +0800
+@@ -68,7 +68,7 @@
+ 
+ $(OUTFILE): luagd.c
+ 	$(CC) -o $(OUTFILE) $(GDFEATURES) $(CFLAGS) $(LFLAGS) luagd.c
+-	lua test_features.lua
++#	lua test_features.lua
+ 
+ install: $(OUTFILE)
+ 	install -s $(OUTFILE) $(INSTALL_PATH)

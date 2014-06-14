@@ -1,0 +1,17 @@
+--- dillo-20110611.orig/configure.in	2011-07-13 09:36:28.260129620 +0800
++++ dillo-20110611/configure.in	2011-07-13 09:36:48.210155268 +0800
+@@ -63,10 +63,10 @@
+ dnl (this is somewhat a religious problem)
+ dnl --------------------------------------
+ dnl
+-if test "`$CPP -v < /dev/null 2>&1 | grep '/usr/local/include' 2>&1`" = ""; then
+-  CPPFLAGS="$CPPFLAGS -I/usr/local/include"
+-  LDFLAGS="$LDFLAGS -L/usr/local/lib"
+-fi
++#if test "`$CPP -v < /dev/null 2>&1 | grep '/usr/local/include' 2>&1`" = ""; then
++#  CPPFLAGS="$CPPFLAGS -I/usr/local/include"
++#  LDFLAGS="$LDFLAGS -L/usr/local/lib"
++#fi
+ 
+ dnl ------------------------------------
+ dnl Check for socket libs (AIX, Solaris)

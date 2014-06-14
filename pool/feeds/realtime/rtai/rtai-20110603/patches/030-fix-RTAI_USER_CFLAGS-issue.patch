@@ -1,0 +1,20 @@
+--- rtai/configure.in	2011-07-14 16:02:46.957641178 +0800
++++ rtai/configure.in	2011-07-14 16:03:20.887641950 +0800
+@@ -1710,12 +1710,12 @@
+ 
+ AC_MSG_CHECKING([for RTAI target architecture])
+ 
+-RTAI_USER_CFLAGS="-I$LINUX_KERNELSRC/include "
++#RTAI_USER_CFLAGS="-I$LINUX_KERNELSRC/include "
+ 
+-if test x"$LINUX_KERNELOUTPUT" != x"$LINUX_KERNELSRC"; then
+-  RTAI_USER_CFLAGS="-I$LINUX_KERNELOUTPUT/include2 $RTAI_USER_CFLAGS"
+-  RTAI_USER_CFLAGS="-I$LINUX_KERNELOUTPUT/include $RTAI_USER_CFLAGS"
+-fi
++#if test x"$LINUX_KERNELOUTPUT" != x"$LINUX_KERNELSRC"; then
++#  RTAI_USER_CFLAGS="-I$LINUX_KERNELOUTPUT/include2 $RTAI_USER_CFLAGS"
++#  RTAI_USER_CFLAGS="-I$LINUX_KERNELOUTPUT/include $RTAI_USER_CFLAGS"
++#fi
+ 
+ dnl extra arch-dependent opts to be passed to the compiler
+ RTAI_TARGET_ARCH_OPTS=

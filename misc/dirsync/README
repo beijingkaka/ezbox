@@ -1,0 +1,52 @@
+1) Modify itemlist.txt
+2) Run command to generate diffs between source and dest dirs.
+	./gen_diff.sh <source dir> <dest dir> <itemlist file>
+3) The diffs will put in diff/ directory
+
+====================================
+Notes!!!
+====================================
+1. bootstrap
+  bootstrap keeps the basic packages of ezbox. The bootstrap_itemlist.txt is used to generate diff files between bootstrap and openwrt packages.
+
+a. Add config ENABLE_LOCALE.
+bootstrap/Config.in
+
+b. Add DEFAULT_PACKAGES:=ezcfg libc libgcc busybox hotplug2
+bootstrap/include/target.mk
+
+c. Fix ifeq ($(CONFIG_ENABLE_LOCALE),true) to ifeq ($(CONFIG_ENABLE_LOCALE),y)
+bootstrap/rules.mk
+
+d. Add locale config file for CONFIG_ENABLE_LOCALE=y
+bootstrap/toolchain/uClibc/Makefile
+bootstrap/toolchain/uClibc/config-0.9.32/locale
+
+e. Fix Fedora 13 and up ['sqrt@@GLIBC_2.0' is defined in DSO /lib/libm.so.6 so try adding it to the linker command line] issue
+bootstrap/tools/cloog/Makefile
+bootstrap/toolchain/gcc/common.mk
+====================================
+2. distro
+a. kuafu
+  kuafu keeps the minimal requirement of packages to build a ezbox system. The kuafu_itemlist.txt is used to generate diff files between kuafu and openwrt packages. Generally the kuafu distro is used to port ezbox system on new platform.
+------------------------------------
+b. huangdi
+  huangdi keeps the all supported packages of the ezbox system. The huangdi_itemlist.txt is used to generate diff files between huangdi and openwrt packages. Generally the huangdi distro is used to add new package in ezbox system.
+------------------------------------
+c. jingwei
+  jingwei keeps the packages to build an IPPBX system. The jingwei_itemlist.txt is used to generate diff files between jingwei and huangdi packages.
+------------------------------------
+d. qiaochui
+  qiaochui keeps the packages to build a CNC system. The qiaochui_itemlist.txt is used to generate diff files between qiaochui and huangdi packages.
+e. lilou
+  lilou keeps the packages to build an intellegent home security system. The lilou_itemlist.txt is used to generate diff files between lilou and huangdi packages.
+f. fuxi
+  fuxi keeps the packages to build an intellegent host keeper. The fuxi_itemlist.txt is used to generate diff files between fuxi and huangdi packages.
+g. zhuanxu
+  zhuanxu keeps the packages to build an virtual private server (VPS). The zhuanxu_itemlist.txt is used to generate diff files between zhuanxu and huangdi packages.
+====================================
+* All openwrt updates merged to ezbox system must be approved in bootstrap at first.
+* The new platform added to ezbox system must be approved in kuafu at first.
+* The new package added to ezbox system must be approved in huangdi at first.
+* The distro other than kuafu and huangdi should retrieve its packages and supported platforms from huangdi and kuafu.
+====================================

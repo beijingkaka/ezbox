@@ -1,0 +1,32 @@
+--- emc2-20110530/src/hal/utils/Submakefile	2011-06-20 17:36:28.454170312 +0800
++++ emc2-20110530/src/hal/utils/Submakefile	2011-06-20 17:37:03.653951459 +0800
+@@ -99,4 +99,4 @@
+ TARGETS += ../bin/comp
+ objects/%.py: %.g ../bin/yapps
+ 	@mkdir -p $(dir $@)
+-	../bin/yapps $< $@
++	$(PYTHON) ../bin/yapps $< $@
+--- emc2-20110530/src/hal/components/Submakefile	2011-06-20 17:41:42.034268652 +0800
++++ emc2-20110530/src/hal/components/Submakefile	2011-06-20 17:42:58.834170920 +0800
+@@ -24,10 +24,10 @@
+ 
+ $(COMP_MANPAGES): ../docs/man/man9/%.9: hal/components/%.comp ../bin/comp
+ 	@mkdir -p $(dir $@)
+-	../bin/comp --document -o $@ $<
++	$(PYTHON) ../bin/comp --document -o $@ $<
+ $(COMP_DRIVER_MANPAGES): ../docs/man/man9/%.9: hal/drivers/%.comp ../bin/comp
+ 	@mkdir -p $(dir $@)
+-	../bin/comp --document -o $@ $<
++	$(PYTHON) ../bin/comp --document -o $@ $<
+ 
+ objects/%.mak: %.comp hal/components/Submakefile
+ 	$(ECHO) "Creating $(notdir $@)"
+@@ -39,7 +39,7 @@
+ objects/%.c: %.comp ../bin/comp
+ 	$(ECHO) "Preprocessing $(notdir $<)"
+ 	@mkdir -p $(dir $@)
+-	@../bin/comp --require-license -o $@ $<
++	@$(PYTHON) ../bin/comp --require-license -o $@ $<
+ 
+ modules: $(patsubst %.comp, objects/%.c, $(COMPS) $(COMP_DRIVERS))
+ 

@@ -1,0 +1,4 @@
+#FIXME: we need copy it to the workspace
+
+# target
+c:target/linux/hi351x:target/linux/hi351x

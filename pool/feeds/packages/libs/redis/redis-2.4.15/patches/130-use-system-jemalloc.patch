@@ -1,0 +1,15 @@
+--- redis-2.4.15.orig/src/Makefile	2012-07-12 16:36:08.219398513 +0800
++++ redis-2.4.15/src/Makefile	2012-07-12 16:38:22.059404061 +0800
+@@ -47,9 +47,9 @@
+ endif
+ 
+ ifeq ($(USE_JEMALLOC),yes)
+-  ALLOC_DEP=../deps/jemalloc/lib/libjemalloc.a
+-  ALLOC_LINK=$(ALLOC_DEP) -ldl
+-  ALLOC_FLAGS=-DUSE_JEMALLOC -I../deps/jemalloc/include
++  ALLOC_DEP=
++  ALLOC_LINK=-ljemalloc -ldl
++  ALLOC_FLAGS=-DUSE_JEMALLOC
+ endif
+ 
+ CCOPT= $(CFLAGS) $(C_ARCH) $(PROF)

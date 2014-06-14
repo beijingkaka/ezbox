@@ -1,0 +1,166 @@
+diff -aur dhisd-5.5/main.c dhisd-5.5.JT//main.c
+--- dhisd-5.5/main.c	2008-09-24 22:45:06.000000000 +0300
++++ dhisd-5.5.JT//main.c	2008-09-24 22:18:32.000000000 +0300
+@@ -34,6 +34,7 @@
+ #include "ddb.h"
+ #include "qrc.h"
+ #include "misc.h"
++#include "nsupdate.h"
+ 
+ /* Locally defined prototypes */
+ void sig_parse(int);
+@@ -54,6 +55,8 @@
+ char pid_file[256];
+ char database_file[256];
+ char conf_file[256];
++char nsupdate_cmd[256];
++char tsig_key[256];
+ 
+ extern int udp_port;
+ extern char dhisd_bind_address[32];
+@@ -98,6 +101,10 @@
+ 			strncpy(database_file,line_entry(2,str),255);	
+ 		if(!strcmp(command,"bindport"))
+ 			udp_port=atoi(line_entry(2,str));		
++		if(!strcmp(command,"nsupdatecmd"))
++			strncpy(nsupdate_cmd,line_entry(2,str),255);	
++		if(!strcmp(command,"tsigkey"))
++			strncpy(tsig_key,line_entry(2,str),255);	
+ #ifdef	WITH_MYSQL
+ 		if(!strcmp(command,"mysqlserver"))
+ 			strncpy(sql_server,line_entry(2,str),127);
+@@ -172,7 +179,7 @@
+ 
+ void usage(char *s) {
+ 
+-	fprintf(stderr,"Syntax: %s [-D] [-P pid_file] [-l log_file] [-c config_file]\n",s); 
++	fprintf(stderr,"Syntax: %s [-D] [-n] [-P pid_file] [-l log_file] [-c config_file]\n",s); 
+ 
+ #ifdef	WITH_MYSQL
+ 	fprintf(stderr,"        [-d dbfile|mysql] [-b ipv4_interface_address] [-p udp_port] \n");
+@@ -191,13 +198,16 @@
+ 	int optreset;
+ 	extern int optind;
+ 	int c;
++	int no_fork=0;
+ 
+ 	strcpy(logfile,DHISD_LOG);
+ 	strcpy(pid_file,DHISD_PID);
+ 	strcpy(database_file,DHISD_DB_FILE);
+ 	strcpy(conf_file,DHISD_CONF_FILE);
++	strcpy(nsupdate_cmd,NSUPDATE_CMD);
++	tsig_key[0]=0;
+ 
+-	while((c=getopt(argc,argv,"Dhp:P:l:b:d:c:")) !=EOF) {
++	while((c=getopt(argc,argv,"nDhp:P:l:b:d:c:")) !=EOF) {
+ 		switch(c) {
+ 			case('c'):  strcpy(conf_file,optarg);break;
+ 		}
+@@ -207,13 +217,14 @@
+ 	optreset=1;
+ 	optind=1;
+ 
+-	while((c=getopt(argc,argv,"Dhp:P:l:b:d:c:")) !=EOF) {
++	while((c=getopt(argc,argv,"nDhp:P:l:b:d:c:")) !=EOF) {
+ 	switch(c) {
+ 	case('l'):strcpy(logfile,optarg);break;
+ 	case('P'):strcpy(pid_file,optarg);break;
+ 	case('p'):udp_port=atoi(optarg);break;
+ 	case('b'):strcpy(dhisd_bind_address,optarg);break;
+ 	case('d'):strcpy(database_file,optarg);break;
++	case('n'):no_fork=1;break;
+ 	case('D'):debug_level++;break;
+ 	case('h'): usage(argv[0]);
+ 	case('c'):  strcpy(conf_file,optarg);break;
+@@ -234,8 +245,10 @@
+ #endif
+ 
+ #ifndef	DONT_FORK
+-	setsid();
+-	if(fork()) _exit(0);
++	if (!no_fork) {
++		setsid();
++		if(fork()) _exit(0);
++	}
+ #endif
+ 	
+ 	if(!db_reload()) {
+diff -aur dhisd-5.5/nsupdate.c dhisd-5.5.JT//nsupdate.c
+--- dhisd-5.5/nsupdate.c	2008-05-22 15:41:21.000000000 +0300
++++ dhisd-5.5.JT//nsupdate.c	2008-09-24 22:39:24.000000000 +0300
+@@ -35,6 +35,7 @@
+ #include <stdio.h>
+ 
+ 
++#include "dhisd.h"
+ #include "nsupdate.h"
+ 
+ int dns_update(int opcode,const char *hostname,const char *ipaddr) {
+@@ -43,19 +44,29 @@
+ 	int childpid;
+ 	int ret_code=0; 
+ 	char str[1024];
++	char ending_dot[2];
++
++	if(hostname[strlen(hostname) - 1] == '.') {
++		ending_dot[0] = 0;
++	}
++	else {
++		ending_dot[0] = '.';
++		ending_dot[1] = 0;
++	}
+ 	
+ 	if(opcode==NSUPDATE_ADD) {
+-        	sprintf(str,"update add %s. %d IN A %s\n\n",hostname,DYN_TTL,ipaddr);
++        	sprintf(str,"update add %s%s %d IN A %s\n\n",hostname,ending_dot,DYN_TTL,ipaddr);
+ 	} 
+ 	else {
+ 		if(opcode==NSUPDATE_DEL)
+-			sprintf(str,"update delete %s. IN A\n\n",hostname);
++			sprintf(str,"update delete %s%s IN A\n\n",hostname,ending_dot);
+ 		else 
+ 			return(0);
+ 	}
+ 
+ 	if(pipe(fildes)) return(0);
+ 
++	DSYSLOG(1,(LOG_DEBUG,"nsupdate cmd: %s\n", str));
+ 	write(fildes[1],str,strlen(str)+1);
+ 
+ 	childpid=fork();
+@@ -73,14 +84,23 @@
+ 		open("/dev/null",O_WRONLY,0666);
+ 		open("/dev/null",O_WRONLY,0666);
+ 
+-		ret_code=execlp(NSUPDATE_CMD,NSUPDATE_CMD,"-d",NULL);
++		DSYSLOG(1,(LOG_DEBUG,"nsupdate binary: %s\n", nsupdate_cmd));
++		if (strlen(tsig_key)) {
++			ret_code=execlp(nsupdate_cmd,nsupdate_cmd,"-k",tsig_key,"-d",NULL);
++		}
++		else {
++			ret_code=execlp(nsupdate_cmd,nsupdate_cmd,"-d",NULL);
++		}
+ 		if(ret_code) exit(1); else exit(0);
+ 
+ 	} else {	// I am the parent, feed the child and wait for it to finish
++		pid_t wstat;
+ 
+ 		close(fildes[0]);
+ 		close(fildes[1]);
+-		if(waitpid(childpid,&ret_code,0)==-1) return(0);
++		wstat = waitpid(childpid,&ret_code,0);
++		DSYSLOG(1,(LOG_DEBUG,"nsupdate status: %d\n", wstat));
++		if(wstat==-1) return(0);
+ 		return(1);
+ 	}
+ 
+diff -aur dhisd-5.5/nsupdate.h dhisd-5.5.JT//nsupdate.h
+--- dhisd-5.5/nsupdate.h	2008-05-22 15:41:21.000000000 +0300
++++ dhisd-5.5.JT//nsupdate.h	2008-09-24 22:18:01.000000000 +0300
+@@ -37,4 +37,6 @@
+ 
+ int dns_update(int opcode,const char *hostname,const char *ipaddr);
+ 
++extern char nsupdate_cmd[256];
++extern char tsig_key[256];
+ 

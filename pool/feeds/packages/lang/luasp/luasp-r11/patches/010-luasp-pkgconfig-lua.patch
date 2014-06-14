@@ -1,0 +1,18 @@
+--- a/Makefile	2010-11-07 21:59:50.000000000 +0800
++++ b/Makefile	2010-11-07 22:01:56.000000000 +0800
+@@ -1,12 +1,12 @@
+ CC	= gcc
+-CFLAGS	= `pkg-config lua5.1 --cflags` -fno-rtti -fno-exceptions -DTHREAD_SAFE
+-LIBS    = `pkg-config lua5.1 --libs`
++CFLAGS	= `pkg-config lua --cflags` -I. -fno-rtti -fno-exceptions -DTHREAD_SAFE
++LIBS    = `pkg-config lua --libs`
+ 
+ 
+ all: lua_module
+ 
+ lua_module:
+-	$(CC) $(CFLAGS) -shared -fPIC -o lualsp.so llsplib.cpp llspaux.cpp
++	$(CC) $(CFLAGS) -shared -fPIC -o libluasp.so llsplib.cpp llspaux.cpp
+ 
+ demo:
+ 	$(CC) $(CFLAGS) -o test test.cpp llsplib.cpp llspaux.cpp $(LIBS)

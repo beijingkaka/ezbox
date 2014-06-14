@@ -1,0 +1,33 @@
+--- emc2-20110131/src/hal/drivers/hal_motenc.c	2011-02-04 22:23:40.368759928 +0800
++++ emc2-20110131/src/hal/drivers/hal_motenc.c	2011-02-04 22:35:25.072795757 +0800
+@@ -291,7 +291,7 @@
+ 
+     i = 0;
+     // Find a MOTENC card.
+-    while((i < MAX_DEVICES) && ((pDev = pci_find_device(MOTENC_VENDOR_ID, MOTENC_DEVICE_ID, pDev)) != NULL)){
++    while((i < MAX_DEVICES) && ((pDev = pci_get_device(MOTENC_VENDOR_ID, MOTENC_DEVICE_ID, pDev)) != NULL)){
+ 
+ 	// Allocate memory for device object.
+ 	pDevice = hal_malloc(sizeof(Device));
+--- emc2-20110131/src/hal/drivers/hal_vti.c	2011-02-04 22:35:40.631779849 +0800
++++ emc2-20110131/src/hal/drivers/hal_vti.c	2011-02-04 22:35:57.932795999 +0800
+@@ -822,7 +822,7 @@
+ /* scans possible addresses for vti cards */
+ static int vti_autodetect()
+ {
+-    dev = pci_find_device(VENDOR, DEVICE, dev);
++    dev = pci_get_device(VENDOR, DEVICE, dev);
+     if (dev) {
+ 	rtapi_print_msg(RTAPI_MSG_INFO,
+ 	    "VTI: Card detected in slot: %2x\n", PCI_SLOT(dev->devfn));
+--- emc2-20110131/src/hal/drivers/opto_ac5.c	2011-02-04 22:36:37.407757031 +0800
++++ emc2-20110131/src/hal/drivers/opto_ac5.c	2011-02-04 22:36:12.935776505 +0800
+@@ -93,7 +93,7 @@
+     for ( n = 0 ; n < MAX_BOARDS ; n++ ) 
+     {
+ 	// Find a M5I20 card.
+-	pDev = pci_find_device(opto22_VENDOR_ID, opto22_pci_AC5_DEVICE_ID, pDev);
++	pDev = pci_get_device(opto22_VENDOR_ID, opto22_pci_AC5_DEVICE_ID, pDev);
+ 	if ( pDev == NULL ) { /* no more boards */break;}
+ 	
+ 

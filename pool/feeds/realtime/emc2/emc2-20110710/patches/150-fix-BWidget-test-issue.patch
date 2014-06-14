@@ -1,0 +1,35 @@
+--- emc2-20110710/src/configure.in	2011-02-09 14:19:36.000000000 +0800
++++ emc2-20110710/src/configure.in	2011-02-09 14:21:38.000000000 +0800
+@@ -1132,19 +1132,19 @@
+     TCLSH=tclsh
+ fi
+ 
+-AC_MSG_CHECKING([for BWidget using $TCLSH])
+-if (unset DISPLAY; echo ["catch { package require bwidget }; exit [expr [lsearch [package names] BWidget] == -1]"] | $TCLSH); then
+-    AC_MSG_RESULT([found])
+-else
+-    AC_MSG_ERROR([not found])
+-fi
+-
+-AC_MSG_CHECKING([for Img using $TCLSH])
+-if (unset DISPLAY; echo ["catch { package require Img }; exit [expr [lsearch [package names] Img] == -1]"] | $TCLSH); then
+-    AC_MSG_RESULT([found])
+-else
+-    AC_MSG_ERROR([not found])
+-fi
++#AC_MSG_CHECKING([for BWidget using $TCLSH])
++#if (unset DISPLAY; echo ["catch { package require bwidget }; exit [expr [lsearch [package names] BWidget] == -1]"] | $TCLSH); then
++#    AC_MSG_RESULT([found])
++#else
++#    AC_MSG_ERROR([not found])
++#fi
++
++#AC_MSG_CHECKING([for Img using $TCLSH])
++#if (unset DISPLAY; echo ["catch { package require Img }; exit [expr [lsearch [package names] Img] == -1]"] | $TCLSH); then
++#    AC_MSG_RESULT([found])
++#else
++#    AC_MSG_ERROR([not found])
++#fi
+ 
+ AC_SUBST([TCL_DBGX])
+ AC_SUBST([TK_DBGX])

@@ -1,0 +1,43 @@
+--- mongrel2-1.7.5.orig/Makefile	2012-07-07 10:08:19.162308555 +0800
++++ mongrel2-1.7.5/Makefile	2012-07-07 11:53:23.982043411 +0800
+@@ -1,5 +1,5 @@
+-CFLAGS=-g -O2 -Wall -Wextra -Isrc -pthread -rdynamic -DNDEBUG $(OPTFLAGS) -D_FILE_OFFSET_BITS=64
+-LIBS=-lzmq -ldl -lsqlite3 $(OPTLIBS)
++CFLAGS?=-g -O2 -Wall -Wextra -Isrc -pthread -rdynamic -DNDEBUG $(OPTFLAGS) -D_FILE_OFFSET_BITS=64
++LIBS?=-lzmq -ldl -lsqlite3 $(OPTLIBS)
+ PREFIX?=/usr/local
+ 
+ get_objs = $(addsuffix .o,$(basename $(wildcard $(1))))
+@@ -16,7 +16,8 @@
+ TESTS=$(patsubst %.c,%,${TEST_SRC})
+ MAKEOPTS=OPTFLAGS="${NOEXTCFLAGS} ${OPTFLAGS}" OPTLIBS="${OPTLIBS}" LIBS="${LIBS}" DESTDIR="${DESTDIR}" PREFIX="${PREFIX}"
+ 
+-all: bin/mongrel2 tests m2sh
++#all: bin/mongrel2 tests m2sh
++all: bin/mongrel2 m2sh filters config_modules
+ 
+ dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS) -D_FILE_OFFSET_BITS=64
+ dev: all
+@@ -30,8 +31,8 @@
+ 
+ build/libm2.a: CFLAGS += -fPIC
+ build/libm2.a: build ${LIB_OBJ}
+-	ar rcs $@ ${LIB_OBJ}
+-	ranlib $@
++	$(AR) rcs $@ ${LIB_OBJ}
++	$(RANLIB) $@
+ 
+ build:
+ 	@mkdir -p build
+--- mongrel2-1.7.5.orig/tools/m2sh/Makefile	2012-07-07 13:48:42.473752459 +0800
++++ mongrel2-1.7.5/tools/m2sh/Makefile	2012-07-07 13:49:31.637750388 +0800
+@@ -9,7 +9,8 @@
+ LIB_SRC=$(filter-out src/m2sh.c,${SOURCES})
+ LIB_OBJ=$(filter-out src/m2sh.o,${OBJECTS})
+ 
+-all: ../lemon/lemon tests build/m2sh
++#all: ../lemon/lemon tests build/m2sh
++all: ../lemon/lemon build/m2sh
+ 
+ dev: CFLAGS=-g -Wall -Wextra -Isrc -I../../src $(OPTFLAGS)
+ dev: all

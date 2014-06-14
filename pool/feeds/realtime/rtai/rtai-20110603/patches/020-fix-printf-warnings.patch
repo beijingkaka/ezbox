@@ -1,0 +1,11 @@
+--- rtai/base/arch/i386/hal/hal.immed	2011-07-13 17:43:55.770129165 +0800
++++ rtai/base/arch/i386/hal/hal.immed	2011-07-13 17:47:22.070126248 +0800
+@@ -2176,7 +2176,7 @@
+ 
+ #ifndef CONFIG_X86_TSC
+ 	if (num_online_cpus() > 1) {
+-		printk("RTAI[hal]: MULTI PROCESSOR SEEN AS A 486, WONT WORK; CONFIGURE LINUX APPROPRIATELY. %d \n", rtai_cpufreq_arg);
++		printk("RTAI[hal]: MULTI PROCESSOR SEEN AS A 486, WONT WORK; CONFIGURE LINUX APPROPRIATELY. %lu \n", rtai_cpufreq_arg);
+ 		halinv = 1;
+ 	}
+ #endif

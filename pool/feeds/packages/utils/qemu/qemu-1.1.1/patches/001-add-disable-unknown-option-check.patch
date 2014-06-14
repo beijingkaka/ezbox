@@ -1,0 +1,28 @@
+--- qemu-1.1.1.orig/configure	2012-08-26 07:49:18.259062671 +0800
++++ qemu-1.1.1/configure	2012-08-26 08:17:05.019063592 +0800
+@@ -824,6 +824,8 @@
+   ;;
+   --disable-guest-agent) guest_agent="no"
+   ;;
++  --disable-unknown-option-check) unknown_option_check="no"
++  ;;
+   *) echo "ERROR: unknown option $opt"; show_help="yes"
+   ;;
+   esac
+@@ -1110,10 +1112,16 @@
+ echo "  --enable-guest-agent     enable building of the QEMU Guest Agent"
+ echo "  --with-coroutine=BACKEND coroutine backend. Supported options:"
+ echo "                           gthread, ucontext, sigaltstack, windows"
++echo "  --disable-unknown-option-check disable unknown option check"
+ echo ""
+ echo "NOTE: The object files are built at the place where configure is launched"
++if test "$unknown_option_check" = "no"; then
++echo ""
++echo "NOTE: --disable-unknown-option-check may cause some unknown errors"
++else
+ exit 1
+ fi
++fi
+ 
+ # Now we have handled --enable-tcg-interpreter and know we're not just
+ # printing the help message, bail out if the host CPU isn't supported.

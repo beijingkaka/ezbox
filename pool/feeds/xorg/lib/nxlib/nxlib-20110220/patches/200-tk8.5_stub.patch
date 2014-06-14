@@ -1,0 +1,9 @@
+--- nxlib/stub.c	2011-02-04 00:42:31.567773609 +0800
++++ nxlib/stub.c	2011-02-04 00:41:59.278751215 +0800
+@@ -167,3 +167,6 @@
+ int XListInputDevices() { DPRINTF("XListInputDevices called\n"); return 0; }
+ int XSelectExtensionEvent() { DPRINTF("XSelectExtensionEvent called\n"); return 0; }
+ int XGetExtensionVersion() { DPRINTF("XGetExtensionVersion called\n"); return 0; }
++
++/* required for tk 8.5.8 */
++int XResetScreenSaver() { DPRINTF("XResetScreenSaver called\n"); return 0; }

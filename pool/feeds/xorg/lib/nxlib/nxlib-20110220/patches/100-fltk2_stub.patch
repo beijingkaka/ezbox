@@ -1,0 +1,13 @@
+--- nxlib/stub.c	2010-05-21 12:11:12.650217409 +0800
++++ nxlib/stub.c	2010-05-21 12:24:50.274216647 +0800
+@@ -160,3 +160,10 @@
+ int XUnregisterIMInstantiateCallback() { DPRINTF("XUnregisterIMInstantiateCallback called\n"); return 0; } 
+ int XIMOfIC() { DPRINTF("XIMOfIC called\n"); return 0; }
+ int XLocaleOfIM() { DPRINTF("XLocaleOfIM called\n"); return 0; }
++
++/* required for fltk 2.0.x */
++int XFreeDeviceList() { DPRINTF("XFreeDeviceList called\n"); return 0; }
++int XOpenDevice() { DPRINTF("XOpenDevice called\n"); return 0; }
++int XListInputDevices() { DPRINTF("XListInputDevices called\n"); return 0; }
++int XSelectExtensionEvent() { DPRINTF("XSelectExtensionEvent called\n"); return 0; }
++int XGetExtensionVersion() { DPRINTF("XGetExtensionVersion called\n"); return 0; }

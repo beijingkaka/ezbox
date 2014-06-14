@@ -1,0 +1,282 @@
+diff -urNd a/mongoose.c b/mongoose.c
+--- a/mongoose.c	2010-11-08 18:53:49.000000000 +0800
++++ b/mongoose.c	2010-11-09 17:35:45.000000000 +0800
+@@ -176,13 +176,20 @@
+ #if !defined(NO_SSL_DL) && !defined(NO_SSL)
+ #include <dlfcn.h>
+ #endif
++#if !defined(NO_LSP_DL) && !defined(NO_LSP)
++#include <dlfcn.h>
++#endif
+ #include <pthread.h>
+ #if defined(__MACH__)
+ #define SSL_LIB   "libssl.dylib"
+ #define CRYPTO_LIB  "libcrypto.dylib"
++#define LSP_LIB   "libluasp-mongoose.dylib"
++#define LUA_LIB   "liblua.dylib"
+ #else
+ #define SSL_LIB   "libssl.so"
+ #define CRYPTO_LIB  "libcrypto.so"
++#define LSP_LIB   "libluasp-mongoose.so"
++#define LUA_LIB   "liblua.so"
+ #endif
+ #define DIRSEP   '/'
+ #define IS_DIRSEP_CHAR(c) ((c) == '/')
+@@ -340,6 +347,89 @@
+ };
+ #endif // NO_SSL_DL
+ 
++// Snatched from Lua includes.
++typedef int (*lsp_puts_t) (void* ctx, const char *s);
++typedef int (*lsp_putc_t) (void* ctx, int c);
++typedef int (*lsp_write_t) (void* ctx, const char *s, size_t len);
++
++struct lsp_io
++{
++  void* lctx;
++  lsp_puts_t lputs;
++  lsp_putc_t lputc;
++  lsp_write_t lwrite;
++};
++typedef struct lsp_io lsp_io;
++
++typedef struct lua_State lua_State;
++
++struct mg_lsp_ctx
++{
++  int http_header_sent;	// HTTP header sent marker
++  struct mg_connection *conn;
++};
++typedef struct mg_lsp_ctx mg_lsp_ctx;
++
++#define lua_open() luaL_newstate()
++#define lua_tostring(L,i) lua_tolstring(L, (i), NULL)
++#define lua_pop(L,n) lua_settop(L, -(n)-1)
++
++#if defined(NO_LSP_DL)
++extern int luaopen_lualsp(lua_State *L);
++extern int luaL_do_lsp_file(lua_State* L,const char* filename);
++extern int luaL_lsp_set_io(lua_State *L,lsp_io *io);
++
++extern int luaopen_luajson(lua_State* L);
++extern void luaclose_luajson(void);
++
++extern lua_State *(luaL_newstate)(void);
++extern void (luaL_openlibs)(lua_State *L);
++extern const char *(lua_tolstring)(lua_State *L, int idx, size_t *len);
++extern void (lua_settop)(lua_State *L, int idx);
++extern void (lua_close)(lua_State *L);
++#else
++// Dynamically loaded LSP functionality
++struct lsp_func {
++  const char *name;   // LSP function name
++  void  (*ptr)(void); // Function pointer
++};
++
++#define luaopen_lualsp (* (int (*)(lua_State *)) lsp_sw[0].ptr)
++#define luaL_do_lsp_file (* (int (*)(lua_State*, const char*)) lsp_sw[1].ptr)
++#define luaL_lsp_set_io (* (int (*)(lua_State *, lsp_io *)) lsp_sw[2].ptr)
++
++#define luaopen_luajson (* (int (*)(lua_State* L)) lsp_sw[3].ptr)
++#define luaclose_luajson (* (void (*)(void)) lsp_sw[4].ptr)
++
++#define luaL_newstate (* (lua_State * (*)(void)) lua_sw[0].ptr)
++#define luaL_openlibs (* (void (*)(lua_State *)) lua_sw[1].ptr)
++#define lua_tolstring (* (const char * (*)(lua_State *, int, size_t *)) lua_sw[2].ptr)
++#define lua_settop (* (void (*)(lua_State *, int)) lua_sw[3].ptr)
++#define lua_close (* (void (*)(lua_State *)) lua_sw[4].ptr)
++
++// set_lsp_option() function updates this array.
++// It loads LSP library dynamically and changes NULLs to the actual addresses
++// of respective functions. The macros above (like luaL_do_lsp_file()) are really
++// just calling these functions indirectly via the pointer.
++static struct lsp_func lsp_sw[] = {
++  {"luaopen_lualsp", NULL},
++  {"luaL_do_lsp_file", NULL},
++  {"luaL_lsp_set_io", NULL},
++  {"luaopen_luajson", NULL},
++  {"luaclose_luajson", NULL},
++  {NULL,    NULL}
++};
++
++static struct lsp_func lua_sw[] = {
++  {"luaL_newstate", NULL},
++  {"luaL_openlibs", NULL},
++  {"lua_tolstring", NULL},
++  {"lua_settop", NULL},
++  {"lua_close", NULL},
++  {NULL,    NULL}
++};
++#endif // NO_LSP_DL
++
+ static const char *month_names[] = {
+   "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+@@ -381,6 +471,7 @@
+ 
+ enum {
+   CGI_EXTENSIONS, CGI_ENVIRONMENT, PUT_DELETE_PASSWORDS_FILE, CGI_INTERPRETER,
++  LSP_EXTENSIONS,
+   PROTECT_URI, AUTHENTICATION_DOMAIN, SSI_EXTENSIONS, ACCESS_LOG_FILE,
+   SSL_CHAIN_FILE, ENABLE_DIRECTORY_LISTING, ERROR_LOG_FILE,
+   GLOBAL_PASSWORDS_FILE, INDEX_FILES,
+@@ -395,6 +486,7 @@
+   "E", "cgi_environment", NULL,
+   "G", "put_delete_passwords_file", NULL,
+   "I", "cgi_interpreter", NULL,
++  "L", "lsp_extensions", ".lsp",
+   "P", "protect_uri", NULL,
+   "R", "authentication_domain", "mydomain.com",
+   "S", "ssi_extensions", ".shtml,.shtm",
+@@ -2953,6 +3045,71 @@
+ }
+ #endif // !NO_CGI
+ 
++#if !defined(NO_LSP)
++int mg_lsp_putc(void *ctx, int c) {
++  mg_lsp_ctx *lctx = (mg_lsp_ctx *)ctx;
++  struct mg_connection *conn = lctx->conn;
++  char cc = c;
++  int num_written = mg_write(conn, &cc, 1);
++  conn->num_bytes_sent += num_written;
++  return num_written;
++}
++
++int mg_lsp_puts(void *ctx, const char *s) {
++  mg_lsp_ctx *lctx = (mg_lsp_ctx *)ctx;
++  struct mg_connection *conn = lctx->conn;
++  int num_written = mg_write(conn, s, strlen(s));
++  conn->num_bytes_sent += num_written;
++  return num_written;
++}
++
++int mg_lsp_write(void *ctx, const char *s, size_t len) {
++  mg_lsp_ctx *lctx = (mg_lsp_ctx *)ctx;
++  struct mg_connection *conn = lctx->conn;
++  int num_written;
++  if (lctx->http_header_sent == 0) {
++    mg_printf(conn, "HTTP/1.1 200 OK\r\n"
++              "Content-Type: text/html\r\nConnection: %s\r\n\r\n",
++              suggest_connection_header(conn));
++    lctx->http_header_sent = 1;
++  }
++  num_written = mg_write(conn, s, len);
++  conn->num_bytes_sent += num_written;
++  return num_written;
++}
++
++static void handle_lsp_file_request(struct mg_connection *conn,
++                                    const char *path) {
++  lua_State* L;
++  mg_lsp_ctx lsp_ctx;
++  lsp_io lio;
++
++  lsp_ctx.http_header_sent = 0;
++  lsp_ctx.conn = conn;
++
++  lio.lctx = &lsp_ctx;
++  lio.lputs = mg_lsp_puts;
++  lio.lputc = mg_lsp_putc;
++  lio.lwrite = mg_lsp_write;
++
++  L = lua_open();
++
++  luaL_openlibs(L);
++  luaopen_lualsp(L);
++  luaopen_luajson(L);
++  luaL_lsp_set_io(L, &lio);
++  if (luaL_do_lsp_file(L, path)) {
++    const char *e = lua_tostring(L,-1);
++    send_http_error(conn, 500, http_500_error, "%s", e);
++    lua_pop(L,1);
++  }
++  luaclose_luajson();
++  lua_close(L);
++
++  conn->request_info.status_code = 200;
++}
++#endif
++
+ // For a given PUT path, create all intermediate subdirectories
+ // for given path. Return 0 if the path itself is a directory,
+ // or -1 on error, 1 if OK.
+@@ -3226,6 +3383,14 @@
+     } else {
+       handle_cgi_request(conn, path);
+     }
++  } else if (match_extension(path, conn->ctx->config[LSP_EXTENSIONS])) {
++    if (strcmp(ri->request_method, "POST") &&
++        strcmp(ri->request_method, "GET")) {
++      send_http_error(conn, 501, "Not Implemented",
++          "Method %s is not implemented", ri->request_method);
++    } else {
++      handle_lsp_file_request(conn, path);
++    }
+   } else if (match_extension(path, conn->ctx->config[SSI_EXTENSIONS])) {
+     handle_ssi_file_request(conn, path);
+   } else if (is_not_modified(conn, &st)) {
+@@ -3573,6 +3738,54 @@
+ }
+ #endif // !NO_SSL
+ 
++#if !defined(NO_LSP)
++#if !defined(NO_LSP_DL)
++static int load_lsp_dll(struct mg_context *ctx, const char *dll_name,
++                    struct lsp_func *sw) {
++  union {void *p; void (*fp)(void);} u;
++  void  *dll_handle;
++  struct lsp_func *fp;
++
++  if ((dll_handle = dlopen(dll_name, RTLD_LAZY)) == NULL) {
++    cry(fc(ctx), "%s: cannot load %s", __func__, dll_name);
++    return 0;
++  }
++
++  for (fp = sw; fp->name != NULL; fp++) {
++#ifdef _WIN32
++    // GetProcAddress() returns pointer to function
++    u.fp = (void (*)(void)) dlsym(dll_handle, fp->name);
++#else
++    // dlsym() on UNIX returns void *. ISO C forbids casts of data pointers to
++    // function pointers. We need to use a union to make a cast.
++    u.p = dlsym(dll_handle, fp->name);
++#endif /* _WIN32 */
++    if (u.fp == NULL) {
++      cry(fc(ctx), "%s: %s: cannot find %s", __func__, dll_name, fp->name);
++      return 0;
++    } else {
++      fp->ptr = u.fp;
++    }
++  }
++
++  return 1;
++}
++#endif // NO_LSP_DL
++
++// Dynamically load LSP library.
++static int set_lsp_option(struct mg_context *ctx) {
++
++#if !defined(NO_LSP_DL)
++  if (!load_lsp_dll(ctx, LSP_LIB, lsp_sw) ||
++      !load_lsp_dll(ctx, LUA_LIB, lua_sw)) {
++    return 0;
++  }
++#endif // NO_LSP_DL
++
++  return 1;
++}
++#endif // !NO_LSP
++
+ static int set_gpass_option(struct mg_context *ctx) {
+   struct mgstat mgstat;
+   const char *path = ctx->config[GLOBAL_PASSWORDS_FILE];
+@@ -4039,6 +4252,9 @@
+ #if !defined(NO_SSL)
+       !set_ssl_option(ctx) ||
+ #endif
++#if !defined(NO_LSP)
++      !set_lsp_option(ctx) ||
++#endif
+       !set_ports_option(ctx) ||
+ #if !defined(_WIN32)
+       !set_uid_option(ctx) ||

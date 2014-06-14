@@ -1,0 +1,4 @@
+#FIXME: we need copy it to the workspace
+
+# target
+c:target/linux/brcm47xx:target/linux/brcm47xx

@@ -1,0 +1,12 @@
+diff -aur dhisd-5.5.JT/main.c dhisd-5.5/main.c
+--- dhisd-5.5.JT/main.c	2008-06-30 23:03:18.000000000 +0300
++++ dhisd-5.5/main.c	2008-06-30 23:03:42.000000000 +0300
+@@ -188,7 +188,7 @@
+ 	FILE *fp;
+ 	char str[128];
+ 	extern char *optarg;
+-	extern int optreset;
++	int optreset;
+ 	extern int optind;
+ 	int c;
+ 

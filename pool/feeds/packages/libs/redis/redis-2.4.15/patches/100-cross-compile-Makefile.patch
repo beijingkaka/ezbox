@@ -1,0 +1,87 @@
+--- redis-2.4.15.orig/src/Makefile	2012-07-12 14:34:29.283095916 +0800
++++ redis-2.4.15/src/Makefile	2012-07-12 14:35:04.151097362 +0800
+@@ -29,7 +29,7 @@
+   CCLINK?=-ldl -lnsl -lsocket -lm -lpthread
+   DEBUG?=-g -ggdb
+ else
+-  CFLAGS?=-std=c99 -pedantic $(OPTIMIZATION) -Wall -W $(ARCH) $(PROF)
++  CFLAGS?=-std=c99 -pedantic $(OPTIMIZATION) -Wall -W $(C_ARCH) $(PROF)
+   CCLINK?=-lm -pthread
+   DEBUG?=-g -rdynamic -ggdb
+ endif
+@@ -52,7 +52,7 @@
+   ALLOC_FLAGS=-DUSE_JEMALLOC -I../deps/jemalloc/include
+ endif
+ 
+-CCOPT= $(CFLAGS) $(ARCH) $(PROF)
++CCOPT= $(CFLAGS) $(C_ARCH) $(PROF)
+ 
+ PREFIX?=/usr/local
+ INSTALL_BIN= $(PREFIX)/bin
+@@ -150,9 +150,9 @@
+ 
+ dependencies:
+ 	@printf '%b %b\n' $(MAKECOLOR)MAKE$(ENDCOLOR) $(BINCOLOR)hiredis$(ENDCOLOR)
+-	@cd ../deps/hiredis && $(MAKE) static ARCH="$(ARCH)"
++	@cd ../deps/hiredis && $(MAKE) static C_ARCH="$(C_ARCH)"
+ 	@printf '%b %b\n' $(MAKECOLOR)MAKE$(ENDCOLOR) $(BINCOLOR)linenoise$(ENDCOLOR)
+-	@cd ../deps/linenoise && $(MAKE) ARCH="$(ARCH)"
++	@cd ../deps/linenoise && $(MAKE) C_ARCH="$(C_ARCH)"
+ 
+ ../deps/jemalloc/lib/libjemalloc.a:
+ 	@printf '%b %b\n' $(MAKECOLOR)MAKE$(ENDCOLOR) $(BINCOLOR)jemalloc$(ENDCOLOR)
+@@ -163,7 +163,7 @@
+ 
+ redis-benchmark: dependencies $(BENCHOBJ)
+ 	@printf '%b %b\n' $(MAKECOLOR)MAKE$(ENDCOLOR) $(BINCOLOR)hiredis$(ENDCOLOR)
+-	@cd ../deps/hiredis && $(MAKE) static ARCH="$(ARCH)"
++	@cd ../deps/hiredis && $(MAKE) static C_ARCH="$(C_ARCH)"
+ 	$(QUIET_LINK)$(CC) -o $(BENCHPRGNAME) $(CCOPT) $(DEBUG) $(BENCHOBJ) ../deps/hiredis/libhiredis.a $(CCLINK) $(ALLOC_LINK)
+ 
+ redis-cli.o:
+@@ -214,7 +214,7 @@
+ 	@echo ""
+ 	@echo "WARNING: if it fails under Linux you probably need to install libc6-dev-i386"
+ 	@echo ""
+-	$(MAKE) ARCH="-m32" JEMALLOC_CFLAGS='CFLAGS="-std=gnu99 -Wall -pipe -g3 -fvisibility=hidden -O3 -funroll-loops -m32"'
++	$(MAKE) C_ARCH="-m32" JEMALLOC_CFLAGS='CFLAGS="-std=gnu99 -Wall -pipe -g3 -fvisibility=hidden -O3 -funroll-loops -m32"'
+ 
+ gprof:
+ 	$(MAKE) PROF="-pg"
+@@ -226,7 +226,7 @@
+ 	$(MAKE) OPTIMIZATION=""
+ 
+ 32bitgprof:
+-	$(MAKE) PROF="-pg" ARCH="-arch i386"
++	$(MAKE) PROF="-pg" C_ARCH="-arch i386"
+ 
+ install: all
+ 	mkdir -p $(INSTALL_BIN)
+--- redis-2.4.15.orig/deps/hiredis/Makefile	2012-07-12 14:34:29.283095916 +0800
++++ redis-2.4.15/deps/hiredis/Makefile	2012-07-12 14:35:04.151097362 +0800
+@@ -15,8 +15,8 @@
+ OPTIMIZATION?=-O3
+ WARNINGS=-Wall -W -Wstrict-prototypes -Wwrite-strings
+ DEBUG?= -g -ggdb
+-REAL_CFLAGS=$(OPTIMIZATION) -fPIC $(CFLAGS) $(WARNINGS) $(DEBUG) $(ARCH)
+-REAL_LDFLAGS=$(LDFLAGS) $(ARCH)
++REAL_CFLAGS=$(OPTIMIZATION) -fPIC $(CFLAGS) $(WARNINGS) $(DEBUG) $(C_ARCH)
++REAL_LDFLAGS=$(LDFLAGS) $(C_ARCH)
+ 
+ DYLIBSUFFIX=so
+ STLIBSUFFIX=a
+--- redis-2.4.15.orig/deps/linenoise/Makefile	2012-07-12 14:34:29.283095916 +0800
++++ redis-2.4.15/deps/linenoise/Makefile	2012-07-12 14:35:04.151097362 +0800
+@@ -1,10 +1,10 @@
+ linenoise_example: linenoise.h linenoise.c
+ 
+ linenoise_example: linenoise.o example.o
+-	$(CC) $(ARCH) -Wall -W -Os -g -o linenoise_example linenoise.o example.o
++	$(CC) $(C_ARCH) -Wall -W -Os -g -o linenoise_example linenoise.o example.o
+ 
+ .c.o:
+-	$(CC) $(ARCH) -c -Wall -W -Os -g $<
++	$(CC) $(C_ARCH) -c -Wall -W -Os -g $<
+ 
+ clean:
+ 	rm -f linenoise_example *.o

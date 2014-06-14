@@ -1,0 +1,11 @@
+--- lua-zmq-threads-1.1.orig/CMakeLists.txt	2012-07-14 16:27:20.861674121 +0800
++++ lua-zmq-threads-1.1/CMakeLists.txt	2012-07-14 16:27:42.713673197 +0800
+@@ -27,7 +27,7 @@
+ ## Lua 5.1.x
+ include(FindLua51)
+ if(NOT ${LUA51_FOUND})
+-	message(FATAL_ERROR "The FindLua51 module could not find lua :-(")
++	#message(FATAL_ERROR "The FindLua51 module could not find lua :-(")
+ endif()
+ if(WIN32)
+ 	set(COMMON_CFLAGS "${COMMON_CFLAGS} -I${LUA_INCLUDE_DIR}")

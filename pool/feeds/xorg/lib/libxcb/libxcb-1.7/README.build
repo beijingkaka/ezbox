@@ -1,0 +1,2 @@
+You may need to install python-genxcb package before building this package.
+We don't provide host-python support right now.

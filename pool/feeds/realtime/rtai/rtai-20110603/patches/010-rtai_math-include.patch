@@ -1,0 +1,24 @@
+--- rtai/base/include/rtai_math.h	2011-06-20 12:12:54.442117588 +0800
++++ rtai/base/include/rtai_math.h	2011-06-20 12:13:55.392058417 +0800
+@@ -25,6 +25,7 @@
+ 
+ #ifndef	_RTAI_MATH_H
+ #define	_RTAI_MATH_H	1
++#if 0
+ #define _MATH_H         1
+ 
+ #include <rtai_types.h>
+@@ -443,6 +444,13 @@
+ #endif
+ 
+ __END_DECLS
++#else
++#define _MATH_H         1
++
++#include <rtai_types.h>
++#undef _MATH_H
++#include <math.h>
++#endif
+ 
+ /* Missing declarations */
+ 

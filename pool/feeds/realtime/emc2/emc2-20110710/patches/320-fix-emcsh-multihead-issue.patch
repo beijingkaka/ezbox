@@ -1,0 +1,51 @@
+--- emc2-20110530/src/emc/usr_intf/emcsh.cc	2011-06-08 17:25:48.632653307 +0800
++++ emc2-20110530/src/emc/usr_intf/emcsh.cc	2011-06-08 17:29:17.253653452 +0800
+@@ -3364,6 +3364,7 @@
+     return TCL_OK;
+ }
+ 
++#ifdef HAVE_LIBXINERAMA
+ #include <X11/extensions/Xinerama.h>
+ 
+ static int multihead(ClientData clientdata,
+@@ -3403,6 +3404,7 @@
+     }
+     return TCL_OK;
+ }
++#endif
+ 
+ static void sigQuit(int sig)
+ {
+@@ -3775,8 +3777,10 @@
+     Tcl_CreateObjCommand(interp, "round", localround, (ClientData) NULL,
+ 			 (Tcl_CmdDeleteProc *) NULL);
+ 
++#ifdef HAVE_LIBXINERAMA
+     Tcl_CreateObjCommand(interp, "multihead", multihead, (ClientData) NULL,
+                          (Tcl_CmdDeleteProc*) NULL);
++#endif
+ 
+     /* 
+      * Specify a user-specific startup file to invoke if the application
+--- emc2-20110530/src/emc/usr_intf/Submakefile	2011-06-08 17:39:29.660653613 +0800
++++ emc2-20110530/src/emc/usr_intf/Submakefile	2011-06-08 17:42:03.896657050 +0800
+@@ -36,6 +36,10 @@
+ USERSRCS += $(XEMCSRCS)
+ endif
+ 
++ifeq "$(HAVE_XINERAMA)" "yes"
++XINERAMA_LIBS := -lXinerama
++endif
++
+ $(call TOOBJSDEPS, $(TCLSRCS)) : EXTRAFLAGS = $(ULFLAGS) $(TCL_CFLAGS)
+ $(call TOOBJSDEPS, $(EMCSHSRCS)) : EXTRAFLAGS = $(ULFLAGS) $(TCL_CFLAGS) -fPIC
+ 
+@@ -46,7 +50,7 @@
+ 
+ ../tcl/emc.so: $(call TOOBJS, $(EMCSHSRCS)) ../lib/libemc.a ../lib/libemcini.so.0 ../lib/libnml.so.0
+ 	$(ECHO) Linking $(notdir $@)
+-	$(CXX) -shared $(LDFLAGS) -o $@ $(ULFLAGS) $(TCL_CFLAGS) $^ $(TCL_LIBS) -lXinerama
++	$(CXX) -shared $(LDFLAGS) -o $@ $(ULFLAGS) $(TCL_CFLAGS) $^ $(TCL_LIBS) $(XINERAMA_LIBS)
+ TARGETS += ../tcl/emc.so
+ 
+ ../bin/emcrsh: $(call TOOBJS, $(EMCRSHSRCS)) ../lib/libemc.a ../lib/libnml.so.0 ../lib/libemcini.so.0

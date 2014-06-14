@@ -1,0 +1,15 @@
+#!/bin/sh /etc/rc.common
+# DHIS client init script
+# For www.dhis.org ddns service
+# created by Philipp A. Mohrenweiser <phiamo@...com>
+
+START=99
+STOP=5
+
+start() {
+ dhid -P /var/run/dhid.pid -f /etc/dhid.conf
+}
+
+stop() {
+ kill `cat /var/run/dhid.pid`
+}

@@ -1,0 +1,13 @@
+Index: fltk-2.0.x-r6671/src/Makefile
+===================================================================
+--- fltk-2.0.x-r6671.orig/src/Makefile
++++ fltk-2.0.x-r6671/src/Makefile
+@@ -235,7 +235,7 @@
+ 
+ ../lib/$(DSONAME): $(OBJECTS)
+ 	echo $(DSOCOMMAND) $@ $(OBJECTS) -L../lib $(IMAGELIBS)
+-	$(DSOCOMMAND) $@ $(OBJECTS) $(LDLIBS)
++	$(DSOCOMMAND) $@ $(OBJECTS) $(LDLIBS) -Wl,-soname,$(DSONAME)
+ 	$(RM) ../lib/$(DSOLINK)
+ 	$(LN) ../lib/$(DSONAME) ../lib/$(DSOLINK)
+ 

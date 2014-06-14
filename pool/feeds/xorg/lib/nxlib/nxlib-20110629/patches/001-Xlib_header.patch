@@ -1,0 +1,486 @@
+--- nxlib/X11/Xlib.h	2011-01-27 03:09:58.000000000 +0800
++++ nxlib/X11/Xlib.h	2011-02-06 21:21:58.486720459 +0800
+@@ -1,5 +1,6 @@
++/* $XdotOrg: lib/X11/include/X11/Xlib.h,v 1.6 2005-11-08 06:33:25 jkj Exp $ */
+ /* $Xorg: Xlib.h,v 1.6 2001/02/09 02:03:38 xorgcvs Exp $ */
+-/* 
++/*
+ 
+ Copyright 1985, 1986, 1987, 1991, 1998  The Open Group
+ 
+@@ -24,7 +25,7 @@
+ in this Software without prior written authorization from The Open Group.
+ 
+ */
+-/* $XFree86: xc/lib/X11/Xlib.h,v 3.23 2002/05/31 18:45:42 dawes Exp $ */
++/* $XFree86: xc/lib/X11/Xlib.h,v 3.25 2003/11/17 22:20:10 dawes Exp $ */
+ 
+ 
+ /*
+@@ -81,12 +82,23 @@
+ 
+ #if defined(ISC) && defined(USE_XMBTOWC)
+ #define wctomb(a,b)	_Xwctomb(a,b)
+-#define mblen(a,b)	_Xmblen(a,b) 
++#define mblen(a,b)	_Xmblen(a,b)
+ #ifndef USE_XWCHAR_STRING
+ #define mbtowc(a,b,c)	_Xmbtowc(a,b,c)
+ #endif
+ #endif
+ 
++extern int
++_Xmblen(
++#ifdef ISC
++    char const *str,
++    size_t len
++#else
++    char *str,
++    int len
++#endif
++    );
++
+ /* API mentioning "UTF8" or "utf8" is an XFree86 extension, introduced in
+    November 2000. Its presence is indicated through the following macro. */
+ #define X_HAVE_UTF8_STRING 1
+@@ -205,10 +217,10 @@
+ 	unsigned long background;/* background pixel */
+ 	int line_width;		/* line width */
+ 	int line_style;	 	/* LineSolid, LineOnOffDash, LineDoubleDash */
+-	int cap_style;	  	/* CapNotLast, CapButt, 
++	int cap_style;	  	/* CapNotLast, CapButt,
+ 				   CapRound, CapProjecting */
+ 	int join_style;	 	/* JoinMiter, JoinRound, JoinBevel */
+-	int fill_style;	 	/* FillSolid, FillTiled, 
++	int fill_style;	 	/* FillSolid, FillTiled,
+ 				   FillStippled, FillOpaeueStippled */
+ 	int fill_rule;	  	/* EvenOddRule, WindingRule */
+ 	int arc_mode;		/* ArcChord, ArcPieSlice */
+@@ -259,7 +271,7 @@
+ 
+ /*
+  * Depth structure; contains information for each possible depth.
+- */	
++ */
+ typedef struct {
+ 	int depth;		/* this depth (Z) of the depth */
+ 	int nvisuals;		/* number of Visual types at this depth */
+@@ -290,7 +302,7 @@
+ 	unsigned long black_pixel;	/* White and Black pixel values */
+ 	int max_maps, min_maps;	/* max and min color maps */
+ 	int backing_store;	/* Never, WhenMapped, Always */
+-	Bool save_unders;	
++	Bool save_unders;
+ 	long root_input_mask;	/* initial root input mask */
+ } Screen;
+ 
+@@ -365,6 +377,16 @@
+ } XHostAddress;
+ 
+ /*
++ * Data structure for ServerFamilyInterpreted addresses in host routines
++ */
++typedef struct {
++	int typelength;		/* length of type string, in bytes */
++	int valuelength;	/* length of value string, in bytes */
++	char *type;		/* pointer to where to find the type string */
++	char *value;		/* pointer to where to find the address */
++} XServerInterpretedAddress;
++
++/*
+  * Data structure for "image" data, used by image manipulation routines.
+  */
+ typedef struct _XImage {
+@@ -412,7 +434,7 @@
+ 	} f;
+ } XImage;
+ 
+-/* 
++/*
+  * Data structure for XReconfigureWindow
+  */
+ typedef struct {
+@@ -433,7 +455,7 @@
+ 	char pad;
+ } XColor;
+ 
+-/* 
++/*
+  * Data structures for graphics operations.  On most machines, these are
+  * congruent with the wire protocol structures, so reformatting the data
+  * can be avoided on these architectures.
+@@ -445,12 +467,12 @@
+ typedef struct {
+     short x, y;
+ } XPoint;
+-    
++
+ typedef struct {
+     short x, y;
+     unsigned short width, height;
+ } XRectangle;
+-    
++
+ typedef struct {
+     short x, y;
+     unsigned short width, height;
+@@ -509,7 +531,7 @@
+ struct _XPrivate;		/* Forward declare before use for C++ */
+ struct _XrmHashBucketRec;
+ 
+-typedef struct 
++typedef struct
+ #ifdef XLIB_ILLEGAL_ACCESS
+ _XDisplay
+ #endif
+@@ -568,7 +590,7 @@
+ 	/* there is more to this structure, but it is private to Xlib */
+ }
+ #ifdef XLIB_ILLEGAL_ACCESS
+-Display, 
++Display,
+ #endif
+ *_XPrivDisplay;
+ 
+@@ -646,7 +668,7 @@
+ 	int mode;		/* NotifyNormal, NotifyGrab, NotifyUngrab */
+ 	int detail;
+ 	/*
+-	 * NotifyAncestor, NotifyVirtual, NotifyInferior, 
++	 * NotifyAncestor, NotifyVirtual, NotifyInferior,
+ 	 * NotifyNonlinear,NotifyNonlinearVirtual
+ 	 */
+ 	Bool same_screen;	/* same screen flag */
+@@ -662,12 +684,13 @@
+ 	Bool send_event;	/* true if this came from a SendEvent request */
+ 	Display *display;	/* Display the event was read from */
+ 	Window window;		/* window of event */
+-	int mode;		/* NotifyNormal, NotifyGrab, NotifyUngrab */
++	int mode;		/* NotifyNormal, NotifyWhileGrabbed,
++				   NotifyGrab, NotifyUngrab */
+ 	int detail;
+ 	/*
+-	 * NotifyAncestor, NotifyVirtual, NotifyInferior, 
++	 * NotifyAncestor, NotifyVirtual, NotifyInferior,
+ 	 * NotifyNonlinear,NotifyNonlinearVirtual, NotifyPointer,
+-	 * NotifyPointerRoot, NotifyDetailNone 
++	 * NotifyPointerRoot, NotifyDetailNone
+ 	 */
+ } XFocusChangeEvent;
+ typedef XFocusChangeEvent XFocusInEvent;
+@@ -681,7 +704,7 @@
+ 	Display *display;	/* Display the event was read from */
+ 	Window window;
+ 	char key_vector[32];
+-} XKeymapEvent;	
++} XKeymapEvent;
+ 
+ typedef struct {
+ 	int type;
+@@ -963,6 +986,33 @@
+ 	Window window;	/* window on which event was requested in event mask */
+ } XAnyEvent;
+ 
++
++/***************************************************************
++ *
++ * GenericEvent.  This event is the standard event for all newer extensions.
++ */
++
++typedef struct
++    {
++    int            type;         /* of event. Always GenericEvent */
++    unsigned long  serial;       /* # of last request processed */
++    Bool           send_event;   /* true if from SendEvent request */
++    Display        *display;     /* Display the event was read from */
++    int            extension;    /* major opcode of extension that caused the event */
++    int            evtype;       /* actual event type. */
++    } XGenericEvent;
++
++typedef struct {
++    int            type;         /* of event. Always GenericEvent */
++    unsigned long  serial;       /* # of last request processed */
++    Bool           send_event;   /* true if from SendEvent request */
++    Display        *display;     /* Display the event was read from */
++    int            extension;    /* major opcode of extension that caused the event */
++    int            evtype;       /* actual event type. */
++    unsigned int   cookie;
++    void           *data;
++} XGenericEventCookie;
++
+ /*
+  * this union is defined so Xlib can always use the same sized
+  * event structure internally, to avoid memory fragmentation.
+@@ -1000,6 +1050,8 @@
+ 	XMappingEvent xmapping;
+ 	XErrorEvent xerror;
+ 	XKeymapEvent xkeymap;
++	XGenericEvent xgeneric;
++	XGenericEventCookie xcookie;
+ 	long pad[24];
+ } XEvent;
+ #endif
+@@ -1250,7 +1302,7 @@
+ typedef unsigned long XIMFeedback;
+ 
+ #define XIMReverse		1L
+-#define XIMUnderline		(1L<<1) 
++#define XIMUnderline		(1L<<1)
+ #define XIMHighlight		(1L<<2)
+ #define XIMPrimary	 	(1L<<5)
+ #define XIMSecondary		(1L<<6)
+@@ -1262,11 +1314,11 @@
+ typedef struct _XIMText {
+     unsigned short length;
+     XIMFeedback *feedback;
+-    Bool encoding_is_wchar; 
++    Bool encoding_is_wchar;
+     union {
+ 	char *multi_byte;
+ 	wchar_t *wide_char;
+-    } string; 
++    } string;
+ } XIMText;
+ 
+ typedef	unsigned long	 XIMPreeditState;
+@@ -1296,11 +1348,11 @@
+ typedef struct _XIMStringConversionText {
+     unsigned short length;
+     XIMStringConversionFeedback *feedback;
+-    Bool encoding_is_wchar; 
++    Bool encoding_is_wchar;
+     union {
+ 	char *mbs;
+ 	wchar_t *wcs;
+-    } string; 
++    } string;
+ } XIMStringConversionText;
+ 
+ typedef	unsigned short	XIMStringConversionPosition;
+@@ -1322,7 +1374,7 @@
+     XIMForwardWord, XIMBackwardWord,
+     XIMCaretUp, XIMCaretDown,
+     XIMNextLine, XIMPreviousLine,
+-    XIMLineStart, XIMLineEnd, 
++    XIMLineStart, XIMLineEnd,
+     XIMAbsolutePosition,
+     XIMDontChange
+ } XIMCaretDirection;
+@@ -1343,7 +1395,7 @@
+ } XIMPreeditDrawCallbackStruct;
+ 
+ typedef enum {
+-    XIMIsInvisible,	/* Disable caret feedback */ 
++    XIMIsInvisible,	/* Disable caret feedback */
+     XIMIsPrimary,	/* UI defined caret feedback */
+     XIMIsSecondary	/* UI defined caret feedback */
+ } XIMCaretStyle;
+@@ -1358,7 +1410,7 @@
+     XIMTextType,
+     XIMBitmapType
+ } XIMStatusDataType;
+-	
++
+ typedef struct _XIMStatusDrawCallbackStruct {
+     XIMStatusDataType type;
+     union {
+@@ -1447,7 +1499,7 @@
+ #else
+     KeyCode		/* keycode_entry */,
+ #endif
+-    int			/* modifier */    
++    int			/* modifier */
+ #endif
+ );
+ 
+@@ -1504,7 +1556,7 @@
+ #endif
+ );
+ 
+-/* 
++/*
+  * X function declarations.
+  */
+ extern Display *XOpenDisplay(
+@@ -1550,7 +1602,7 @@
+ #if NeedFunctionPrototypes
+     Display*		/* display */,
+     _Xconst char*	/* program */,
+-    _Xconst char*	/* option */		  
++    _Xconst char*	/* option */
+ #endif
+ );
+ extern char *XDisplayName(
+@@ -1592,7 +1644,7 @@
+ #if NeedFunctionPrototypes
+     Display*		/* display */,
+     _Xconst char*	/* atom_name */,
+-    Bool		/* only_if_exists */		 
++    Bool		/* only_if_exists */
+ #endif
+ );
+ extern Status XInternAtoms(
+@@ -1615,7 +1667,7 @@
+     Display*		/* display */,
+     Window		/* w */,
+     Visual*		/* visual */,
+-    int			/* alloc */			 
++    int			/* alloc */
+ #endif
+ );
+ extern Cursor XCreatePixmapCursor(
+@@ -1626,7 +1678,7 @@
+     XColor*		/* foreground_color */,
+     XColor*		/* background_color */,
+     unsigned int	/* x */,
+-    unsigned int	/* y */			   
++    unsigned int	/* y */
+ #endif
+ );
+ extern Cursor XCreateGlyphCursor(
+@@ -1677,7 +1729,7 @@
+     Drawable		/* d */,
+     unsigned int	/* width */,
+     unsigned int	/* height */,
+-    unsigned int	/* depth */		        
++    unsigned int	/* depth */
+ #endif
+ );
+ extern Pixmap XCreateBitmapFromData(
+@@ -1735,7 +1787,7 @@
+     unsigned long	/* valuemask */,
+     XSetWindowAttributes*	/* attributes */
+ #endif
+-); 
++);
+ extern Colormap *XListInstalledColormaps(
+ #if NeedFunctionPrototypes
+     Display*		/* display */,
+@@ -2161,7 +2213,7 @@
+ #if NeedFunctionPrototypes
+     Display*		/* display */,
+     XHostAddress*	/* hosts */,
+-    int			/* num_hosts */    
++    int			/* num_hosts */
+ #endif
+ );
+ 
+@@ -2454,7 +2506,7 @@
+     Display*		/* display */,
+     Window		/* w */,
+     unsigned int	/* value_mask */,
+-    XWindowChanges*	/* values */		 
++    XWindowChanges*	/* values */
+ #endif
+ );
+ 
+@@ -2566,7 +2618,7 @@
+ 
+ extern int XDoesBackingStore(
+ #if NeedFunctionPrototypes
+-    Screen*		/* screen */    
++    Screen*		/* screen */
+ #endif
+ );
+ 
+@@ -2929,7 +2981,7 @@
+ 
+ extern int XFreeExtensionList(
+ #if NeedFunctionPrototypes
+-    char**		/* list */    
++    char**		/* list */
+ #endif
+ );
+ 
+@@ -3420,7 +3472,7 @@
+     int			/* dest_x */,
+     int			/* dest_y */,
+     unsigned int	/* width */,
+-    unsigned int	/* height */	  
++    unsigned int	/* height */
+ #endif
+ );
+ 
+@@ -3532,7 +3584,7 @@
+     int*		/* direction_return */,
+     int*		/* font_ascent_return */,
+     int*		/* font_descent_return */,
+-    XCharStruct*	/* overall_return */    
++    XCharStruct*	/* overall_return */
+ #endif
+ );
+ 
+@@ -3613,7 +3665,7 @@
+ 
+ extern int XRefreshKeyboardMapping(
+ #if NeedFunctionPrototypes
+-    XMappingEvent*	/* event_map */    
++    XMappingEvent*	/* event_map */
+ #endif
+ );
+ 
+@@ -3819,7 +3871,7 @@
+ #if NeedFunctionPrototypes
+     Display*		/* display */,
+     char**		/* directories */,
+-    int			/* ndirs */	     
++    int			/* ndirs */
+ #endif
+ );
+ 
+@@ -4210,7 +4262,7 @@
+     unsigned int	/* src_width */,
+     unsigned int	/* src_height */,
+     int			/* dest_x */,
+-    int			/* dest_y */	     
++    int			/* dest_y */
+ #endif
+ );
+ 
+@@ -4243,7 +4295,7 @@
+     unsigned int	/* width */,
+     unsigned int	/* height */,
+     int			/* x_hot */,
+-    int			/* y_hot */		     
++    int			/* y_hot */
+ #endif
+ );
+ 
+@@ -4776,7 +4828,7 @@
+     XPointer*			/* watch_data */ /* open sets, close uses */
+ #endif
+ );
+-    
++
+ 
+ extern Status XInternalConnectionNumbers(
+ #if NeedFunctionPrototypes
+@@ -4812,7 +4864,7 @@
+ extern void XSetAuthorization(
+ #if NeedFunctionPrototypes
+     char *			/* name */,
+-    int				/* namelen */, 
++    int				/* namelen */,
+     char *			/* data */,
+     int				/* datalen */
+ #endif
+@@ -4838,6 +4890,20 @@
+ #endif
+ );
+ 
++extern Bool XGetEventData(
++#if NeedFunctionPrototypes
++    Display*			/* dpy */,
++    XGenericEventCookie*	/* cookie*/
++#endif
++);
++
++extern void XFreeEventData(
++#if NeedFunctionPrototypes
++    Display*			/* dpy */,
++    XGenericEventCookie*	/* cookie*/
++#endif
++);
++
+ _XFUNCPROTOEND
+ 
+ #endif /* _XLIB_H_ */

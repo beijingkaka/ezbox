@@ -1,0 +1,45 @@
+--- tk8.5.8/unix/configure.in	2011-06-10 12:48:44.599731080 +0800
++++ tk8.5.8/unix/configure.in	2011-06-10 13:12:43.042750702 +0800
+@@ -518,21 +518,36 @@
+ 	AC_HELP_STRING([--enable-xft],
+ 	    [use freetype/fontconfig/xft (default: on)]),
+ 	[enable_xft=$enableval], [enable_xft="default"])
+-    XFT_CFLAGS=""
+-    XFT_LIBS=""
++    AC_ARG_WITH(xft-config,
++	AC_HELP_STRING([--with-xft-config],
++	    [xft package config (default: xft-config)]),
++	[XFT_CONFIG=$withval], [XFT_CONFIG="xft-config"])
++    AC_ARG_WITH(xft-cflags,
++	AC_HELP_STRING([--with-xft-cflags],
++	    [xft package cflags (default: )]),
++	[XFT_CFLAGS=$withval], [XFT_CFLAGS=""])
++    AC_ARG_WITH(xft-libs,
++	AC_HELP_STRING([--with-xft-libs],
++	    [xft package libs (default: )]),
++	[XFT_LIBS=$withval], [XFT_LIBS=""])
++
+     if test "$enable_xft" = "no" ; then
+ 	AC_MSG_RESULT([$enable_xft])
+     else
++    if test "x$XFT_CFLAGS" != "x" -a "x$XFT_LIBS" != "x" ; then
++	found_xft=yes
++    else
+ 	found_xft="yes"
+ 	dnl make sure package configurator (xft-config or pkg-config
+ 	dnl says that xft is present.
+-	XFT_CFLAGS=`xft-config --cflags 2>/dev/null` || found_xft="no"
+-	XFT_LIBS=`xft-config --libs 2>/dev/null` || found_xft="no"
++	XFT_CFLAGS=`$XFT_CONFIG --cflags 2>/dev/null` || found_xft="no"
++	XFT_LIBS=`$XFT_CONFIG --libs 2>/dev/null` || found_xft="no"
+ 	if test "$found_xft" = "no" ; then
+ 	    found_xft=yes
+-	    XFT_CFLAGS=`pkg-config --cflags xft 2>/dev/null` || found_xft="no"
+-	    XFT_LIBS=`pkg-config --libs xft 2>/dev/null` || found_xft="no"
++	    XFT_CFLAGS=`$XFT_CONFIG --cflags xft 2>/dev/null` || found_xft="no"
++	    XFT_LIBS=`$XFT_CONFIG --libs xft 2>/dev/null` || found_xft="no"
+ 	fi
++    fi
+ 	AC_MSG_RESULT([$found_xft])
+ 	dnl make sure that compiling against Xft header file doesn't bomb
+ 	if test "$found_xft" = "yes" ; then

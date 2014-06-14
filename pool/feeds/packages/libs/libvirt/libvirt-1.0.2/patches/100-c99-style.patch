@@ -1,0 +1,45 @@
+--- libvirt-1.0.2/src/parallels.orig/parallels_storage.c	2013-02-22 00:04:20.194976452 +0800
++++ libvirt-1.0.2/src/parallels/parallels_storage.c	2013-02-22 00:06:24.602483371 +0800
+@@ -134,8 +134,10 @@
+ {
+     parallelsConnPtr privconn = conn->privateData;
+     char *name;
++    unsigned int i;
++    int j;
+ 
+-    for (unsigned int i = 0; i < UINT_MAX; i++) {
++    for (i = 0; i < UINT_MAX; i++) {
+         bool found = false;
+ 
+         if (!(name = strdup(path))) {
+@@ -153,11 +155,11 @@
+             return 0;
+         }
+ 
+-        for (int j = 0; j < strlen(name); j++)
++        for (j = 0; j < strlen(name); j++)
+             if (name[j] == '/')
+                 name[j] = '-';
+ 
+-        for (int j = 0; j < privconn->pools.count; j++) {
++        for (j = 0; j < privconn->pools.count; j++) {
+             if (STREQ(name, privconn->pools.objs[j]->def->name)) {
+                 found = true;
+                 break;
+@@ -231,6 +233,7 @@
+     virStoragePoolObjListPtr pools = &privconn->pools;
+     char *poolPath;
+     virStoragePoolObjPtr pool = NULL;
++    int j;
+ 
+     if (!(poolPath = strdup(pdom->home))) {
+         virReportOOMError();
+@@ -239,7 +242,7 @@
+ 
+     poolPath = dirname(poolPath);
+ 
+-    for (int j = 0; j < pools->count; j++) {
++    for (j = 0; j < pools->count; j++) {
+         if (STREQ(poolPath, pools->objs[j]->def->target.path)) {
+             pool = pools->objs[j];
+             break;

@@ -1,0 +1,71 @@
+--- fltk-2.0/src/x11/Image.cxx	2010-05-28 11:44:32.660880613 +0800
++++ fltk-2.0/src/x11/Image.cxx	2010-05-31 13:44:07.937063635 +0800
+@@ -379,6 +379,41 @@
+ }
+ 
+ ////////////////////////////////////////////////////////////////
++// 24bit TrueColor converters on a 32 or 64-bit machine:
++static void mono_to_24(const uchar *from, uchar *to, int w) {
++  // go backwards so from and to can be the same buffer:
++  uchar *t = to+3*w;
++  from += w;
++  while (t > to)
++  {
++    *--t = *--from;
++    *--t = *from;
++    *--t = *from;
++  }
++}
++
++static void rgb_to_24d(const uchar *from, uchar *to, int w, int delta) {
++  int d = delta-3;
++  for (; w--; from += d) {
++    *to++ = *from++;
++    *to++ = *from++;
++    *to++ = *from++;
++  }
++}
++
++static void rgb_to_24(const uchar *from, uchar *to, int w) {
++  rgb_to_24d(from, to, w, 3);
++}
++
++static void rgba_to_24(const uchar *from, uchar *to, int w) {
++  rgb_to_24d(from, to, w, 4);
++}
++
++static void argb32_to_24(const uchar *from, uchar *to, int w) {
++  rgb_to_24d(from+1, to, w, 4);
++}
++
++////////////////////////////////////////////////////////////////
+ // 32bit TrueColor converters on a 32 or 64-bit machine:
+ // I have only seen rgbx32 and xrgb32 orders, or the byte-swapped
+ // version of them, which is done by flipping the byte order in Image
+@@ -956,6 +991,26 @@
+     }
+     break;
+ 
++  case 3:
++    converter[MONO] = mono_to_24;
++    if (rs == 0 && gs == 8 && bs == 16) {
++      ::i.byte_order = !WORDS_BIGENDIAN;
++#if USE_XSHM
++      use_xshm_pixmaps = false;
++#endif
++      goto RGB;
++    }
++    if (rs == 16 && gs == 8 && bs == 0) {
++      ::i.byte_order = WORDS_BIGENDIAN;
++    RGB:
++      converter[RGB] = rgb_to_24;
++      converter[RGBx] = rgba_to_24;
++      converter[RGB32] = argb32_to_24;
++      break;
++    }
++    fatal("Can't do arbitrary 24bit color");
++    break;
++
+   case 4:
+     converter[MONO] = mono_to_32;
+     if (rs == 0 && gs == 8 && bs == 16) {

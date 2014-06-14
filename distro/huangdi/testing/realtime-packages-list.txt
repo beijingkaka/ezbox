@@ -1,0 +1,3 @@
+# realtime packages
+c:realtime/emc2/emc2-20110710:realtime/emc2
+c:realtime/rtai/rtai-20110603:realtime/rtai

@@ -1,0 +1,37 @@
+--- a/arch/mips/ar71xx/machtype.h	2011-08-31 15:24:49.488715167 +0800
++++ b/arch/mips/ar71xx/machtype.h	2011-08-31 15:26:37.418722744 +0800
+@@ -71,6 +71,7 @@
+ 	AR71XX_MACH_UBNT_UNIFI, /* Unifi */
+ 	AR71XX_MACH_DB120,      /* Atheros DB120 (AR934x based) */
+ 	AR71XX_MACH_EZBOX_TL_WR740N_V4,	/* EZBOX on TL-WR740N v4 */
++	AR71XX_MACH_EZBOX_MW150R_V2,	/* EZBOX on Mercury MW150R v2 */
+ };
+ 
+ #endif /* _AR71XX_MACHTYPE_H */
+--- a/arch/mips/ar71xx/Kconfig	2011-08-31 15:24:56.538714372 +0800
++++ b/arch/mips/ar71xx/Kconfig	2011-08-31 15:27:32.238714321 +0800
+@@ -362,6 +362,17 @@
+ 	select AR71XX_UBOOT_ENV
+ 	default n
+ 
++config AR71XX_MACH_EZBOX_MW150R_V2
++	bool "EZBOX on MW150R v2 support"
++	select SOC_AR724X
++	select AR71XX_DEV_M25P80
++	select AR71XX_DEV_AP91_PCI if PCI
++	select AR71XX_DEV_GPIO_BUTTONS
++	select AR71XX_DEV_LEDS_GPIO
++	select AR71XX_NVRAM
++	select AR71XX_UBOOT_ENV
++	default n
++
+ endmenu
+ 
+ config SOC_AR71XX
+--- a/arch/mips/ar71xx/Makefile	2011-08-31 15:25:01.428714529 +0800
++++ b/arch/mips/ar71xx/Makefile	2011-08-31 15:27:56.148713989 +0800
+@@ -67,3 +67,4 @@
+ obj-$(CONFIG_AR71XX_MACH_WZR_HP_AG300H)	+= mach-wzr-hp-ag300h.o
+ obj-$(CONFIG_AR71XX_MACH_ZCN_1523H)	+= mach-zcn-1523h.o
+ obj-$(CONFIG_AR71XX_MACH_EZBOX_TL_WR740N_V4)	+= mach-ezbox-tl-wr740n_v4.o
++obj-$(CONFIG_AR71XX_MACH_EZBOX_MW150R_V2)	+= mach-ezbox-mw150r_v2.o

@@ -1,0 +1,724 @@
+#
+# Automatically generated file; DO NOT EDIT.
+# OpenWrt Configuration
+#
+CONFIG_MODULES=y
+CONFIG_HAVE_DOT_CONFIG=y
+CONFIG_TARGET_x86=y
+CONFIG_TARGET_x86_generic=y
+# CONFIG_TARGET_x86_olpc is not set
+# CONFIG_TARGET_x86_xen_domu is not set
+# CONFIG_TARGET_x86_ep80579 is not set
+# CONFIG_TARGET_x86_net5501 is not set
+# CONFIG_TARGET_x86_kvm_guest is not set
+# CONFIG_TARGET_x86_geos is not set
+# CONFIG_TARGET_x86_alix2 is not set
+# CONFIG_TARGET_x86_thincan is not set
+# CONFIG_TARGET_x86_rdc is not set
+CONFIG_TARGET_x86_generic_Generic=y
+# CONFIG_TARGET_x86_generic_Soekris45xx is not set
+# CONFIG_TARGET_x86_generic_Soekris48xx is not set
+# CONFIG_TARGET_x86_generic_Wrap is not set
+CONFIG_HAS_SUBTARGETS=y
+CONFIG_TARGET_BOARD="x86"
+CONFIG_TARGET_ARCH_PACKAGES="x86"
+CONFIG_DEFAULT_TARGET_OPTIMIZATION="-Os -pipe -march=i486"
+CONFIG_CPU_TYPE="i486"
+CONFIG_LINUX_3_10=y
+CONFIG_DEFAULT_ezcfg=y
+CONFIG_DEFAULT_kmod-3c59x=y
+CONFIG_DEFAULT_kmod-8139too=y
+CONFIG_DEFAULT_kmod-e100=y
+CONFIG_DEFAULT_kmod-e1000=y
+CONFIG_DEFAULT_kmod-natsemi=y
+CONFIG_DEFAULT_kmod-ne2k-pci=y
+CONFIG_DEFAULT_kmod-pcnet32=y
+CONFIG_DEFAULT_kmod-r8169=y
+CONFIG_DEFAULT_kmod-sis900=y
+CONFIG_DEFAULT_kmod-tg3=y
+CONFIG_DEFAULT_kmod-via-rhine=y
+CONFIG_DEFAULT_kmod-via-velocity=y
+CONFIG_DEFAULT_libc=y
+CONFIG_DEFAULT_libgcc=y
+CONFIG_AUDIO_SUPPORT=y
+CONFIG_PCI_SUPPORT=y
+CONFIG_PCIE_SUPPORT=y
+CONFIG_PCMCIA_SUPPORT=y
+CONFIG_USB_SUPPORT=y
+CONFIG_RTC_SUPPORT=y
+CONFIG_USES_SQUASHFS=y
+CONFIG_USES_EXT4=y
+CONFIG_USES_TARGZ=y
+CONFIG_i386=y
+CONFIG_ARCH="i386"
+
+#
+# Target Images
+#
+CONFIG_TARGET_ROOTFS_INITRAMFS=y
+# CONFIG_TARGET_INITRAMFS_COMPRESSION_NONE is not set
+# CONFIG_TARGET_INITRAMFS_COMPRESSION_GZIP is not set
+# CONFIG_TARGET_INITRAMFS_COMPRESSION_BZIP2 is not set
+# CONFIG_TARGET_INITRAMFS_COMPRESSION_LZMA is not set
+# CONFIG_TARGET_INITRAMFS_COMPRESSION_LZO is not set
+# CONFIG_TARGET_INITRAMFS_COMPRESSION_LZ4 is not set
+CONFIG_TARGET_INITRAMFS_COMPRESSION_XZ=y
+CONFIG_EXTERNAL_CPIO=""
+
+#
+# Root filesystem archives
+#
+# CONFIG_TARGET_ROOTFS_CPIOGZ is not set
+# CONFIG_TARGET_ROOTFS_TARGZ is not set
+
+#
+# Root filesystem images
+#
+CONFIG_TARGET_ROOTFS_EXT4FS=y
+CONFIG_TARGET_ROOTFS_ISO=y
+# CONFIG_TARGET_ROOTFS_JFFS2 is not set
+# CONFIG_TARGET_ROOTFS_SQUASHFS is not set
+CONFIG_TARGET_UBIFS_FREE_SPACE_FIXUP=y
+CONFIG_TARGET_UBIFS_JOURNAL_SIZE=""
+
+#
+# Image Options
+#
+CONFIG_X86_GRUB_IMAGES=y
+CONFIG_X86_GRUB_CONSOLE=y
+CONFIG_X86_GRUB_SERIAL="ttyS0"
+CONFIG_X86_GRUB_BAUDRATE=38400
+CONFIG_X86_GRUB_BOOTOPTS=""
+CONFIG_X86_GRUB_TIMEOUT="5"
+CONFIG_X86_VDI_IMAGES=y
+# CONFIG_X86_VMDK_IMAGES is not set
+# CONFIG_TARGET_IMAGES_PAD is not set
+CONFIG_TARGET_IMAGES_GZIP=y
+CONFIG_TARGET_KERNEL_PARTSIZE=8
+CONFIG_TARGET_ROOTFS_PARTNAME="/dev/sda2"
+CONFIG_TARGET_ROOTFS_PARTSIZE=64
+CONFIG_TARGET_ROOTFS_MAXINODE=6000
+CONFIG_TARGET_ROOTFS_RESERVED_PCT=0
+# CONFIG_TARGET_ROOTFS_INCLUDE_KERNEL is not set
+# CONFIG_TARGET_ROOTFS_INCLUDE_UIMAGE is not set
+# CONFIG_TARGET_ROOTFS_INCLUDE_ZIMAGE is not set
+# CONFIG_TARGET_ROOTFS_INCLUDE_FIT is not set
+
+#
+# Global build settings
+#
+# CONFIG_ALL is not set
+
+#
+# General build options
+#
+CONFIG_DISPLAY_SUPPORT=y
+# CONFIG_BUILD_PATENTED is not set
+# CONFIG_BUILD_NLS is not set
+# CONFIG_BUILD_STATIC_TOOLS is not set
+CONFIG_SHADOW_PASSWORDS=y
+CONFIG_CLEAN_IPKG=y
+# CONFIG_COLLECT_KERNEL_DEBUG is not set
+
+#
+# Kernel build options
+#
+CONFIG_KERNEL_DEBUG_FS=y
+# CONFIG_KERNEL_PERF_EVENTS is not set
+# CONFIG_KERNEL_PROFILING is not set
+CONFIG_KERNEL_KALLSYMS=y
+# CONFIG_KERNEL_FTRACE is not set
+CONFIG_KERNEL_DEBUG_KERNEL=y
+CONFIG_KERNEL_DEBUG_INFO=y
+# CONFIG_KERNEL_DYNAMIC_DEBUG is not set
+CONFIG_KERNEL_AIO=y
+# CONFIG_KERNEL_DIRECT_IO is not set
+CONFIG_KERNEL_MAGIC_SYSRQ=y
+CONFIG_KERNEL_COREDUMP=y
+CONFIG_KERNEL_ELF_CORE=y
+# CONFIG_KERNEL_PROVE_LOCKING is not set
+CONFIG_KERNEL_PRINTK_TIME=y
+# CONFIG_KERNEL_KEXEC is not set
+# CONFIG_USE_RFKILL is not set
+# CONFIG_KERNEL_CGROUPS is not set
+# CONFIG_KERNEL_NAMESPACES is not set
+# CONFIG_KERNEL_LXC_MISC is not set
+
+#
+# Package build options
+#
+# CONFIG_DEBUG is not set
+# CONFIG_IPV6 is not set
+# CONFIG_PKG_BUILD_PARALLEL is not set
+
+#
+# Stripping options
+#
+# CONFIG_NO_STRIP is not set
+# CONFIG_USE_STRIP is not set
+CONFIG_USE_SSTRIP=y
+# CONFIG_STRIP_KERNEL_EXPORTS is not set
+# CONFIG_USE_MKLIBS is not set
+CONFIG_USE_UCLIBCXX=y
+# CONFIG_USE_LIBSTDCXX is not set
+CONFIG_DEVEL=y
+# CONFIG_BROKEN is not set
+CONFIG_BINARY_FOLDER=""
+CONFIG_DOWNLOAD_FOLDER=""
+CONFIG_LOCALMIRROR="http://ezbox-pool.googlecode.com/svn/trunk"
+CONFIG_AUTOREBUILD=y
+CONFIG_BUILD_SUFFIX=""
+CONFIG_TARGET_ROOTFS_DIR=""
+# CONFIG_CCACHE is not set
+CONFIG_EXTERNAL_KERNEL_TREE=""
+CONFIG_KERNEL_GIT_CLONE_URI=""
+CONFIG_KERNEL_GIT_LOCAL_REPOSITORY=""
+CONFIG_BUILD_LOG=y
+# CONFIG_SRC_TREE_OVERRIDE is not set
+CONFIG_EXTRA_OPTIMIZATION="-fno-caller-saves"
+CONFIG_TARGET_OPTIONS=y
+CONFIG_TARGET_OPTIMIZATION="-O2 -pipe -march=i486 -fno-caller-saves"
+# CONFIG_EXTERNAL_TOOLCHAIN is not set
+CONFIG_NEED_TOOLCHAIN=y
+CONFIG_TOOLCHAINOPTS=y
+# CONFIG_EXTRA_TARGET_ARCH is not set
+
+#
+# Binary tools
+#
+CONFIG_BINUTILS_VERSION_2_22=y
+# CONFIG_BINUTILS_VERSION_2_23_1 is not set
+# CONFIG_BINUTILS_VERSION_LINARO is not set
+CONFIG_EXTRA_BINUTILS_CONFIG_OPTIONS=""
+CONFIG_BINUTILS_VERSION="2.22"
+
+#
+# Compiler
+#
+# CONFIG_GCC_USE_VERSION_4_8_0 is not set
+CONFIG_GCC_USE_VERSION_4_6_LINARO=y
+# CONFIG_GCC_USE_VERSION_4_8_LINARO is not set
+CONFIG_GCC_USE_GRAPHITE=y
+# CONFIG_GCC_USE_SYSTEM_PPL_CLOOG is not set
+CONFIG_EXTRA_GCC_CONFIG_OPTIONS=""
+# CONFIG_SSP_SUPPORT is not set
+# CONFIG_SJLJ_EXCEPTIONS is not set
+# CONFIG_INSTALL_LIBGCJ is not set
+# CONFIG_INSTALL_GFORTRAN is not set
+
+#
+# C Library
+#
+# CONFIG_LIBC_USE_EGLIBC is not set
+CONFIG_LIBC_USE_UCLIBC=y
+# CONFIG_LIBC_USE_MUSL is not set
+CONFIG_UCLIBC_USE_VERSION_0_9_33=y
+# CONFIG_UCLIBC_ENABLE_DEBUG is not set
+
+#
+# Debuggers
+#
+# CONFIG_GDB is not set
+# CONFIG_INSIGHT is not set
+CONFIG_USE_UCLIBC=y
+CONFIG_GCC_VERSION_4_6_LINARO=y
+CONFIG_GCC_VERSION="4.6-linaro"
+CONFIG_GCC_VERSION_4_6=y
+CONFIG_UCLIBC_VERSION="0.9.33.2"
+CONFIG_UCLIBC_VERSION_0_9_33=y
+CONFIG_LIBC="uClibc"
+CONFIG_LIBC_VERSION="0.9.33.2"
+CONFIG_TARGET_SUFFIX="uclibc"
+# CONFIG_SDK is not set
+CONFIG_MAKE_TOOLCHAIN=y
+# CONFIG_IMAGEOPT is not set
+# CONFIG_PREINITOPT is not set
+CONFIG_TARGET_PREINIT_SUPPRESS_STDERR=y
+CONFIG_TARGET_PREINIT_TIMEOUT=2
+# CONFIG_TARGET_PREINIT_SHOW_NETMSG is not set
+# CONFIG_TARGET_PREINIT_SUPPRESS_FAILSAFE_NETMSG is not set
+CONFIG_TARGET_PREINIT_IFNAME=""
+CONFIG_TARGET_PREINIT_IP="192.168.1.1"
+CONFIG_TARGET_PREINIT_NETMASK="255.255.255.0"
+CONFIG_TARGET_PREINIT_BROADCAST="192.168.1.255"
+# CONFIG_INITOPT is not set
+CONFIG_TARGET_INIT_PATH="/bin:/sbin:/usr/bin:/usr/sbin"
+CONFIG_TARGET_INIT_ENV=""
+CONFIG_TARGET_INIT_CMD="/sbin/init"
+CONFIG_TARGET_INIT_SUPPRESS_STDERR=y
+# CONFIG_VERSIONOPT is not set
+
+#
+# Package features
+#
+CONFIG_FEATURE_EZCFG_ezcfg-ssl-none=y
+# CONFIG_FEATURE_EZCFG_ezcfg-ssl-openssl is not set
+
+#
+# Base system
+#
+CONFIG_PACKAGE_busybox=y
+# CONFIG_BUSYBOX_CONFIG_FEATURE_MOUNT_NFS is not set
+CONFIG_PACKAGE_ezcfg=y
+
+#
+# Configuration
+#
+
+#
+# ezcfg Settings
+#
+CONFIG_EZCFG_EZBOX_DISTRO_KUAFU=y
+# CONFIG_EZCFG_EZBOX_DISTRO_HUANGDI is not set
+# CONFIG_EZCFG_EZBOX_DISTRO_JINGWEI is not set
+# CONFIG_EZCFG_EZBOX_DISTRO_QIAOCHUI is not set
+# CONFIG_EZCFG_EZBOX_DISTRO_LILOU is not set
+# CONFIG_EZCFG_EZBOX_DISTRO_FUXI is not set
+# CONFIG_EZCFG_EZBOX_DISTRO_ZHUANXU is not set
+# CONFIG_EZCFG_EZBOX_SYSUP is not set
+
+#
+# Network Interfaces
+#
+
+#
+# ezcfg Network Interfaces
+#
+CONFIG_EZCFG_EZBOX_ETH_LAN_NIC=y
+CONFIG_EZCFG_EZBOX_WIFI_LAN_NIC=y
+CONFIG_EZCFG_EZBOX_BR_LAN_NIC=y
+CONFIG_EZCFG_EZBOX_LAN_NIC=y
+CONFIG_EZCFG_EZBOX_WAN_NIC=y
+
+#
+# Utilities
+#
+
+#
+# ezcfg IGRS Utilities
+#
+CONFIG_PACKAGE_libc=y
+CONFIG_PACKAGE_libgcc=y
+CONFIG_PACKAGE_libpthread=y
+CONFIG_PACKAGE_librt=y
+# CONFIG_PACKAGE_libstdcpp is not set
+# CONFIG_PACKAGE_libthread-db is not set
+# CONFIG_PACKAGE_opkg is not set
+# CONFIG_PACKAGE_opkg-smime is not set
+
+#
+# Kernel modules
+#
+
+#
+# Block Devices
+#
+# CONFIG_PACKAGE_kmod-aoe is not set
+# CONFIG_PACKAGE_kmod-ata-core is not set
+# CONFIG_PACKAGE_kmod-block2mtd is not set
+# CONFIG_PACKAGE_kmod-dm is not set
+# CONFIG_PACKAGE_kmod-ide-core is not set
+# CONFIG_PACKAGE_kmod-libsas is not set
+# CONFIG_PACKAGE_kmod-loop is not set
+# CONFIG_PACKAGE_kmod-md-mod is not set
+# CONFIG_PACKAGE_kmod-mvsas is not set
+# CONFIG_PACKAGE_kmod-nbd is not set
+# CONFIG_PACKAGE_kmod-scsi-cdrom is not set
+# CONFIG_PACKAGE_kmod-scsi-core is not set
+# CONFIG_PACKAGE_kmod-scsi-generic is not set
+
+#
+# CAN Support
+#
+# CONFIG_PACKAGE_kmod-can is not set
+
+#
+# Cryptographic API modules
+#
+# CONFIG_PACKAGE_kmod-crypto-aes is not set
+# CONFIG_PACKAGE_kmod-crypto-arc4 is not set
+# CONFIG_PACKAGE_kmod-crypto-authenc is not set
+# CONFIG_PACKAGE_kmod-crypto-cbc is not set
+# CONFIG_PACKAGE_kmod-crypto-core is not set
+# CONFIG_PACKAGE_kmod-crypto-crc32c is not set
+# CONFIG_PACKAGE_kmod-crypto-deflate is not set
+# CONFIG_PACKAGE_kmod-crypto-des is not set
+# CONFIG_PACKAGE_kmod-crypto-ecb is not set
+# CONFIG_PACKAGE_kmod-crypto-hash is not set
+# CONFIG_PACKAGE_kmod-crypto-hmac is not set
+# CONFIG_PACKAGE_kmod-crypto-hw-geode is not set
+# CONFIG_PACKAGE_kmod-crypto-hw-hifn-795x is not set
+# CONFIG_PACKAGE_kmod-crypto-hw-padlock is not set
+# CONFIG_PACKAGE_kmod-crypto-hw-talitos is not set
+# CONFIG_PACKAGE_kmod-crypto-iv is not set
+# CONFIG_PACKAGE_kmod-crypto-manager is not set
+# CONFIG_PACKAGE_kmod-crypto-md4 is not set
+# CONFIG_PACKAGE_kmod-crypto-md5 is not set
+# CONFIG_PACKAGE_kmod-crypto-michael-mic is not set
+# CONFIG_PACKAGE_kmod-crypto-misc is not set
+# CONFIG_PACKAGE_kmod-crypto-null is not set
+# CONFIG_PACKAGE_kmod-crypto-ocf is not set
+# CONFIG_PACKAGE_kmod-crypto-pcompress is not set
+# CONFIG_PACKAGE_kmod-crypto-rng is not set
+# CONFIG_PACKAGE_kmod-crypto-sha1 is not set
+# CONFIG_PACKAGE_kmod-crypto-sha256 is not set
+# CONFIG_PACKAGE_kmod-crypto-test is not set
+# CONFIG_PACKAGE_kmod-crypto-user is not set
+# CONFIG_PACKAGE_kmod-crypto-wq is not set
+# CONFIG_PACKAGE_kmod-crypto-xts is not set
+
+#
+# Filesystems
+#
+# CONFIG_PACKAGE_kmod-fs-autofs4 is not set
+# CONFIG_PACKAGE_kmod-fs-btrfs is not set
+# CONFIG_PACKAGE_kmod-fs-cifs is not set
+# CONFIG_PACKAGE_kmod-fs-configfs is not set
+# CONFIG_PACKAGE_kmod-fs-exportfs is not set
+# CONFIG_PACKAGE_kmod-fs-ext4 is not set
+# CONFIG_PACKAGE_kmod-fs-hfs is not set
+# CONFIG_PACKAGE_kmod-fs-hfsplus is not set
+# CONFIG_PACKAGE_kmod-fs-isofs is not set
+# CONFIG_PACKAGE_kmod-fs-minix is not set
+# CONFIG_PACKAGE_kmod-fs-msdos is not set
+# CONFIG_PACKAGE_kmod-fs-nfs is not set
+# CONFIG_PACKAGE_kmod-fs-nfs-common is not set
+# CONFIG_PACKAGE_kmod-fs-nfsd is not set
+# CONFIG_PACKAGE_kmod-fs-ntfs is not set
+# CONFIG_PACKAGE_kmod-fs-reiserfs is not set
+# CONFIG_PACKAGE_kmod-fs-udf is not set
+# CONFIG_PACKAGE_kmod-fs-vfat is not set
+# CONFIG_PACKAGE_kmod-fs-xfs is not set
+# CONFIG_PACKAGE_kmod-fuse is not set
+
+#
+# FireWire support
+#
+# CONFIG_PACKAGE_kmod-firewire is not set
+
+#
+# Hardware Monitoring Support
+#
+CONFIG_PACKAGE_kmod-hwmon-core=y
+# CONFIG_PACKAGE_kmod-hwmon-adt7410 is not set
+# CONFIG_PACKAGE_kmod-hwmon-adt7475 is not set
+# CONFIG_PACKAGE_kmod-hwmon-gsc is not set
+# CONFIG_PACKAGE_kmod-hwmon-ina2xx is not set
+# CONFIG_PACKAGE_kmod-hwmon-lm63 is not set
+# CONFIG_PACKAGE_kmod-hwmon-lm75 is not set
+# CONFIG_PACKAGE_kmod-hwmon-lm77 is not set
+# CONFIG_PACKAGE_kmod-hwmon-lm85 is not set
+# CONFIG_PACKAGE_kmod-hwmon-lm90 is not set
+# CONFIG_PACKAGE_kmod-hwmon-lm92 is not set
+# CONFIG_PACKAGE_kmod-hwmon-lm95241 is not set
+# CONFIG_PACKAGE_kmod-hwmon-pc87360 is not set
+# CONFIG_PACKAGE_kmod-hwmon-sht21 is not set
+# CONFIG_PACKAGE_kmod-hwmon-vid is not set
+# CONFIG_PACKAGE_kmod-hwmon-w83627hf is not set
+
+#
+# I2C support
+#
+# CONFIG_PACKAGE_kmod-i2c-core is not set
+
+#
+# Input modules
+#
+# CONFIG_PACKAGE_kmod-acpi-button is not set
+# CONFIG_PACKAGE_kmod-hid is not set
+# CONFIG_PACKAGE_kmod-hid-generic is not set
+# CONFIG_PACKAGE_kmod-input-core is not set
+# CONFIG_PACKAGE_kmod-input-evdev is not set
+# CONFIG_PACKAGE_kmod-input-joydev is not set
+# CONFIG_PACKAGE_kmod-input-matrixkmap is not set
+# CONFIG_PACKAGE_kmod-input-polldev is not set
+
+#
+# LED modules
+#
+# CONFIG_PACKAGE_kmod-leds-net48xx is not set
+# CONFIG_PACKAGE_kmod-leds-wrap is not set
+# CONFIG_PACKAGE_kmod-ledtrig-default-on is not set
+# CONFIG_PACKAGE_kmod-ledtrig-gpio is not set
+# CONFIG_PACKAGE_kmod-ledtrig-heartbeat is not set
+# CONFIG_PACKAGE_kmod-ledtrig-morse is not set
+# CONFIG_PACKAGE_kmod-ledtrig-netdev is not set
+# CONFIG_PACKAGE_kmod-ledtrig-oneshot is not set
+# CONFIG_PACKAGE_kmod-ledtrig-timer is not set
+
+#
+# Libraries
+#
+# CONFIG_PACKAGE_kmod-lib-cordic is not set
+CONFIG_PACKAGE_kmod-lib-crc-ccitt=y
+# CONFIG_PACKAGE_kmod-lib-crc-itu-t is not set
+# CONFIG_PACKAGE_kmod-lib-crc16 is not set
+# CONFIG_PACKAGE_kmod-lib-crc32c is not set
+# CONFIG_PACKAGE_kmod-lib-crc7 is not set
+# CONFIG_PACKAGE_kmod-lib-crc8 is not set
+# CONFIG_PACKAGE_kmod-lib-lzo is not set
+# CONFIG_PACKAGE_kmod-lib-textsearch is not set
+# CONFIG_PACKAGE_kmod-lib-zlib is not set
+
+#
+# Native Language Support
+#
+# CONFIG_PACKAGE_kmod-nls-base is not set
+# CONFIG_PACKAGE_kmod-nls-cp1250 is not set
+# CONFIG_PACKAGE_kmod-nls-cp1251 is not set
+# CONFIG_PACKAGE_kmod-nls-cp437 is not set
+# CONFIG_PACKAGE_kmod-nls-cp775 is not set
+# CONFIG_PACKAGE_kmod-nls-cp850 is not set
+# CONFIG_PACKAGE_kmod-nls-cp852 is not set
+# CONFIG_PACKAGE_kmod-nls-cp866 is not set
+# CONFIG_PACKAGE_kmod-nls-iso8859-1 is not set
+# CONFIG_PACKAGE_kmod-nls-iso8859-13 is not set
+# CONFIG_PACKAGE_kmod-nls-iso8859-15 is not set
+# CONFIG_PACKAGE_kmod-nls-iso8859-2 is not set
+# CONFIG_PACKAGE_kmod-nls-koi8r is not set
+# CONFIG_PACKAGE_kmod-nls-utf8 is not set
+
+#
+# Netfilter Extensions
+#
+# CONFIG_PACKAGE_kmod-arptables is not set
+# CONFIG_PACKAGE_kmod-ebtables is not set
+# CONFIG_PACKAGE_kmod-ip6tables is not set
+# CONFIG_PACKAGE_kmod-ipt-conntrack is not set
+# CONFIG_PACKAGE_kmod-ipt-conntrack-extra is not set
+# CONFIG_PACKAGE_kmod-ipt-core is not set
+# CONFIG_PACKAGE_kmod-ipt-debug is not set
+# CONFIG_PACKAGE_kmod-ipt-extra is not set
+# CONFIG_PACKAGE_kmod-ipt-filter is not set
+# CONFIG_PACKAGE_kmod-ipt-hashlimit is not set
+# CONFIG_PACKAGE_kmod-ipt-ipopt is not set
+# CONFIG_PACKAGE_kmod-ipt-iprange is not set
+# CONFIG_PACKAGE_kmod-ipt-ipsec is not set
+# CONFIG_PACKAGE_kmod-ipt-led is not set
+# CONFIG_PACKAGE_kmod-ipt-nat is not set
+# CONFIG_PACKAGE_kmod-ipt-nat-extra is not set
+# CONFIG_PACKAGE_kmod-ipt-nat6 is not set
+# CONFIG_PACKAGE_kmod-ipt-nathelper is not set
+# CONFIG_PACKAGE_kmod-ipt-nathelper-extra is not set
+# CONFIG_PACKAGE_kmod-ipt-queue is not set
+# CONFIG_PACKAGE_kmod-ipt-tee is not set
+# CONFIG_PACKAGE_kmod-ipt-tproxy is not set
+# CONFIG_PACKAGE_kmod-ipt-u32 is not set
+# CONFIG_PACKAGE_kmod-ipt-ulog is not set
+# CONFIG_PACKAGE_kmod-nf-conntrack-netlink is not set
+# CONFIG_PACKAGE_kmod-nfnetlink is not set
+# CONFIG_PACKAGE_kmod-nfnetlink-log is not set
+# CONFIG_PACKAGE_kmod-nfnetlink-queue is not set
+
+#
+# Network Devices
+#
+CONFIG_PACKAGE_kmod-3c59x=y
+CONFIG_PACKAGE_kmod-8139cp=y
+CONFIG_PACKAGE_kmod-8139too=y
+# CONFIG_PACKAGE_kmod-atl1 is not set
+# CONFIG_PACKAGE_kmod-atl1c is not set
+# CONFIG_PACKAGE_kmod-atl1e is not set
+# CONFIG_PACKAGE_kmod-atl2 is not set
+CONFIG_PACKAGE_kmod-b44=y
+# CONFIG_PACKAGE_kmod-dm9000 is not set
+# CONFIG_PACKAGE_kmod-dummy is not set
+CONFIG_PACKAGE_kmod-e100=y
+CONFIG_PACKAGE_kmod-e1000=y
+CONFIG_PACKAGE_kmod-e1000e=y
+# CONFIG_PACKAGE_kmod-et131x is not set
+# CONFIG_PACKAGE_kmod-forcedeth is not set
+# CONFIG_PACKAGE_kmod-gigaset is not set
+# CONFIG_PACKAGE_kmod-hfcmulti is not set
+# CONFIG_PACKAGE_kmod-hfcpci is not set
+# CONFIG_PACKAGE_kmod-ifb is not set
+CONFIG_PACKAGE_kmod-libphy=y
+# CONFIG_PACKAGE_kmod-macvlan is not set
+CONFIG_PACKAGE_kmod-mii=y
+CONFIG_PACKAGE_kmod-natsemi=y
+CONFIG_PACKAGE_kmod-ne2k-pci=y
+# CONFIG_PACKAGE_kmod-of-mdio is not set
+CONFIG_PACKAGE_kmod-pcnet32=y
+# CONFIG_PACKAGE_kmod-r6040 is not set
+CONFIG_PACKAGE_kmod-r8169=y
+# CONFIG_PACKAGE_kmod-sis190 is not set
+CONFIG_PACKAGE_kmod-sis900=y
+# CONFIG_PACKAGE_kmod-skge is not set
+CONFIG_PACKAGE_kmod-sky2=y
+# CONFIG_PACKAGE_kmod-solos-pci is not set
+# CONFIG_PACKAGE_kmod-swconfig is not set
+# CONFIG_PACKAGE_kmod-switch-ip17xx is not set
+CONFIG_PACKAGE_kmod-tg3=y
+# CONFIG_PACKAGE_kmod-tulip is not set
+CONFIG_PACKAGE_kmod-via-rhine=y
+CONFIG_PACKAGE_kmod-via-velocity=y
+# CONFIG_PACKAGE_kmod-vmxnet3 is not set
+
+#
+# Network Support
+#
+# CONFIG_PACKAGE_kmod-8021q is not set
+# CONFIG_PACKAGE_kmod-appletalk is not set
+# CONFIG_PACKAGE_kmod-atm is not set
+# CONFIG_PACKAGE_kmod-ax25 is not set
+# CONFIG_PACKAGE_kmod-bonding is not set
+# CONFIG_PACKAGE_kmod-bridge is not set
+# CONFIG_PACKAGE_kmod-capi is not set
+# CONFIG_PACKAGE_kmod-gre is not set
+# CONFIG_PACKAGE_kmod-gre6 is not set
+# CONFIG_PACKAGE_kmod-ip6-tunnel is not set
+# CONFIG_PACKAGE_kmod-ipip is not set
+# CONFIG_PACKAGE_kmod-ipsec is not set
+# CONFIG_PACKAGE_kmod-iptunnel6 is not set
+# CONFIG_PACKAGE_kmod-ipv6 is not set
+# CONFIG_PACKAGE_kmod-isdn4linux is not set
+# CONFIG_PACKAGE_kmod-l2tp is not set
+# CONFIG_PACKAGE_kmod-l2tp-eth is not set
+# CONFIG_PACKAGE_kmod-l2tp-ip is not set
+# CONFIG_PACKAGE_kmod-llc is not set
+# CONFIG_PACKAGE_kmod-misdn is not set
+# CONFIG_PACKAGE_kmod-mp-alg is not set
+# CONFIG_PACKAGE_kmod-netem is not set
+# CONFIG_PACKAGE_kmod-pktgen is not set
+# CONFIG_PACKAGE_kmod-ppp is not set
+# CONFIG_PACKAGE_kmod-sched is not set
+# CONFIG_PACKAGE_kmod-sched-connmark is not set
+# CONFIG_PACKAGE_kmod-sched-core is not set
+# CONFIG_PACKAGE_kmod-sched-esfq is not set
+# CONFIG_PACKAGE_kmod-sctp is not set
+# CONFIG_PACKAGE_kmod-sit is not set
+# CONFIG_PACKAGE_kmod-slip is not set
+# CONFIG_PACKAGE_kmod-stp is not set
+CONFIG_PACKAGE_kmod-tun=y
+# CONFIG_PACKAGE_kmod-veth is not set
+
+#
+# Other modules
+#
+# CONFIG_PACKAGE_kmod-bcma is not set
+# CONFIG_PACKAGE_kmod-bluetooth is not set
+# CONFIG_PACKAGE_kmod-cpu-msr is not set
+# CONFIG_PACKAGE_kmod-cs5535-clockevt is not set
+# CONFIG_PACKAGE_kmod-cs5535-mfd is not set
+# CONFIG_PACKAGE_kmod-cs5535-mfgpt is not set
+# CONFIG_PACKAGE_kmod-eeprom-93cx6 is not set
+# CONFIG_PACKAGE_kmod-eeprom-at24 is not set
+# CONFIG_PACKAGE_kmod-eeprom-at25 is not set
+# CONFIG_PACKAGE_kmod-gpio-cs5535-new is not set
+# CONFIG_PACKAGE_kmod-gpio-nsc is not set
+# CONFIG_PACKAGE_kmod-gpio-nxp-74hc164 is not set
+# CONFIG_PACKAGE_kmod-gpio-pc8736x is not set
+# CONFIG_PACKAGE_kmod-gpio-scx200 is not set
+# CONFIG_PACKAGE_kmod-iio-core is not set
+# CONFIG_PACKAGE_kmod-ikconfig is not set
+# CONFIG_PACKAGE_kmod-mmc is not set
+# CONFIG_PACKAGE_kmod-mtdtests is not set
+# CONFIG_PACKAGE_kmod-nand is not set
+# CONFIG_PACKAGE_kmod-nandsim is not set
+CONFIG_PACKAGE_kmod-pps=y
+CONFIG_PACKAGE_kmod-ptp=y
+# CONFIG_PACKAGE_kmod-pwm is not set
+# CONFIG_PACKAGE_kmod-pwm-gpio is not set
+# CONFIG_PACKAGE_kmod-random-core is not set
+# CONFIG_PACKAGE_kmod-regmap is not set
+# CONFIG_PACKAGE_kmod-rtc-ds1672 is not set
+# CONFIG_PACKAGE_kmod-rtc-isl1208 is not set
+# CONFIG_PACKAGE_kmod-rtc-pcf2123 is not set
+# CONFIG_PACKAGE_kmod-rtc-pcf8563 is not set
+# CONFIG_PACKAGE_kmod-rtc-pt7c4338 is not set
+# CONFIG_PACKAGE_kmod-sdhci is not set
+# CONFIG_PACKAGE_kmod-serial-8250 is not set
+# CONFIG_PACKAGE_kmod-softdog is not set
+CONFIG_PACKAGE_kmod-ssb=y
+# CONFIG_PACKAGE_kmod-wdt-geode is not set
+# CONFIG_PACKAGE_kmod-wdt-sc520 is not set
+# CONFIG_PACKAGE_kmod-wdt-scx200 is not set
+# CONFIG_PACKAGE_kmod-zram is not set
+
+#
+# PCMCIA support
+#
+# CONFIG_PACKAGE_kmod-pcmcia-core is not set
+
+#
+# SPI Support
+#
+# CONFIG_PACKAGE_kmod-mmc-spi is not set
+# CONFIG_PACKAGE_kmod-spi-bitbang is not set
+# CONFIG_PACKAGE_kmod-spi-dev is not set
+
+#
+# Sound Support
+#
+# CONFIG_PACKAGE_kmod-sound-core is not set
+
+#
+# USB Support
+#
+# CONFIG_PACKAGE_kmod-usb-acm is not set
+# CONFIG_PACKAGE_kmod-usb-atm is not set
+# CONFIG_PACKAGE_kmod-usb-chipidea is not set
+# CONFIG_PACKAGE_kmod-usb-cm109 is not set
+# CONFIG_PACKAGE_kmod-usb-core is not set
+# CONFIG_PACKAGE_kmod-usb-dwc2 is not set
+# CONFIG_PACKAGE_kmod-usb-hid is not set
+# CONFIG_PACKAGE_kmod-usb-net is not set
+# CONFIG_PACKAGE_kmod-usb-ohci is not set
+# CONFIG_PACKAGE_kmod-usb-printer is not set
+# CONFIG_PACKAGE_kmod-usb-serial is not set
+# CONFIG_PACKAGE_kmod-usb-storage is not set
+# CONFIG_PACKAGE_kmod-usb-storage-extras is not set
+# CONFIG_PACKAGE_kmod-usb-test is not set
+# CONFIG_PACKAGE_kmod-usb-uhci is not set
+# CONFIG_PACKAGE_kmod-usb-wdm is not set
+# CONFIG_PACKAGE_kmod-usb-yealink is not set
+# CONFIG_PACKAGE_kmod-usb2 is not set
+# CONFIG_PACKAGE_kmod-usb2-pci is not set
+# CONFIG_PACKAGE_kmod-usbip is not set
+# CONFIG_PACKAGE_kmod-usbip-client is not set
+# CONFIG_PACKAGE_kmod-usbip-server is not set
+# CONFIG_PACKAGE_kmod-usbmon is not set
+
+#
+# Video Support
+#
+# CONFIG_PACKAGE_kmod-fb is not set
+# CONFIG_PACKAGE_kmod-fb-cfb-copyarea is not set
+# CONFIG_PACKAGE_kmod-fb-cfb-fillrect is not set
+# CONFIG_PACKAGE_kmod-fb-cfb-imgblt is not set
+# CONFIG_PACKAGE_kmod-video-core is not set
+
+#
+# Virtualization Support
+#
+
+#
+# W1 support
+#
+# CONFIG_PACKAGE_kmod-w1 is not set
+
+#
+# Wireless Drivers
+#
+# CONFIG_PACKAGE_kmod-net-airo is not set
+# CONFIG_PACKAGE_kmod-net-prism54 is not set
+# CONFIG_PACKAGE_kmod-net-zd1201 is not set
+
+#
+# Libraries
+#
+# CONFIG_PACKAGE_libltdl is not set
+CONFIG_PACKAGE_librpc=y
+
+#
+# Utilities
+#
+
+#
+# Boot Loaders
+#
+CONFIG_PACKAGE_grub2=y
+# CONFIG_PACKAGE_grub2-editenv is not set
+# CONFIG_PACKAGE_ldconfig is not set
+# CONFIG_PACKAGE_ldd is not set
+# CONFIG_PACKAGE_ocf-crypto-headers is not set

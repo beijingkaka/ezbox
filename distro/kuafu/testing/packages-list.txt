@@ -1,0 +1,3 @@
+# c:libs/gettext-full/gettext-full-0.18.1.1:libs/gettext-full
+# c:libs/libiconv-full/libiconv-full-1.11.1:libs/libiconv-full
+# c:libs/check/check-0.9.8:libs/check

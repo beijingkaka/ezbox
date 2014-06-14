@@ -1,0 +1,11 @@
+--- emc2-20110131/src/Makefile.inc.in	2011-02-04 08:31:20.740526510 +0800
++++ emc2-20110131/src/Makefile.inc.in	2011-02-04 08:31:50.348566577 +0800
+@@ -98,7 +98,7 @@
+ HAVE_NCURSES = @HAVE_NCURSES@
+ 
+ # readline support for halcmd
+-READLINE_LIBS =  @READLINE_LIBS@
++READLINE_LIBS =  @READLINE_LIBS@ @NCURSES_LIBS@
+ 
+ # flags for glib
+ GLIB_CFLAGS = @GLIB_CFLAGS@

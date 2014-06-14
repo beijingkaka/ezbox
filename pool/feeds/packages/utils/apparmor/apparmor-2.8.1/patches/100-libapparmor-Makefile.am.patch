@@ -1,0 +1,12 @@
+--- apparmor-2.8.1.orig/libraries/libapparmor/Makefile.am	2013-03-15 10:46:45.636311255 +0800
++++ apparmor-2.8.1/libraries/libapparmor/Makefile.am	2013-03-15 10:47:26.516309537 +0800
+@@ -2,7 +2,8 @@
+ NAME = libapparmor
+ SRCDIR = src
+ 
+-SUBDIRS = doc src swig testsuite
++#SUBDIRS = doc src swig testsuite
++SUBDIRS = src
+ 
+ REPO_VERSION=$(shell if [ -x /usr/bin/svn ] ; then \
+ 	/usr/bin/svn info . 2> /dev/null | grep "^Last Changed Rev:" | sed "s/^Last Changed Rev: //" ; \

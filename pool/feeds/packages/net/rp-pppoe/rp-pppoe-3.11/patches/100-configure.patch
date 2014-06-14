@@ -1,0 +1,11 @@
+--- a/src/configure
++++ b/src/configure
+@@ -4611,7 +4611,7 @@
+ $as_echo_n "checking packing order of bit fields... " >&6; }
+ if test "${rpppoe_cv_pack_bitfields+set}" != set ; then
+ if test "$cross_compiling" = yes; then :
+-  $ECHO "no defaults for cross-compiling"; exit 0
++  rpppoe_cv_pack_bitfields="$ac_cv_pack_bitfields"
+ else
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */

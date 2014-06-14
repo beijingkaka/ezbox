@@ -1,0 +1,16 @@
+--- linux-3.3.8.orig/kernel/crashlog.c	2013-02-02 15:17:09.344940298 +0800
++++ linux-3.3.8/kernel/crashlog.c	2013-02-02 15:24:31.496958629 +0800
+@@ -148,8 +148,11 @@
+ 		crashlog_printf("Modules:");
+ 		list_for_each_entry(m, crashlog_modules, list) {
+ 			crashlog_printf("\t%s@%p+%x", m->name,
+-			m->module_core, m->core_size,
+-			m->module_init, m->init_size);
++			m->module_core_rx, m->core_size_rx,
++			m->module_init_rx, m->init_size_rx);
++			crashlog_printf("\t%s@%p+%x", m->name,
++			m->module_core_rw, m->core_size_rw,
++			m->module_init_rw, m->init_size_rw);
+ 		}
+ 		crashlog_printf("\n");
+ 		first = false;

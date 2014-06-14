@@ -1,0 +1,11 @@
+diff -urNd mongrel2-1.7.5/tools/m2sh/src/mimetypes.csql mongrel2.git/tools/m2sh/src/mimetypes.csql
+--- mongrel2-1.7.5/tools/m2sh/src/mimetypes.csql	2011-06-23 00:25:12.000000000 +0800
++++ mongrel2.git/tools/m2sh/src/mimetypes.csql	2012-07-07 10:02:04.286324320 +0800
+@@ -668,6 +668,7 @@
+ "insert into mimetype (extension, mimetype) values ('.flo', 'application/vnd.micrografx.flo');\n"
+ "insert into mimetype (extension, mimetype) values ('.tgf', 'chemical/x-mdl-tgf');\n"
+ "insert into mimetype (extension, mimetype) values ('.tgz', 'application/x-gtar');\n"
++"insert into mimetype (extension, mimetype) values ('.gz', 'application/x-gzip');\n"
+ "insert into mimetype (extension, mimetype) values ('.lhs', 'text/x-literate-haskell');\n"
+ "insert into mimetype (extension, mimetype) values ('.msl', 'application/vnd.mobius.msl');\n"
+ "insert into mimetype (extension, mimetype) values ('.qxd', 'application/vnd.quark.quarkxpress');\n"

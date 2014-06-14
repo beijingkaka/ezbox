@@ -1,0 +1,12 @@
+# basic packages
+c:package/e2fsprogs/e2fsprogs-1.42.4:package/e2fsprogs
+c:package/libs/libpcap/libpcap-1.1.1:package/libs/libpcap
+c:package/libs/libreadline/libreadline-6.2:package/libs/libreadline
+c:package/libs/ncurses/ncurses-5.7:package/libs/ncurses
+c:package/libs/openssl/openssl-1.0.1c:package/libs/openssl
+c:package/libs/zlib/zlib-1.2.7:package/libs/zlib
+c:package/lua/lua-5.1.5:package/lua
+c:package/network/services/dnsmasq/dnsmasq-2.62:package/network/services/dnsmasq
+c:package/network/services/dropbear/dropbear-2012.55:package/network/services/dropbear
+c:package/network/services/ppp/ppp-2.4.5:package/network/services/ppp
+c:package/util-linux/util-linux-2.21.2:package/util-linux

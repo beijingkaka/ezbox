@@ -1,0 +1,38 @@
+--- tcl8.5.8/unix/Makefile.in	2011-06-10 09:06:49.378733795 +0800
++++ tcl8.5.8/unix/Makefile.in	2011-06-10 09:07:25.766730714 +0800
+@@ -42,7 +42,7 @@
+ TCL_LIBRARY		= @TCL_LIBRARY@
+ 
+ # Path to use at runtime to refer to LIB_INSTALL_DIR:
+-LIB_RUNTIME_DIR		= $(libdir)
++LIB_RUNTIME_DIR		= @TARGET_LIB_RUNTIME_DIR@
+ 
+ # Directory in which to install the program tclsh:
+ BIN_INSTALL_DIR		= $(INSTALL_ROOT)$(bindir)
+--- tcl8.5.8/unix/configure.in	2011-06-10 09:18:13.822746321 +0800
++++ tcl8.5.8/unix/configure.in	2011-06-10 09:39:54.158772028 +0800
+@@ -870,6 +870,15 @@
+ 
+ TCL_SHARED_BUILD=${SHARED_BUILD}
+ 
++#------------------------------------------------------------------------
++# check for runtime lib directory.
++#------------------------------------------------------------------------
++
++AC_ARG_WITH(target-lib-runtime-dir,
++    AC_HELP_STRING([--with-target-lib-runtime-dir],
++	[target runtime libs directory (default: $libdir)]),
++    [TARGET_LIB_RUNTIME_DIR=$withval], [TARGET_LIB_RUNTIME_DIR=$libdir])
++
+ AC_SUBST(TCL_VERSION)
+ AC_SUBST(TCL_MAJOR_VERSION)
+ AC_SUBST(TCL_MINOR_VERSION)
+@@ -931,6 +940,8 @@
+ AC_SUBST(DLTEST_LD)
+ AC_SUBST(DLTEST_SUFFIX)
+ 
++AC_SUBST(TARGET_LIB_RUNTIME_DIR)
++
+ dnl	Disable the automake-friendly normalization of LIBOBJS
+ dnl	performed by autoconf 2.53 and later.  It's not correct for us.
+ define([_AC_LIBOBJS_NORMALIZE],[])

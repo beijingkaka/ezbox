@@ -1,0 +1,31 @@
+Index: fltk-1.3.0/makeinclude.in
+===================================================================
+--- fltk-1.3.0.orig/makeinclude.in	2010-11-03 02:16:42.106000002 +0100
++++ fltk-1.3.0/makeinclude.in	2010-11-03 02:16:43.163002267 +0100
+@@ -59,6 +59,7 @@
+ # flags for C++ compiler:
+ ARCHFLAGS	= @ARCHFLAGS@
+ OPTIM		= @OPTIM@
++CPPFLAGS	= @CPPFLAGS@
+ CFLAGS		= $(OPTIM) @LARGEFILE@ @PTHREAD_FLAGS@ @CPPFLAGS@ @CFLAGS@
+ CXXFLAGS	= $(OPTIM) @LARGEFILE@ @PTHREAD_FLAGS@ @CPPFLAGS@ @CXXFLAGS@ $(FLTKFLAGS)
+ 
+@@ -148,15 +149,15 @@
+ 
+ .c.o:
+ 	echo Compiling $<...
+-	$(CC) -I.. $(ARCHFLAGS) @PNGINC@ @JPEGINC@ @ZLIBINC@ $(CFLAGS) -c $< -o $@
++	$(CC) $(CPPFLAGS) -I.. $(ARCHFLAGS) @PNGINC@ @JPEGINC@ @ZLIBINC@ $(CFLAGS) -c $< -o $@
+ 
+ .cxx.o:
+ 	echo Compiling $<...
+-	$(CXX) -I.. $(ARCHFLAGS) @PNGINC@ @JPEGINC@ @ZLIBINC@ $(CXXFLAGS) -c $< -o $@
++	$(CXX) $(CPPFLAGS) -I.. $(ARCHFLAGS) @PNGINC@ @JPEGINC@ @ZLIBINC@ $(CXXFLAGS) -c $< -o $@
+ 	
+ .mm.o:
+ 	echo Compiling $<...
+-	$(CXX) -I.. $(ARCHFLAGS) $(CXXFLAGS) -x objective-c++ -c $< -o $@
++	$(CXX) $(CPPFLAGS) -I.. $(ARCHFLAGS) $(CXXFLAGS) -x objective-c++ -c $< -o $@
+ 
+ 
+ .man.0 .man.1 .man.3 .man.6:

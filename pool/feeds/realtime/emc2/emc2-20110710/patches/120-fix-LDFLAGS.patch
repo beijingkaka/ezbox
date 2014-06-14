@@ -1,0 +1,31 @@
+--- emc2-20110131/src/Makefile	2011-02-05 07:45:25.807612276 +0800
++++ emc2-20110131/src/Makefile	2011-02-05 07:46:31.486986872 +0800
+@@ -173,13 +173,13 @@
+ # Compilation options.  Perhaps some of these should come from Makefile.inc?
+ OPT := -Os
+ DEBUG := -g -Wall
+-CFLAGS := $(INCLUDE) $(OPT) $(DEBUG) -DULAPI $(call cc-option, -Wdeclaration-after-statement) $(BITOPS_DEFINE)
+-CXXFLAGS := $(INCLUDE) $(OPT) $(DEBUG) -DULAPI $(BITOPS_DEFINE)
++CFLAGS := $(INCLUDE) $(TARGET_CFLAGS) $(OPT) $(DEBUG) -DULAPI $(call cc-option, -Wdeclaration-after-statement) $(BITOPS_DEFINE)
++CXXFLAGS := $(INCLUDE) $(TARGET_CXXFLAGS) $(OPT) $(DEBUG) -DULAPI $(BITOPS_DEFINE)
+ 
+ ifeq ($(RUN_IN_PLACE),yes)
+-LDFLAGS := -L$(LIB_DIR) -Wl,-rpath,$(LIB_DIR)
++LDFLAGS := -L$(LIB_DIR) $(TARGET_LDFLAGS) -Wl,-rpath,$(LIB_DIR)
+ else
+-LDFLAGS := -Wl,-rpath-link,../lib
++LDFLAGS := $(TARGET_LDFLAGS) -Wl,-rpath-link,../lib
+ endif
+ 
+ # Rules to make .d (dependency) files.
+--- emc2-20110710/src/Makefile	2011-02-05 07:45:25.807612276 +0800
++++ emc2-20110710/src/Makefile	2011-02-05 07:46:31.486986872 +0800
+@@ -163,7 +163,7 @@
+ INCLUDE := $(patsubst %,-I%, $(INCLUDES)) -I$(RTDIR)/include
+ 
+ ifneq ($(KERNELDIR),)
+-INCLUDE += -I$(KERNELDIR)/include
++#INCLUDE += -I$(KERNELDIR)/include
+ endif
+ 
+ ifeq ($(BUILD_PYTHON),yes)

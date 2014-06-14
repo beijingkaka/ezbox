@@ -1,0 +1,95 @@
+diff -urNd mongrel2-1.7.5/src/task.orig/asm.S mongrel2-1.7.5/src/task/asm.S
+--- mongrel2-1.7.5/src/task.orig/asm.S	2012-07-08 03:25:43.176302970 +0800
++++ mongrel2-1.7.5/src/task/asm.S	2012-07-08 03:21:52.048293388 +0800
+@@ -46,15 +46,23 @@
+ #define GET getmcontext
+ #endif
+ 
++#if defined(__linux__) && defined(__UCLIBC__)
++#if defined(__i386__)
++#define NEEDX86CONTEXT 1
++#define SET setmcontext
++#define GET getmcontext
++#endif
++#endif
++
+ #ifdef NEEDX86CONTEXT
+ .globl SET
+ SET:
+     movl    4(%esp), %eax
+ 
+-    movl    8(%eax), %fs
+-    movl    12(%eax), %es
+-    movl    16(%eax), %ds
+-    movl    76(%eax), %ss
++    mov    8(%eax), %fs
++    mov    12(%eax), %es
++    mov    16(%eax), %ds
++    mov    76(%eax), %ss
+     movl    20(%eax), %edi
+     movl    24(%eax), %esi
+     movl    28(%eax), %ebp
+@@ -71,10 +79,10 @@
+ GET:
+     movl    4(%esp), %eax
+ 
+-    movl    %fs, 8(%eax)
+-    movl    %es, 12(%eax)
+-    movl    %ds, 16(%eax)
+-    movl    %ss, 76(%eax)
++    mov    %fs, 8(%eax)
++    mov    %es, 12(%eax)
++    mov    %ds, 16(%eax)
++    mov    %ss, 76(%eax)
+     movl    %edi, 20(%eax)
+     movl    %esi, 24(%eax)
+     movl    %ebp, 28(%eax)
+diff -urNd mongrel2-1.7.5/src/task.orig/context.c mongrel2-1.7.5/src/task/context.c
+--- mongrel2-1.7.5/src/task.orig/context.c	2012-07-08 03:25:43.176302970 +0800
++++ mongrel2-1.7.5/src/task/context.c	2012-07-07 15:55:05.929433543 +0800
+@@ -40,6 +40,13 @@
+ #define	NEEDMIPSMAKECONTEXT
+ #endif
+ 
++#if defined(__linux__) && defined(__UCLIBC__)
++#if defined(__i386__)
++#define NEEDX86MAKECONTEXT
++#define NEEDSWAPCONTEXT
++#endif
++#endif
++
+ #ifdef NEEDPOWERMAKECONTEXT
+ void makecontext(ucontext_t *ucp, void (*func)(void), int argc, ...)
+ {
+diff -urNd mongrel2-1.7.5/src/task.orig/taskimpl.h mongrel2-1.7.5/src/task/taskimpl.h
+--- mongrel2-1.7.5/src/task.orig/taskimpl.h	2012-07-08 03:25:43.176302970 +0800
++++ mongrel2-1.7.5/src/task/taskimpl.h	2012-07-08 03:21:30.756292504 +0800
+@@ -16,6 +16,11 @@
+ #define USE_UCONTEXT 0
+ #endif
+ 
++#if defined(__linux__) && defined(__UCLIBC__)
++#undef USE_UCONTEXT
++#define USE_UCONTEXT 0
++#endif
++
+ #if defined(__APPLE__)
+ #include <AvailabilityMacros.h>
+ #if defined(MAC_OS_X_VERSION_10_5)
+@@ -116,6 +121,16 @@
+ int getmcontext(mcontext_t*);
+ void setmcontext(const mcontext_t*);
+ #define	setcontext(u)	setmcontext(&(u)->uc_mcontext)
++#define	getcontext(u)	getmcontext(&(u)->uc_mcontext)
++#endif
++
++#if defined(__UCLIBC__)
++#    if defined(__i386__)
++#        include "386-ucontext.h"
++#    endif
++int getmcontext(mcontext_t*);
++void setmcontext(const mcontext_t*);
++#define	setcontext(u)	setmcontext(&(u)->uc_mcontext)
+ #define	getcontext(u)	getmcontext(&(u)->uc_mcontext)
+ #endif
+ 

@@ -1,0 +1,36 @@
+--- mongrel2-1.7.5.orig/src/task/asm.S	2012-07-12 00:06:21.031186466 +0800
++++ mongrel2-1.7.5/src/task/asm.S	2012-07-12 00:08:15.155186928 +0800
+@@ -51,6 +51,10 @@
+ #define NEEDX86CONTEXT 1
+ #define SET setmcontext
+ #define GET getmcontext
++#elif defined(__x86_64__)
++#define NEEDAMD64CONTEXT 1
++#define SET setmcontext
++#define GET getmcontext
+ #endif
+ #endif
+ 
+--- mongrel2-1.7.5.orig/src/task/context.c	2012-07-12 00:11:37.711187446 +0800
++++ mongrel2-1.7.5/src/task/context.c	2012-07-12 00:12:11.751186515 +0800
+@@ -44,6 +44,9 @@
+ #if defined(__i386__)
+ #define NEEDX86MAKECONTEXT
+ #define NEEDSWAPCONTEXT
++#elif defined(__x86_64__)
++#define NEEDAMD64MAKECONTEXT
++#define NEEDSWAPCONTEXT
+ #endif
+ #endif
+ 
+--- mongrel2-1.7.5.orig/src/task/taskimpl.h	2012-07-12 00:13:43.459187592 +0800
++++ mongrel2-1.7.5/src/task/taskimpl.h	2012-07-12 00:14:28.219189237 +0800
+@@ -127,6 +127,8 @@
+ #if defined(__UCLIBC__)
+ #    if defined(__i386__)
+ #        include "386-ucontext.h"
++#    elif defined(__x86_64__)
++#        include "amd64-ucontext.h"
+ #    endif
+ int getmcontext(mcontext_t*);
+ void setmcontext(const mcontext_t*);

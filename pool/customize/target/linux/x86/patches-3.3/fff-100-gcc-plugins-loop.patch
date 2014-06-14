@@ -1,0 +1,27 @@
+--- linux-3.3.8.orig/Makefile	2013-02-02 01:36:06.193676475 +0800
++++ linux-3.3.8/Makefile	2013-02-02 01:39:06.029683930 +0800
+@@ -416,6 +416,15 @@
+ # To avoid any implicit rule to kick in, define an empty command.
+ scripts/basic/%: scripts_basic ;
+ 
++# Workaround for loopback calling
++PHONY += gcc_scripts_basic
++gcc_scripts_basic:
++	$(Q)$(MAKE) $(build)=scripts/basic
++	$(Q)rm -f .tmp_quiet_recordmcount
++
++# To avoid any implicit rule to kick in, define an empty command.
++scripts/basic/%: gcc_scripts_basic ;
++
+ PHONY += outputmakefile
+ # outputmakefile generates a Makefile in the output directory, if using a
+ # separate output directory. This allows convenient use of make in the
+@@ -595,7 +604,7 @@
+ GCC_PLUGINS_AFLAGS := $(KERNEXEC_PLUGIN_AFLAGS)
+ export CONSTIFY_PLUGIN STACKLEAK_PLUGIN KERNEXEC_PLUGIN CHECKER_PLUGIN SIZE_OVERFLOW_PLUGIN
+ ifeq ($(KBUILD_EXTMOD),)
+-gcc-plugins:
++gcc-plugins: gcc_scripts_basic
+ 	$(Q)$(MAKE) $(build)=tools/gcc
+ else
+ gcc-plugins: ;

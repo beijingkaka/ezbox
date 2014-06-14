@@ -1,0 +1,16 @@
+# basic packages
+c:package/e2fsprogs/e2fsprogs-1.41.12:package/e2fsprogs
+c:package/fuse/fuse-2.8.5:package/fuse
+c:package/network/services/dropbear/dropbear-0.53.1:package/network/services/dropbear
+c:package/network/services/hostapd/hostapd-20110527:package/network/services/hostapd
+c:package/network/utils/iproute2/iproute2-2.6.35:package/network/services/iproute2
+c:package/network/utils/iw/iw-0.9.22:package/network/utils/iw
+# kernel modules package
+l:package/kernel/modules/extra-block.mk:package/kernel/modules/extra-block.mk
+c:package/libs/libnl-tiny/libnl-tiny-0.1:package/libs/libnl-tiny
+c:package/libs/libreadline/libreadline-5.2:package/libs/libreadline
+c:package/mac80211/mac80211-2011-06-22:package/mac80211
+c:package/libs/ncurses/ncurses-5.7:package/libs/ncurses
+c:package/libs/openssl/openssl-1.0.1c:package/libs/openssl
+c:package/network/utils/wireless-tools/wireless-tools-29:package/network/utils/wireless-tools
+c:package/libs/zlib/zlib-1.2.7:package/libs/zlib

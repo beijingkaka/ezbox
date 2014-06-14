@@ -1,0 +1,231 @@
+--- /dev/null	2012-07-07 08:05:28.573795776 +0800
++++ mongrel2-1.7.5/src/task/mips-ucontext.h	2011-01-03 07:43:14.000000000 +0800
+@@ -0,0 +1,77 @@
++typedef struct mcontext mcontext_t;
++typedef struct ucontext ucontext_t;
++
++extern	int		swapcontext(ucontext_t*, const ucontext_t*);
++extern	void	makecontext(ucontext_t*, void(*)(), int, ...);
++
++/*
++ * Copyright (c) 1992, 1993
++ *	The Regents of the University of California.  All rights reserved.
++ *
++ * This code is derived from software contributed to Berkeley by
++ * Ralph Campbell.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ * 4. Neither the name of the University nor the names of its contributors
++ *    may be used to endorse or promote products derived from this software
++ *    without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
++ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
++ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
++ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
++ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
++ * SUCH DAMAGE.
++ *
++ *	@(#)ucontext.h	8.1 (Berkeley) 6/10/93
++ *	JNPR: ucontext.h,v 1.2 2007/08/09 11:23:32 katta
++ * $FreeBSD: src/sys/mips/include/ucontext.h,v 1.2 2010/01/10 19:50:24 imp Exp $
++ */
++
++struct	mcontext {
++	/*
++	 * These fields must match the corresponding fields in struct 
++	 * sigcontext which follow 'sc_mask'. That way we can support
++	 * struct sigcontext and ucontext_t at the same time.
++	 */
++	int		mc_onstack;		/* sigstack state to restore */
++	int		mc_pc;			/* pc at time of signal */
++	int		mc_regs[32];	/* processor regs 0 to 31 */
++    int		sr;             /* status register */
++    int		mullo, mulhi;	/* mullo and mulhi registers... */
++	int		mc_fpused;		/* fp has been used */
++	int		mc_fpregs[33];	/* fp regs 0 to 31 and csr */
++	int		mc_fpc_eir;		/* fp exception instruction reg */
++	void	*mc_tls;		/* pointer to TLS area */
++	int	__spare__[8];		/* XXX reserved */ 
++};
++
++struct ucontext {
++	/*
++	 * Keep the order of the first two fields. Also,
++	 * keep them the first two fields in the structure.
++	 * This way we can have a union with struct
++	 * sigcontext and ucontext_t. This allows us to
++	 * support them both at the same time.
++	 * note: the union is not defined, though.
++	 */
++	sigset_t	uc_sigmask;
++	mcontext_t	uc_mcontext;
++
++	struct __ucontext *uc_link;
++	stack_t		uc_stack;
++	int		uc_flags;
++	int		__spare__[4];
++};
+diff -urNd mongrel2-1.7.5.orig/src/task/asm.S mongrel2-1.7.5/src/task/asm.S
+--- mongrel2-1.7.5.orig/src/task/asm.S	2011-06-23 00:25:12.000000000 +0800
++++ mongrel2-1.7.5/src/task/asm.S	2012-07-07 13:23:11.141816855 +0800
+@@ -40,6 +40,12 @@
+ #define GET getmcontext
+ #endif
+ 
++#if defined(__linux__) && defined(__mips__)
++#define NEEDMIPSCONTEXT 1
++#define SET setmcontext
++#define GET getmcontext
++#endif
++
+ #ifdef NEEDX86CONTEXT
+ .globl SET
+ SET:
+@@ -264,3 +270,63 @@
+     ldr    r0, [r0]
+     mov    pc, lr
+ #endif
++
++#ifdef NEEDMIPSCONTEXT
++.globl GET
++GET:
++	sw	$4, 24($4)
++	sw	$5, 28($4)
++	sw	$6, 32($4)
++	sw	$7, 36($4)
++
++	sw	$16, 72($4)
++	sw	$17, 76($4)
++	sw	$18, 80($4)
++	sw	$19, 84($4)
++	sw	$20, 88($4)
++	sw	$21, 92($4)
++	sw	$22, 96($4)
++	sw	$23, 100($4)
++
++	sw	$28, 120($4)	/* gp */
++	sw	$29, 124($4)	/* sp */
++	sw	$30, 128($4)	/* fp */
++	sw	$31, 132($4)	/* ra */
++
++	xor	$2, $2, $2
++	j	$31
++	nop
++
++.globl SET
++SET:
++	lw	$16, 72($4)
++	lw	$17, 76($4)
++	lw	$18, 80($4)
++	lw	$19, 84($4)
++	lw	$20, 88($4)
++	lw	$21, 92($4)
++	lw	$22, 96($4)
++	lw	$23, 100($4)
++
++	lw	$28, 120($4)	/* gp */
++	lw	$29, 124($4)	/* sp */
++	lw	$30, 128($4)	/* fp */
++	
++	/* 
++	 * If we set $31 directly and j $31, 
++	 * we would loose the outer return address.
++	 * Use a temporary register, then.
++	 */
++	lw	$8, 132($4)		/* ra */
++		
++	/*  bug: not setting the pc causes a bus error */
++	lw	$25, 132($4)	/* pc */
++
++	lw	$5, 28($4)
++	lw	$6, 32($4)
++	lw	$7, 36($4)
++	lw	$4, 24($4)
++
++	j	$8
++	nop
++#endif
+diff -urNd mongrel2-1.7.5.orig/src/task/context.c mongrel2-1.7.5/src/task/context.c
+--- mongrel2-1.7.5.orig/src/task/context.c	2011-06-23 00:25:12.000000000 +0800
++++ mongrel2-1.7.5/src/task/context.c	2012-07-07 13:27:51.837805052 +0800
+@@ -35,6 +35,11 @@
+ #define NEEDARMMAKECONTEXT
+ #endif
+ 
++#if defined(__linux__) && defined(__mips__)
++#define	NEEDSWAPCONTEXT
++#define	NEEDMIPSMAKECONTEXT
++#endif
++
+ #ifdef NEEDPOWERMAKECONTEXT
+ void makecontext(ucontext_t *ucp, void (*func)(void), int argc, ...)
+ {
+@@ -109,6 +114,23 @@
+ }
+ #endif
+ 
++#ifdef NEEDMIPSMAKECONTEXT
++void
++makecontext(ucontext_t *uc, void (*fn)(void), int argc, ...)
++{
++	int i, *sp;
++	va_list arg;
++	
++	va_start(arg, argc);
++	sp = (int*)uc->uc_stack.ss_sp+uc->uc_stack.ss_size/4;
++	for(i=0; i<4 && i<argc; i++)
++		uc->uc_mcontext.mc_regs[i+4] = va_arg(arg, int);
++	va_end(arg);
++	uc->uc_mcontext.mc_regs[29] = (int)sp;
++	uc->uc_mcontext.mc_regs[31] = (int)fn;
++}
++#endif
++
+ #ifdef NEEDSWAPCONTEXT
+ int swapcontext(ucontext_t *oucp, const ucontext_t *ucp)
+ {
+@@ -120,3 +142,4 @@
+ }
+ #endif
+ 
++ 
+diff -urNd mongrel2-1.7.5.orig/src/task/taskimpl.h mongrel2-1.7.5/src/task/taskimpl.h
+--- mongrel2-1.7.5.orig/src/task/taskimpl.h	2011-06-23 00:25:12.000000000 +0800
++++ mongrel2-1.7.5/src/task/taskimpl.h	2012-07-07 13:30:52.333797458 +0800
+@@ -11,7 +11,7 @@
+ 
+ #define USE_UCONTEXT 1
+ 
+-#if defined(__OpenBSD__)
++#if defined(__OpenBSD__) || defined(__mips__)
+ #undef USE_UCONTEXT
+ #define USE_UCONTEXT 0
+ #endif
+@@ -111,6 +111,14 @@
+ #define    getcontext(u)    getmcontext((void *)&((u)->uc_mcontext.arm_r0))
+ #endif
+ 
++#if defined(__mips__)
++#include "mips-ucontext.h"
++int getmcontext(mcontext_t*);
++void setmcontext(const mcontext_t*);
++#define	setcontext(u)	setmcontext(&(u)->uc_mcontext)
++#define	getcontext(u)	getmcontext(&(u)->uc_mcontext)
++#endif
++
+ typedef struct Context Context;
+ 
+ enum

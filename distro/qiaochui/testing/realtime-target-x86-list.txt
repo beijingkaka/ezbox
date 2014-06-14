@@ -1,0 +1,12 @@
+# target patches
+# l:target/linux/x86/patches-2.6.32/1100-adeos-ipipe-2.6.32.11-x86-2.6-03.patch:target/linux/x86/patches-2.6.32/1100-adeos-ipipe-2.6.32.11-x86-2.6-03.patch
+# l:target/linux/x86/patches-2.6.32/1100-adeos-ipipe-2.6.32.20-x86-2.7-03.patch:target/linux/x86/patches-2.6.32/1100-adeos-ipipe-2.6.32.20-x86-2.7-03.patch
+l:target/linux/x86/patches-2.6.32/1100-adeos-ipipe-2.6.32.32-x86-2.7-03.patch:target/linux/x86/patches-2.6.32/1100-adeos-ipipe-2.6.32.32-x86-2.7-03.patch
+# l:target/linux/x86/patches-2.6.32/1110-rtai-hal-2.6.32.11-x86-2.6-03.patch:target/linux/x86/patches-2.6.32/1110-rtai-hal-2.6.32.11-x86-2.6-03.patch
+# l:target/linux/x86/patches-2.6.32/1110-rtai-hal-2.6.32.20-x86-2.7-03.patch:target/linux/x86/patches-2.6.32/1110-rtai-hal-2.6.32.20-x86-2.7-03.patch
+l:target/linux/x86/patches-2.6.32/1110-rtai-hal-2.6.32.32-x86-2.7-03.patch:target/linux/x86/patches-2.6.32/1110-rtai-hal-2.6.32.32-x86-2.7-03.patch
+l:target/linux/x86/patches-2.6.37/1100-adeos-ipipe-2.6.37.6-x86-2.9-02.patch:target/linux/x86/patches-2.6.37/1100-adeos-ipipe-2.6.37.6-x86-2.9-02.patch
+l:target/linux/x86/patches-2.6.37/1110-rtai-hal-2.6.37.6-x86-2.9-02.patch:target/linux/x86/patches-2.6.37/1110-rtai-hal-2.6.37.6-x86-2.9-02.patch
+l:target/linux/x86/config-default:target/linux/x86/config-default
+l:target/linux/x86/generic/config-default:target/linux/x86/generic/config-default
+l:target/linux/x86/Makefile:target/linux/x86/Makefile

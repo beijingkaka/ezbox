@@ -1,0 +1,22 @@
+--- emc2-20110131/src/configure.in	2011-03-30 12:47:43.656639838 +0800
++++ emc2-20110131/src/configure.in	2011-03-30 12:51:22.229639867 +0800
+@@ -1262,9 +1262,18 @@
+ 
+ # if you don't have nls tools, allow a way out!
+ 
++AC_MSG_CHECKING(for Native Language support)
+ AC_ARG_ENABLE(nls,
+               [  --disable-nls           don't use NLS],
+-              USE_NLS=no, USE_NLS=yes)
++              [
++          	case "$enableval" in
++         	Y*|y*)
++         	    USE_NLS=yes ;;
++          	*)
++         	    USE_NLS=no ;;
++          	esac
++              ],
++              [USE_NLS=yes])
+ AC_SUBST(USE_NLS)
+ 
+ if test "$USE_NLS" = "yes"; then

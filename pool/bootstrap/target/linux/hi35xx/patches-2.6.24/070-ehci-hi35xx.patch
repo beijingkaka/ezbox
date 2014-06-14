@@ -1,0 +1,323 @@
+diff -urNd linux-2.6.24/drivers/usb/host/ehci-hcd.c linux-2.6.24-hi3515/drivers/usb/host/ehci-hcd.c
+--- linux-2.6.24/drivers/usb/host/ehci-hcd.c	2008-01-25 06:58:37.000000000 +0800
++++ linux-2.6.24-hi3515/drivers/usb/host/ehci-hcd.c	2010-03-16 10:41:13.000000000 +0800
+@@ -964,11 +964,46 @@
+ #define	PLATFORM_DRIVER		ehci_ppc_soc_driver
+ #endif
+ 
++#include "ehci-hi3515v100.c"
++#define	PLATFORM_DRIVER		ehci_hcd_hi3515v100_driver
++
+ #if !defined(PCI_DRIVER) && !defined(PLATFORM_DRIVER) && \
+     !defined(PS3_SYSTEM_BUS_DRIVER)
+ #error "missing bus glue for ehci-hcd"
+ #endif
+ 
++static struct resource ehci_res[] = {
++	[0] = {
++		.start = REG_BASE_EHCI,
++		.end   = REG_BASE_EHCI + REG_EHCI_IOSIZE - 1,
++		.flags = IORESOURCE_MEM,
++	},
++	[1] = {
++		.start = INTNR_EHCI,
++		.end   = INTNR_EHCI,
++		.flags = IORESOURCE_IRQ,
++	},
++};
++
++static void usb_ehci_platdev_release (struct device *dev)
++{
++	/* These don't need to do anything because the pdev structures are
++	 * statically allocated. */
++}
++
++static struct platform_device ehci_platdev= {
++	.name	= EHCI_DEV_NAME,
++	.id	= 0,
++	.dev	= {
++		.platform_data	= NULL,
++		.dma_mask = (u64*)~0,
++		.coherent_dma_mask = (u64)~0,
++		.release = usb_ehci_platdev_release,
++	},
++	.num_resources = ARRAY_SIZE(ehci_res),
++	.resource	= ehci_res,
++};
++
+ static int __init ehci_hcd_init(void)
+ {
+ 	int retval = 0;
+@@ -1007,6 +1042,21 @@
+ 	}
+ #endif
+ 
++	retval = platform_device_register(&ehci_platdev);
++	if (retval < 0) {
++		printk("%s->%d, platform_device_register fail.\n", __FUNCTION__, __LINE__);
++#ifdef PLATFORM_DRIVER
++		platform_driver_unregister(&PLATFORM_DRIVER);
++#endif
++#ifdef PCI_DRIVER
++		pci_unregister_driver(&PCI_DRIVER);
++#endif
++#ifdef PS3_SYSTEM_BUS_DRIVER
++		ps3_ehci_driver_unregister(&PS3_SYSTEM_BUS_DRIVER);
++#endif
++		return retval;
++	}
++
+ 	return retval;
+ }
+ module_init(ehci_hcd_init);
+@@ -1022,6 +1072,7 @@
+ #ifdef PS3_SYSTEM_BUS_DRIVER
+ 	ps3_ehci_driver_unregister(&PS3_SYSTEM_BUS_DRIVER);
+ #endif
++
++	platform_device_unregister(&ehci_platdev);
+ }
+ module_exit(ehci_hcd_cleanup);
+-
+diff -urNd linux-2.6.24/drivers/usb/host/ehci-hi3515v100.c linux-2.6.24-hi3515/drivers/usb/host/ehci-hi3515v100.c
+--- linux-2.6.24/drivers/usb/host/ehci-hi3515v100.c	1970-01-01 08:00:00.000000000 +0800
++++ linux-2.6.24-hi3515/drivers/usb/host/ehci-hi3515v100.c	2010-03-16 10:41:13.000000000 +0800
+@@ -0,0 +1,238 @@
++/*
++ * EHCI HCD (Host Controller Driver) for USB.
++ *
++ * This file is licenced under the GPL.
++ */
++#include <linux/platform_device.h>
++
++#define EHCI_DEV_NAME	"hi3515v100-ehci"
++#define REG_BASE_EHCI	0x100b0000
++#define REG_EHCI_IOSIZE	PAGE_ALIGN(0x10000)
++#define INTNR_EHCI	23
++
++extern int usb_disabled(void);
++
++/*-------------------------------------------------------------------------*/
++
++static void hi3515v100_start_ehc(struct platform_device *dev)
++{
++	pr_debug(__FILE__ ": starting hi3515v100 EHCI USB Controller\n");
++#if 0
++	/* write HW defaults again in case Yamon cleared them */
++	if (au_readl(USB_HOST_CONFIG) == 0) {
++		au_writel(0x00d02000, USB_HOST_CONFIG);
++		au_readl(USB_HOST_CONFIG);
++		udelay(1000);
++	}
++	/* enable host controller */
++	au_writel(USBH_ENABLE_CE | au_readl(USB_HOST_CONFIG), USB_HOST_CONFIG);
++	au_readl(USB_HOST_CONFIG);
++	udelay(1000);
++	au_writel(USBH_ENABLE_INIT | au_readl(USB_HOST_CONFIG),
++		  USB_HOST_CONFIG);
++	au_readl(USB_HOST_CONFIG);
++	udelay(1000);
++#endif
++	pr_debug(__FILE__ ": Clock to USB host has been enabled\n");
++}
++
++static void hi3515v100_stop_ehc(struct platform_device *dev)
++{
++	pr_debug(__FILE__ ": stopping hi3515v100 EHCI USB Controller\n");
++#if 0
++	/* Disable mem */
++	au_writel(~USBH_DISABLE & au_readl(USB_HOST_CONFIG), USB_HOST_CONFIG);
++	udelay(1000);
++	/* Disable clock */
++	au_writel(~USB_MCFG_EHCCLKEN & au_readl(USB_HOST_CONFIG),
++		  USB_HOST_CONFIG);
++	au_readl(USB_HOST_CONFIG);
++#endif
++}
++
++/*-------------------------------------------------------------------------*/
++
++/* configure so an HC device and id are always provided */
++/* always called with process context; sleeping is OK */
++
++/**
++ * usb_ehci_hi3515v100_probe - initialize h2v100-based HCDs
++ * Context: !in_interrupt()
++ *
++ * Allocates basic resources for this USB host controller, and
++ * then invokes the start() method for the HCD associated with it
++ * through the hotplug entry's driver_data.
++ *
++ */
++int usb_ehci_hi3515v100_probe(const struct hc_driver *driver,
++			  struct usb_hcd **hcd_out, struct platform_device *dev)
++{
++	int retval;
++	struct usb_hcd *hcd;
++	struct ehci_hcd *ehci;
++
++	hi3515v100_start_ehc(dev);
++
++	if (dev->resource[1].flags != IORESOURCE_IRQ) {
++		pr_debug("resource[1] is not IORESOURCE_IRQ");
++		retval = -ENOMEM;
++	}
++	hcd = usb_create_hcd(driver, &dev->dev, EHCI_DEV_NAME);
++	if (!hcd)
++		return -ENOMEM;
++	hcd->rsrc_start = dev->resource[0].start;
++	hcd->rsrc_len = dev->resource[0].end - dev->resource[0].start + 1;
++
++	if (!request_mem_region(hcd->rsrc_start, hcd->rsrc_len, hcd_name)) {
++		pr_debug("request_mem_region failed");
++		retval = -EBUSY;
++		goto err1;
++	}
++
++	hcd->regs = ioremap(hcd->rsrc_start, hcd->rsrc_len);
++	if (!hcd->regs) {
++		pr_debug("ioremap failed");
++		retval = -ENOMEM;
++		goto err2;
++	}
++
++	ehci = hcd_to_ehci(hcd);
++	ehci->caps = hcd->regs;
++	ehci->regs = hcd->regs + HC_LENGTH(readl(&ehci->caps->hc_capbase));
++	/* cache this readonly data; minimize chip reads */
++	ehci->hcs_params = readl(&ehci->caps->hcs_params);
++
++	/* ehci_hcd_init(hcd_to_ehci(hcd)); */
++
++	retval = usb_add_hcd(hcd, dev->resource[1].start, IRQF_DISABLED | IRQF_SHARED);
++	if (retval == 0)
++		return retval;
++
++	hi3515v100_stop_ehc(dev);
++	iounmap(hcd->regs);
++err2:
++	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
++err1:
++	usb_put_hcd(hcd);
++	return retval;
++}
++
++/* may be called without controller electrically present */
++/* may be called with controller, bus, and devices active */
++
++/**
++ * usb_ehci_hcd_h2v100_remove - shutdown processing for h2v100-based HCDs
++ * @dev: USB Host Controller being removed
++ * Context: !in_interrupt()
++ *
++ * Reverses the effect of usb_ehci_hcd_h2v100_probe(), first invoking
++ * the HCD's stop() method.  It is always called from a thread
++ * context, normally "rmmod", "apmd", or something similar.
++ *
++ */
++void usb_ehci_hi3515v100_remove(struct usb_hcd *hcd, struct platform_device *dev)
++{
++	usb_remove_hcd(hcd);
++	iounmap(hcd->regs);
++	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
++	usb_put_hcd(hcd);
++	hi3515v100_stop_ehc(dev);
++}
++
++/*-------------------------------------------------------------------------*/
++
++static const struct hc_driver ehci_hi3515v100_hc_driver = {
++	.description = hcd_name,
++	.product_desc = EHCI_DEV_NAME,
++	.hcd_priv_size = sizeof(struct ehci_hcd),
++
++	/*
++	 * generic hardware linkage
++	 */
++	.irq = ehci_irq,
++	.flags = HCD_MEMORY | HCD_USB2,
++
++	/*
++	 * basic lifecycle operations
++	 *
++	 * FIXME -- ehci_init() doesn't do enough here.
++	 * See ehci-ppc-soc for a complete implementation.
++	 */
++	.reset = ehci_init,
++	.start = ehci_run,
++	.stop = ehci_stop,
++	.shutdown = ehci_shutdown,
++
++	/*
++	 * managing i/o requests and associated device resources
++	 */
++	.urb_enqueue = ehci_urb_enqueue,
++	.urb_dequeue = ehci_urb_dequeue,
++	.endpoint_disable = ehci_endpoint_disable,
++
++	/*
++	 * scheduling support
++	 */
++	.get_frame_number = ehci_get_frame,
++
++	/*
++	 * root hub support
++	 */
++	.hub_status_data = ehci_hub_status_data,
++	.hub_control = ehci_hub_control,
++	.bus_suspend = ehci_bus_suspend,
++	.bus_resume = ehci_bus_resume,
++};
++
++/*-------------------------------------------------------------------------*/
++
++static int ehci_hcd_hi3515v100_drv_probe(struct platform_device *pdev)
++{
++	struct usb_hcd *hcd = NULL;
++	int ret;
++
++	pr_debug("In ehci_hcd_hi3515v100_drv_probe\n");
++
++	if (usb_disabled())
++		return -ENODEV;
++
++	ret = usb_ehci_hi3515v100_probe(&ehci_hi3515v100_hc_driver, &hcd, pdev);
++	return ret;
++}
++
++static int ehci_hcd_hi3515v100_drv_remove(struct platform_device *pdev)
++{
++	struct usb_hcd *hcd = platform_get_drvdata(pdev);
++
++	usb_ehci_hi3515v100_remove(hcd, pdev);
++	return 0;
++}
++
++ /*TBD*/
++/*static int ehci_hcd_hi3515v100_drv_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct usb_hcd *hcd = dev_get_drvdata(dev);
++
++	return 0;
++}
++static int ehci_hcd_hi3515v100_drv_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct usb_hcd *hcd = dev_get_drvdata(dev);
++
++	return 0;
++}
++*/
++MODULE_ALIAS(EHCI_DEV_NAME);
++static struct platform_driver ehci_hcd_hi3515v100_driver = {
++	.probe = ehci_hcd_hi3515v100_drv_probe,
++	.remove = ehci_hcd_hi3515v100_drv_remove,
++	.shutdown = usb_hcd_platform_shutdown,
++	/*.suspend      = ehci_hcd_hi3515v100_drv_suspend, */
++	/*.resume       = ehci_hcd_hi3515v100_drv_resume, */
++	.driver = {
++		.name = EHCI_DEV_NAME,
++		.bus = &platform_bus_type
++	}
++};

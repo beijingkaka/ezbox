@@ -1,0 +1,38 @@
+--- tk8.5.8/unix/Makefile.in	2011-06-08 12:57:30.527654002 +0800
++++ tk8.5.8/unix/Makefile.in	2011-06-08 12:59:14.059653622 +0800
+@@ -52,7 +52,7 @@
+ TK_LIBRARY		= @TK_LIBRARY@
+ 
+ # Path to use at runtime to refer to LIB_INSTALL_DIR:
+-LIB_RUNTIME_DIR		= $(libdir)
++LIB_RUNTIME_DIR		= @TARGET_LIB_RUNTIME_DIR@
+ 
+ # Directory in which to install the program wish:
+ BIN_INSTALL_DIR		= $(INSTALL_ROOT)$(bindir)
+--- tk8.5.8/unix/configure.in	2011-06-10 09:49:07.399728892 +0800
++++ tk8.5.8/unix/configure.in	2011-06-10 09:53:31.058749136 +0800
+@@ -748,6 +748,15 @@
+ 
+ TK_SHARED_BUILD=${SHARED_BUILD}
+ 
++#------------------------------------------------------------------------
++# check for runtime lib directory.
++#------------------------------------------------------------------------
++
++AC_ARG_WITH(target-lib-runtime-dir,
++    AC_HELP_STRING([--with-target-lib-runtime-dir],
++	[target runtime libs directory (default: $libdir)]),
++    [TARGET_LIB_RUNTIME_DIR=$withval], [TARGET_LIB_RUNTIME_DIR=$libdir])
++
+ AC_SUBST(TK_VERSION)
+ AC_SUBST(TK_MAJOR_VERSION)
+ AC_SUBST(TK_MINOR_VERSION)
+@@ -800,6 +809,8 @@
+ AC_SUBST(REZ)
+ AC_SUBST(REZ_FLAGS)
+ 
++AC_SUBST(TARGET_LIB_RUNTIME_DIR)
++
+ AC_CONFIG_FILES([
+     Makefile:../unix/Makefile.in
+     tkConfig.sh:../unix/tkConfig.sh.in

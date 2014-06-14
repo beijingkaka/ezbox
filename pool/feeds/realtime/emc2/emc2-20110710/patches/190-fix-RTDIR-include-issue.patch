@@ -1,0 +1,10 @@
+--- emc2-20110530/src/configure.in	2011-07-10 01:24:48.310266288 +0800
++++ emc2-20110530/src/configure.in	2011-07-10 01:34:45.320243785 +0800
+@@ -498,6 +498,7 @@
+ AC_SUBST([DEFAULT_NMLFILE])
+ AC_DEFINE_UNQUOTED([EMC2_DEFAULT_NMLFILE], "$DEFAULT_NMLFILE", [Default nml file])
+ AC_DEFINE_UNQUOTED([EMC2_DEFAULT_TOOLTABLE], "$DEFAULT_TOOLTABLE", [Default nml file])
++AC_DEFINE_UNQUOTED([RTDIR], "$MODULE_DIR", [Directory of the installed realtime system])
+ 
+ ##############################################################################
+ # Subsection 3.4 - define default dirs, these get used in a lot of places    #

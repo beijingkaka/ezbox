@@ -1,0 +1,60 @@
+diff -urNd linux-2.6.24/drivers/scsi/scsi_ioctl.c linux-2.6.24-hi3515/drivers/scsi/scsi_ioctl.c
+--- linux-2.6.24/drivers/scsi/scsi_ioctl.c	2008-01-25 06:58:37.000000000 +0800
++++ linux-2.6.24-hi3515/drivers/scsi/scsi_ioctl.c	2010-03-16 10:41:01.000000000 +0800
+@@ -25,6 +25,9 @@
+ 
+ #include "scsi_logging.h"
+ 
++#include "scsi.h"
++#include <scsi/scsi_host.h>
++#include <linux/libata.h>
+ #define NORMAL_RETRIES			5
+ #define IOCTL_NORMAL_TIMEOUT			(10 * HZ)
+ 
+@@ -256,6 +259,22 @@
+ 				     START_STOP_TIMEOUT, NORMAL_RETRIES);
+         case SCSI_IOCTL_GET_PCI:
+                 return scsi_ioctl_get_pci(sdev, arg);
++	case SCSI_IOCTL_GET_PHY_STATE: {
++		        struct ata_port *sata_ap;
++			u32 port_phy_state;
++
++			sata_ap = *(struct ata_port **)&sdev->host->hostdata[0];
++			if(ata_link_online(&(sata_ap->link))){
++				port_phy_state = 1;
++			}
++			else{
++				port_phy_state = 0;
++			}
++
++			if (copy_to_user(arg, &port_phy_state, sizeof(port_phy_state)))
++				return -EFAULT;
++		}
++		return 0;
+ 	default:
+ 		if (sdev->host->hostt->ioctl)
+ 			return sdev->host->hostt->ioctl(sdev, cmd, arg);
+diff -urNd linux-2.6.24/drivers/scsi/sd.c linux-2.6.24-hi3515/drivers/scsi/sd.c
+--- linux-2.6.24/drivers/scsi/sd.c	2008-01-25 06:58:37.000000000 +0800
++++ linux-2.6.24-hi3515/drivers/scsi/sd.c	2010-03-16 10:41:02.000000000 +0800
+@@ -708,6 +708,7 @@
+ 	switch (cmd) {
+ 		case SCSI_IOCTL_GET_IDLUN:
+ 		case SCSI_IOCTL_GET_BUS_NUMBER:
++		case SCSI_IOCTL_GET_PHY_STATE: 
+ 			return scsi_ioctl(sdp, cmd, p);
+ 		default:
+ 			error = scsi_cmd_ioctl(filp, disk->queue, disk, cmd, p);
+diff -urNd linux-2.6.24/include/scsi/scsi.h linux-2.6.24-hi3515/include/scsi/scsi.h
+--- linux-2.6.24/include/scsi/scsi.h	2008-01-25 06:58:37.000000000 +0800
++++ linux-2.6.24-hi3515/include/scsi/scsi.h	2010-03-16 10:41:03.000000000 +0800
+@@ -426,6 +426,9 @@
+ /* Used to obtain the PCI location of a device */
+ #define SCSI_IOCTL_GET_PCI		0x5387
+ 
++/* Used to obtain PHY State of a device for hisilicon */
++ #define SCSI_IOCTL_GET_PHY_STATE        0x5390
++
+ /* Pull a u32 out of a SCSI message (using BE SCSI conventions) */
+ static inline __u32 scsi_to_u32(__u8 *ptr)
+ {

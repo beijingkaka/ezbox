@@ -1,0 +1,29 @@
+--- lgstring-0.1.orig/Makefile	2012-07-16 16:07:40.318718963 +0800
++++ lgstring-0.1/Makefile	2012-07-16 16:10:02.402712988 +0800
+@@ -1,5 +1,21 @@
+-all:
+-	gcc -O2 -fPIC -shared lgstring.c -o lgstring.so -I /usr/include/lua5.1/ -llua5.1 -lm
+-	
+-install:
+-	cp lgstring.so /usr/local/lib/lua/5.1/
++LGSTRING_DESTINATION ?= /usr/local/lib/lua/5.1/
++DESTINATION = $(LGSTRING_DESTINATION)
++
++LIBRARY = lgstring.so
++OBJECTS = $(LIBRARY)
++
++INSTALL = install -c -v
++CC = gcc
++CFLAGS = -Wall -fPIC -O2 -I/usr/include/lua5.1
++LDFLAGS = -llua5.1 -lm
++
++all: lgstring.so
++
++install: $(LIBRARY)
++	$(INSTALL) -m 755 $(LIBRARY) $(DESTINATION)
++
++clean:
++	-rm $(OBJECTS)
++
++lgstring.so: lgstring.c
++	$(CC) $(CFLAGS) $(LDFLAGS) -shared -o $@ $^
