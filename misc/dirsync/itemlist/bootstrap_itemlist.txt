@@ -32,6 +32,7 @@ m:target/linux/generic/config-3.9
 m:target/linux/generic/config-3.10
 m:target/linux/generic/config-3.12
 m:target/linux/generic/config-3.13
+m:target/linux/generic/config-3.14
 m:target/linux/adm5120
 m:target/linux/adm8668
 m:target/linux/amazon
