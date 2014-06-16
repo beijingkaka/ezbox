@@ -48,6 +48,7 @@ get_status_led() {
 		;;
 	dir-505-a1 |\
 	dir-600-a1 |\
+	dir-615-e1 |\
 	dir-615-e4)
 		status_led="d-link:green:power"
 		;;
@@ -63,6 +64,9 @@ get_status_led() {
 		;;
 	eap7660d)
 		status_led="eap7660d:green:ds4"
+		;;
+	hiwifi-hc6361)
+		status_led="hiwifi:blue:system"
 		;;
 	hornet-ub)
 		status_led="alfa:blue:wps"
@@ -94,8 +98,13 @@ get_status_led() {
 	nbg460n_550n_550nh)
 		status_led="nbg460n:green:power"
 		;;
+	nbg6716)
+		status_led="nbg6716:white:power"
+		;;
 	om2p | \
+	om2pv2 | \
 	om2p-hs | \
+	om2p-hsv2 | \
 	om2p-lc)
 		status_led="om2p:blue:power"
 		;;
@@ -124,6 +133,9 @@ get_status_led() {
 		;;
 	rw2458n)
 		status_led="rw2458n:green:d3"
+		;;
+	oolite)
+		status_led="oolite:red:system"
 		;;
 	tew-632brp)
 		status_led="tew-632brp:green:status"
@@ -174,6 +186,9 @@ get_status_led() {
 	tl-wr710n | \
 	tl-wr720n-v3)
 		status_led="tp-link:blue:system"
+		;;
+	tl-wr841n-v9)
+		status_led="tp-link:green:qss"
 		;;
 	tl-wr2543n)
 		status_led="tp-link:green:wps"

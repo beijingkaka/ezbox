@@ -111,7 +111,7 @@ platform_check_image() {
 	local magic="$(get_magic_word "$1")"
 	local magic_long="$(get_magic_long "$1")"
 
-	[ "$ARGC" -gt 1 ] && return 1
+	[ "$#" -gt 1 ] && return 1
 
 	case "$board" in
 	all0315n | \
@@ -146,12 +146,14 @@ platform_check_image() {
 	dir-505-a1 | \
 	dir-600-a1 | \
 	dir-615-c1 | \
+	dir-615-e1 | \
 	dir-615-e4 | \
 	dir-825-c1 | \
 	dir-835-a1 | \
 	dragino2 | \
 	ew-dorin | \
 	ew-dorin-router | \
+	hiwifi-hc6361 | \
 	hornet-ub-x2 | \
 	mzk-w04nu | \
 	mzk-w300nh | \
@@ -213,13 +215,16 @@ platform_check_image() {
 	mr600 | \
 	mr600v2 | \
 	om2p | \
+	om2pv2 | \
 	om2p-hs | \
+	om2p-hsv2 | \
 	om2p-lc)
 		platform_check_image_openmesh "$magic_long" "$1" && return 0
 		return 1
 		;;
 
 	archer-c7 | \
+	oolite | \
 	tl-mr10u | \
 	tl-mr11u | \
 	tl-mr13u | \
@@ -248,6 +253,7 @@ platform_check_image() {
 	tl-wr841n-v1 | \
 	tl-wr841n-v7 | \
 	tl-wr841n-v8 | \
+	tl-wr841n-v9 | \
 	tl-wr842n-v2 | \
 	tl-wr941nd | \
 	tl-wr1041n-v2 | \
@@ -288,6 +294,7 @@ platform_check_image() {
 		return 0
 		;;
 	wndr3700 | \
+	wnr2000-v3 | \
 	wnr612-v2)
 		local hw_magic
 
@@ -297,6 +304,14 @@ platform_check_image() {
 			return 1
 		}
 		return 0
+		;;
+	wndr4300 )
+		nand_do_upgrade_stage1 $board $1
+		[ $? != 0 ] && {
+			echo "Invalid tar file."
+			return 1
+		}
+		return 0;
 		;;
 	routerstation | \
 	routerstation-pro | \
@@ -368,7 +383,9 @@ platform_do_upgrade() {
 	mr600 | \
 	mr600v2 | \
 	om2p | \
+	om2pv2 | \
 	om2p-hs | \
+	om2p-hsv2 | \
 	om2p-lc)
 		platform_do_upgrade_openmesh "$ARGV"
 		;;

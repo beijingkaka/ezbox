@@ -91,6 +91,9 @@ tplink_board_detect() {
 	hwver="v${hwver#0}"
 
 	case "$hwid" in
+	"3C0001"*)
+		model="OOLITE"
+		;;
 	"070300"*)
 		model="TP-Link TL-WR703N"
 		;;
@@ -103,6 +106,9 @@ tplink_board_detect() {
 	"070100"*)
 		model="TP-Link TL-WA701N/ND"
 		;;
+	"073000"*)
+		model="TP-Link TL-WA730RE"
+		;;
 	"074000"*)
 		model="TP-Link TL-WR740N/ND"
 		;;
@@ -114,6 +120,9 @@ tplink_board_detect() {
 		;;
 	"075000"*)
 		model="TP-Link TL-WA750RE"
+		;;
+	"751000"*)
+		model="TP-Link TL-WA7510N"
 		;;
 	"080100"*)
 		model="TP-Link TL-WA801N/ND"
@@ -180,6 +189,10 @@ tplink_board_detect() {
 	"430000"*)
 		model="TP-Link TL-WDR4300"
 		;;
+	"430080"*)
+		iw reg set IL
+		model="TP-Link TL-WDR4300 (IL)"
+		;;
 	"431000"*)
 		model="TP-Link TL-WDR4310"
 		;;
@@ -204,6 +217,9 @@ ar71xx_board_detect() {
 	machine=$(awk 'BEGIN{FS="[ \t]+:[ \t]"} /machine/ {print $2}' /proc/cpuinfo)
 
 	case "$machine" in
+	*"Oolite V1.0")
+		name="oolite"
+		;;
 	*"AirRouter")
 		name="airrouter"
 		;;
@@ -269,6 +285,9 @@ ar71xx_board_detect() {
 		;;
 	*"DIR-600 rev. A1")
 		name="dir-600-a1"
+		;;
+	*"DIR-615 rev. E1")
+		name="dir-615-e1"
 		;;
 	*"DIR-615 rev. E4")
 		name="dir-615-e4"
@@ -342,11 +361,20 @@ ar71xx_board_detect() {
 	*"NBG460N/550N/550NH")
 		name="nbg460n_550n_550nh"
 		;;
+	*"Zyxel NBG6716")
+		name="nbg6716"
+		;;
 	*OM2P)
 		name="om2p"
 		;;
+	*OM2Pv2)
+		name="om2pv2"
+		;;
 	*"OM2P HS")
 		name="om2p-hs"
+		;;
+	*"OM2P HSv2")
+		name="om2p-hsv2"
 		;;
 	*"OM2P LC")
 		name="om2p-lc"
@@ -486,7 +514,7 @@ ar71xx_board_detect() {
 	*TL-WA750RE)
 		name="tl-wa750re"
 		;;
-	*TL-WA7510N)
+	*"TL-WA7510N v1")
 		name="tl-wa7510n"
 		;;
 	*TL-WA850RE)
@@ -527,6 +555,9 @@ ar71xx_board_detect() {
 		;;
 	*"TL-WR841N/ND v8")
 		name="tl-wr841n-v8"
+		;;
+	*"TL-WR841N/ND v9")
+		name="tl-wr841n-v9"
 		;;
 	*"TL-WR842N/ND v2")
 		name="tl-wr842n-v2"
@@ -638,6 +669,9 @@ ar71xx_board_detect() {
 		;;
 	*"BHU BXU2000n-2 rev. A1")
 		name="bxu2000n-2-a1"
+		;;
+	*"HiWiFi HC6361")
+		name="hiwifi-hc6361"
 		;;
 	esac
 

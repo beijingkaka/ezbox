@@ -13,6 +13,9 @@ ramips_board_detect() {
 	machine=$(awk 'BEGIN{FS="[ \t]+:[ \t]"} /machine/ {print $2}' /proc/cpuinfo)
 
 	case "$machine" in
+	*"7Links PX-4885")
+		name="px4885"
+		;;
 	*"8devices Carambola")
 		name="carambola"
 		;;
@@ -21,6 +24,9 @@ ramips_board_detect() {
 		;;
 	*"Edimax 3g-6200nl")
 		name="3g-6200nl"
+		;;
+	*"Airlink101 AR725W")
+		name="ar725w"
 		;;
 	*"AirLive Air3GII")
 		name="air3gii"
@@ -49,6 +55,9 @@ ramips_board_detect() {
 	*"AsiaRF AWM002 EVB")
 		name="awm002-evb"
 		;;
+	*"AsiaRF AWAPN2403")
+		name="awapn2403"
+		;;
 	*"BR6524N")
 		name="br6524n"
 		;;
@@ -63,6 +72,9 @@ ramips_board_detect() {
 		;;
 	*"Aztech HW550-3G")
 		name="hw550-3g"
+		;;
+	*"CY-SWR1100")
+		name="cy-swr1100"
 		;;
 	*"DCS-930")
 		name="dcs-930"
@@ -205,6 +217,9 @@ ramips_board_detect() {
 	*"RT-N56U")
 		name="rt-n56u"
 		;;
+	*"RUT5XX")
+		name="rut5xx"
+		;;
 	*"Skyline SL-R7205"*)
 		name="sl-r7205"
 		;;
@@ -279,6 +294,9 @@ ramips_board_detect() {
 		;;
 	*"V22SG")
 		name="v22sg"
+		;;
+	*"WRTNODE")
+		name="wrtnode"
 		;;
 	*"Sercomm NA930")
 		name="na930"

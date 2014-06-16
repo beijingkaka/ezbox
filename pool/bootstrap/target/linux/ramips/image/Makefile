@@ -162,7 +162,8 @@ BuildFirmware/Edimax/initramfs=$(call BuildFirmware/OF/initramfs,$(1),$(2),$(3))
 
 # build Seama header images
 define BuildFirmware/Seama/squashfs
-	$(call BuildFirmware/OF,$(1),$(2),$(3),$(5))
+	$(call MkImageLzmaDtb,$(2),$(3),$(5))
+	$(eval output_name=$(IMG_PREFIX)-$(2)-$(1)-sysupgrade.bin)
 	cat $(KDIR)/vmlinux-$(2).bin.lzma $(KDIR)/root.$(1) > $(KDIR)/img_$(2).$(1).tmp
 	if [ `stat -c%s "$(KDIR)/img_$(2).$(1).tmp"` -gt $$$$(($(5) - 64)) ]; then \
 		echo "Warning: $(KDIR)/img_$(2).$(1).tmp is too big" >&2; \
@@ -179,6 +180,14 @@ define BuildFirmware/Seama/squashfs
 			-s $(call imgname,$(1),$(2))-factory.bin \
 			-m "signature=$(4)" \
 			-i $(KDIR)/vmlinux-$(2).tmp.seama; \
+		dd if=$(KDIR)/vmlinux-$(2).bin.lzma.padded bs=1 count=`expr \`stat -c%s $(KDIR)/vmlinux-$(2).bin.lzma.padded\` - 64` of=$(KDIR)/vmlinux-$(2)-sysupgrade.tmp; \
+		$(STAGING_DIR_HOST)/bin/seama \
+			-i $(KDIR)/vmlinux-$(2)-sysupgrade.tmp \
+			-m "dev=/dev/mtdblock/2" -m "type=firmware"; \
+		( \
+			dd if=$(KDIR)/vmlinux-$(2)-sysupgrade.tmp.seama; \
+			dd if=$(KDIR)/root.$(1) bs=64k conv=sync; \
+		) > $(BIN_DIR)/$(output_name); \
 	fi
 endef
 BuildFirmware/Seama/initramfs=$(call BuildFirmware/OF/initramfs,$(1),$(2),$(3))
@@ -257,9 +266,21 @@ define BuildFirmware/PorayDualSize/squashfs
 endef
 BuildFirmware/PorayDualSize/initramfs=$(call BuildFirmware/DefaultDualSize/initramfs,$(1),$(2),$(3))
 
+define BuildFirmware/Gemtek/squashfs
+	$(call BuildFirmware/Default4M/$(1),$(1),$(2),$(3))
+	if [ -e "$(call sysupname,$(1),$(2))" ]; then \
+		mkheader_gemtek "$(call sysupname,$(1),$(2))" \
+			"$(call imgname,$(1),$(2))-factory.bin" $(2) || \
+		rm -f "$(call imgname,$(1),$(2))-factory.bin"; \
+	fi
+endef
+BuildFirmware/Gemtek/initramfs=$(call BuildFirmware/OF/initramfs,$(1),$(2),$(3))
+
 #
 # RT288X Profiles
 #
+
+Image/Build/Profile/AR725W=$(call BuildFirmware/Gemtek/$(1),$(1),ar725w,AR725W)
 
 # 0x790000
 belkin_f5d8235v1_mtd_size=7929856
@@ -273,6 +294,7 @@ Image/Build/Profile/WLITX4AG300N=$(call BuildFirmware/Default4M/$(1),$(1),wli-tx
 
 ifeq ($(SUBTARGET),rt288x)
 define Image/Build/Profile/Default
+	$(call Image/Build/Profile/AR725W,$(1))
 	$(call Image/Build/Profile/F5D8235V1,$(1))
 	$(call Image/Build/Profile/RTN15,$(1))
 	$(call Image/Build/Profile/V11STFE,$(1))
@@ -326,6 +348,7 @@ endef
 Image/Build/Profile/ASL26555=$(call BuildFirmware/ASL26555/$(1),$(1),asl26555,ASL26555)
 
 Image/Build/Profile/AWM002EVB=$(call BuildFirmware/DefaultDualSize/$(1),$(1),awm002-evb,AWM002-EVB)
+Image/Build/Profile/AWAPN2403=$(call BuildFirmware/Default4M/$(1),$(1),awmapn2403,AWAPN2403)
 
 Image/Build/Profile/BC2=$(call BuildFirmware/Default8M/$(1),$(1),bc2,BC2)
 
@@ -435,9 +458,13 @@ Image/Build/Profile/PSR-680W=$(call BuildFirmware/Default4M/$(1),$(1),psr-680w,P
 
 Image/Build/Profile/PWH2004=$(call BuildFirmware/Default8M/$(1),$(1),pwh2004,PWH2004)
 
+Image/Build/Profile/PX4885=$(call BuildFirmware/Default4M/$(1),$(1),px4885,PX4885)
+
 Image/Build/Profile/RTG32B1=$(call BuildFirmware/Default4M/$(1),$(1),rt-g32-b1,RT-G32-B1)
 
 Image/Build/Profile/RTN10PLUS=$(call BuildFirmware/Default4M/$(1),$(1),rt-n10-plus,RT-N10-PLUS)
+
+Image/Build/Profile/RUT5XX=$(call BuildFirmware/Default8M/$(1),$(1),rut5xx,RUT5XX)
 
 Image/Build/Profile/SL-R7205=$(call BuildFirmware/Default4M/$(1),$(1),sl-r7205,SL-R7205)
 
@@ -456,13 +483,15 @@ define BuildFirmware/WHRG300N/squashfs
 	$(call BuildFirmware/Default4M/$(1),$(1),whr-g300n,WHR-G300N)
 	# the following line has a bad argument 3 ... the old Makefile was already broken	
 	$(call BuildFirmware/Buffalo,$(1),whr-g300n,whr-g300n)
-	( \
-		echo -n -e "# Airstation FirmWare\nrun u_fw\nreset\n\n" | \
-			dd bs=512 count=1 conv=sync; \
-		dd if=$(call sysupname,$(1),whr-g300n); \
-	) > $(KDIR)/whr-g300n-tftp.tmp
-	buffalo-tftp -i $(KDIR)/whr-g300n-tftp.tmp \
-		-o $(call imgname,$(1),whr-g300n)-tftp.bin
+	if [ -e "$(call sysupname,$(1),$(2))" ]; then \
+		( \
+			echo -n -e "# Airstation FirmWare\nrun u_fw\nreset\n\n" | \
+				dd bs=512 count=1 conv=sync; \
+			dd if=$(call sysupname,$(1),whr-g300n); \
+		) > $(KDIR)/whr-g300n-tftp.tmp && \
+		buffalo-tftp -i $(KDIR)/whr-g300n-tftp.tmp \
+			-o $(call imgname,$(1),whr-g300n)-tftp.bin; \
+	fi
 endef
 BuildFirmware/WHRG300N/initramfs=$(call BuildFirmware/OF/initramfs,$(1),whr-g300n,WHR-G300N)
 Image/Build/Profile/WHRG300N=$(call BuildFirmware/WHRG300N/$(1),$(1))
@@ -534,6 +563,7 @@ define Image/Build/Profile/Default
 	$(call Image/Build/Profile/ARGUS_ATP52B,$(1))
 	$(call Image/Build/Profile/ASL26555,$(1))
 	$(call Image/Build/Profile/AWM002EVB,$(1))
+	$(call Image/Build/Profile/AWAPN2403,$(1))
 	$(call Image/Build/Profile/BC2,$(1))
 	$(call Image/Build/Profile/BROADWAY,$(1))
 	$(call Image/Build/Profile/CARAMBOLA,$(1))
@@ -570,9 +600,11 @@ define Image/Build/Profile/Default
 	$(call Image/Build/Profile/OMNI-EMB,$(1))
 	$(call Image/Build/Profile/PSR-680W,$(1))
 	$(call Image/Build/Profile/PWH2004,$(1))
+	$(call Image/Build/Profile/PX4885,$(1))
 	$(call Image/Build/Profile/RTG32B1,$(1))
 	$(call Image/Build/Profile/RTN10PLUS,$(1))
 	$(call Image/Build/Profile/RT-N13U,$(1))
+	$(call Image/Build/Profile/RUT5XX,$(1))
 	$(call Image/Build/Profile/SL-R7205,$(1))
 	$(call Image/Build/Profile/UR-326N4G,$(1))
 	$(call Image/Build/Profile/V22RW-2X2,$(1))
@@ -626,6 +658,8 @@ define BuildFirmware/EdimaxCombined/squashfs
 		-s $(6) -m $(7) -f $(8) -S $(9)
 endef
 
+Image/Build/Profile/CYSWR1100=$(call BuildFirmware/Seama/$(1),$(1),cy-swr1100,CY-SWR1100,wrgnd10_samsung_ss815,$(ralink_default_fw_size_8M))
+
 Image/Build/Profile/DIR645=$(call BuildFirmware/Seama/$(1),$(1),dir-645,DIR-645,wrgn39_dlob.hans_dir645,$(ralink_default_fw_size_8M))
 
 omniembhpm_mtd_size=16449536
@@ -643,6 +677,7 @@ Image/Build/Profile/BR6475ND=$(call BuildFirmware/EdimaxCombined/$(1),$(1),br-64
 
 ifeq ($(SUBTARGET),rt3883)
 define Image/Build/Profile/Default
+	$(call Image/Build/Profile/CYSWR1100,$(1))
 	$(call Image/Build/Profile/DIR645,$(1))
 	$(call Image/Build/Profile/OMNIEMBHPM,$(1))
 	$(call Image/Build/Profile/RTN56U,$(1))
@@ -690,11 +725,13 @@ endif
 
 Image/Build/Profile/WMR300=$(call BuildFirmware/Default8M/$(1),$(1),wmr-300,WMR300)
 Image/Build/Profile/RT-N14U=$(call BuildFirmware/Default8M/$(1),$(1),rt-n14u,RT-N14U)
+Image/Build/Profile/WRTNODE=$(call BuildFirmware/Default16M/$(1),$(1),wrtnode,WRTNODE)
 
 ifeq ($(SUBTARGET),mt7620n)
 define Image/Build/Profile/Default
 	$(call Image/Build/Profile/WMR300,$(1))
 	$(call Image/Build/Profile/RT-N14U,$(1))
+	$(call Image/Build/Profile/WRTNODE,$(1))
 endef
 endif
 
