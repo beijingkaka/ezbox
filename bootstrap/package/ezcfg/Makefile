@@ -8,15 +8,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ezcfg
-PKG_REV:=2034
-PKG_VERSION:=r$(PKG_REV)
+PKG_VERSION:=0.1
 PKG_RELEASE:=1
 
-PKG_SOURCE_PROTO:=svn
-PKG_SOURCE_VERSION:=$(PKG_REV)
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=http://ezbox.googlecode.com/svn/sub-projects/ezcfg
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://github.com/zetalabs/ezcfg.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE_VERSION:=86e1d8fe4462a62c15d86d3d602f7532455b5b56
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 
 PKG_FIXUP:=libtool
 PKG_INSTALL:=1
@@ -367,8 +366,19 @@ define Build/Configure
 	$(call Build/Configure/Default, )
 endef
 
-define Build/Compile
+define Build/Compile/Default
 	$(MAKE) -C $(PKG_BUILD_DIR)
+endef
+
+define Build/CompileScan/Default
+	mkdir -p $(PKG_CLANG_SCAN_DIR)
+	$(CLANG_SCAN) -o $(PKG_CLANG_SCAN_DIR) \
+	$(MAKE) -C $(PKG_BUILD_DIR) \
+		CC="$(CLANG_CC)" CCC_CC="$(TARGET_CC)"
+endef
+
+define Build/Compile
+	$(if $(BUILD_SCAN),$(call Build/CompileScan/Default,),$(call Build/Compile/Default,))
 endef
 
 define Build/InstallDev

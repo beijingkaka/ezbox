@@ -41,6 +41,7 @@ f:package/utils/util-linux/util-linux-2.24.1/|package/utils/util-linux/
 #########################
 # target/linux/ directory
 #########################
+f:target/linux/x86_64/config-default|bootstrap/target/linux/x86_64/config-default
 d:target/linux/ar71xx/
 d:target/linux/brcm47xx/
 d:target/linux/lantiq/

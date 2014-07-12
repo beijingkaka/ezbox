@@ -85,6 +85,11 @@ menuconfig DEVEL
 		help
 		  If enabled log files will be written to the ./log directory
 
+	config BUILD_SCAN
+		bool "Enable clang analyzer scan during build process" if DEVEL
+		help
+		  If enabled scan results will be written to the ./clang-scan directory
+
 	config SRC_TREE_OVERRIDE
 		bool "Enable package source tree override" if DEVEL
 		help

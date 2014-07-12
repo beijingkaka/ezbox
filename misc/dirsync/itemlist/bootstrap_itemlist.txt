@@ -4,7 +4,10 @@
 #########################
 m:Config.in
 m:config/Config-build.in
+m:config/Config-devel.in
 m:include/nls.mk
+m:include/package-defaults.mk
+m:include/package.mk
 m:include/target.mk
 m:rules.mk
 m:package/base-files

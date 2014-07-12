@@ -109,6 +109,7 @@ TARGET_DIR:=$(TARGET_ROOTFS_DIR)/root-$(BOARD)
 STAGING_DIR_ROOT:=$(STAGING_DIR)/root-$(BOARD)
 BUILD_LOG_DIR:=$(TOPDIR)/logs
 PKG_INFO_DIR := $(STAGING_DIR)/pkginfo
+CLANG_SCAN_DIR:=$(TOPDIR)/clang-scan
 
 TARGET_PATH:=$(STAGING_DIR_HOST)/bin:$(subst $(space),:,$(filter-out .,$(filter-out ./,$(subst :,$(space),$(PATH)))))
 TARGET_CFLAGS:=$(TARGET_OPTIMIZATION)$(if $(CONFIG_DEBUG), -g3) $(EXTRA_OPTIMIZATION)
@@ -201,6 +202,9 @@ CP:=cp -fpR
 LN:=ln -sf
 XARGS:=xargs -r
 
+CLANG_SCAN:=scan-build
+CLANG_CC:=ccc-analyzer
+
 INSTALL_BIN:=install -m0755
 INSTALL_DIR:=install -d -m0755
 INSTALL_DATA:=install -m0644
@@ -267,6 +271,10 @@ TAR_OPTIONS:=-xf -
 
 ifeq ($(CONFIG_BUILD_LOG),y)
   BUILD_LOG:=1
+endif
+
+ifeq ($(CONFIG_BUILD_SCAN),y)
+  BUILD_SCAN:=1
 endif
 
 define shvar

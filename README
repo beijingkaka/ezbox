@@ -90,3 +90,6 @@ Known issues
 ==
 1. Please set LD_LIBRARY_PATH if it can't find correct libraries for building host tools.
   $ export LD_LIBRARY_PATH="/path/to/your/staging/host/lib:$LD_LIBRARY_PATH"
+
+2. Please add clang analyzer path to PATH if you want to use build-scan and ccc-analyer to scan the build
+  $ export PATH="/path/to/ccc-analyzer:$PATH"

@@ -136,6 +136,16 @@ define Build/Compile/Default
 		$(1);
 endef
 
+define Build/CompileScan/Default
+	mkdir -p $(PKG_CLANG_SCAN_DIR)
+	+$(MAKE_VARS) \
+	$(CLANG_SCAN) -o $(PKG_CLANG_SCAN_DIR) \
+	$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR)/$(MAKE_PATH) \
+		$(MAKE_FLAGS) \
+		CC="$(CLANG_CC)" CCC_CC="$(TARGET_CC)" \
+		$(1);
+endef
+
 define Build/Install/Default
 	$(MAKE_VARS) \
 	$(MAKE) -C $(PKG_BUILD_DIR)/$(MAKE_PATH) \
