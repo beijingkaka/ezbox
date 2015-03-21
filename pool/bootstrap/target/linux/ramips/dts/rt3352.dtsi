@@ -204,6 +204,9 @@
 		compatible = "ralink,rt3352-eth", "ralink,rt3050-eth";
 		reg = <0x10100000 10000>;
 
+		resets = <&rstctrl 21>;
+		reset-names = "fe";
+
 		interrupt-parent = <&cpuintc>;
 		interrupts = <5>;
 	};
@@ -212,8 +215,18 @@
 		compatible = "ralink,rt3352-esw", "ralink,rt3050-esw";
 		reg = <0x10110000 8000>;
 
+		resets = <&rstctrl 23>;
+		reset-names = "esw";
+
 		interrupt-parent = <&intc>;
 		interrupts = <17>;
+	};
+
+	usbphy {
+		compatible = "ralink,rt3xxx-usbphy";
+
+		resets = <&rstctrl 22 &rstctrl 25>;
+		reset-names = "host", "device";
 	};
 
 	wmac@10180000 {
@@ -227,7 +240,7 @@
 	};
 
 	ehci@101c0000 {
-		compatible = "ralink,rt3352-ehci", "ehci-platform";
+		compatible = "ralink,rt3xxx-ehci", "ehci-platform";
 		reg = <0x101c0000 0x1000>;
 
 		interrupt-parent = <&intc>;
@@ -237,7 +250,7 @@
 	};
 
 	ohci@101c1000 {
-		compatible = "ralink,rt3352-ohci", "ohci-platform";
+		compatible = "ralink,rt3xxx-ohci", "ohci-platform";
 		reg = <0x101c1000 0x1000>;
 
 		interrupt-parent = <&intc>;

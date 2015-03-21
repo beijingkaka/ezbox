@@ -9,11 +9,9 @@ Signed-off-by: Daniel Golle <daniel@makrotopia.org>
  drivers/mtd/ubi/build.c | 36 ++++++++++++++++++++++++++++++++++++
  1 file changed, 36 insertions(+)
 
-diff --git a/drivers/mtd/ubi/build.c b/drivers/mtd/ubi/build.c
-index 6e30a3c..999a36b 100644
 --- a/drivers/mtd/ubi/build.c
 +++ b/drivers/mtd/ubi/build.c
-@@ -1209,6 +1209,36 @@ static struct mtd_info * __init open_mtd_device(const char *mtd_dev)
+@@ -1207,6 +1207,49 @@ static struct mtd_info * __init open_mtd
  	return mtd;
  }
  
@@ -25,14 +23,27 @@ index 6e30a3c..999a36b 100644
 +{
 +	int err;
 +	struct mtd_info *mtd;
++
 +	/* try attaching mtd device named "ubi" or "data" */
 +	mtd = open_mtd_device("ubi");
 +	if (IS_ERR(mtd))
 +		mtd = open_mtd_device("data");
 +
 +	if (!IS_ERR(mtd)) {
++		size_t len;
++		char magic[4];
++
++		/* check for a valid ubi magic */
++		err = mtd_read(mtd, 0, 4, &len, (void *) magic);
++		if (!err && len == 4 && strncmp(magic, "UBI#", 4)) {
++			ubi_err("no valid UBI magic found inside mtd%d", mtd->index);
++			put_mtd_device(mtd);
++			return;
++		}
++
 +		/* auto-add only media types where UBI makes sense */
 +		if (mtd->type == MTD_NANDFLASH ||
++		    mtd->type == MTD_NORFLASH ||
 +		    mtd->type == MTD_DATAFLASH ||
 +		    mtd->type == MTD_MLCNANDFLASH) {
 +			mutex_lock(&ubi_devices_mutex);
@@ -50,7 +61,7 @@ index 6e30a3c..999a36b 100644
  static int __init ubi_init(void)
  {
  	int err, i, k;
-@@ -1298,6 +1328,12 @@ static int __init ubi_init(void)
+@@ -1290,6 +1333,12 @@ static int __init ubi_init(void)
  		}
  	}
  
@@ -63,6 +74,3 @@ index 6e30a3c..999a36b 100644
  	err = ubiblock_init();
  	if (err) {
  		ubi_err("block: cannot initialize, error %d", err);
--- 
-1.9.2
-

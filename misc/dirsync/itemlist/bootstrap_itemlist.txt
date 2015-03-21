@@ -28,14 +28,17 @@ m:tools/mpc/Makefile
 m:tools/mpfr/Makefile
 m:tools/ppl/Makefile
 m:tools/ppl/patches/010-automake_1.11_fix.patch
-m:target/linux/generic/config-3.3
-m:target/linux/generic/config-3.6
+# m:target/linux/generic/config-3.3
+# m:target/linux/generic/config-3.6
 m:target/linux/generic/config-3.8
-m:target/linux/generic/config-3.9
+# m:target/linux/generic/config-3.9
 m:target/linux/generic/config-3.10
-m:target/linux/generic/config-3.12
+# m:target/linux/generic/config-3.12
 m:target/linux/generic/config-3.13
 m:target/linux/generic/config-3.14
+m:target/linux/generic/config-3.18
+m:target/linux/generic/config-3.19
+m:target/linux/generic/config-4.0
 m:target/linux/adm5120
 m:target/linux/adm8668
 m:target/linux/amazon
@@ -99,6 +102,7 @@ m:target/linux/xburst
 # next do the diff action
 #########################
 # d:Config.in
+d:feeds.conf.default
 d:LICENSE
 d:Makefile
 d:README

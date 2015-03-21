@@ -7,14 +7,6 @@
 	model = "Ralink V11ST-FE";
 
 	palmbus@300000 {
-		sysc@0 {
-			ralink,pinmux = "uartlite";
-			ralink,gpiomux = "i2c", "jtag";
-			ralink,uartmux = "gpio";
-			ralink,pcimux = "pci-fnc";
-			ralink,wdtmux = <0>;
-		};
-
 		gpio0: gpio@600 {
 			status = "okay";
 		};
@@ -22,6 +14,10 @@
 
 	ethernet@400000 {
 		status = "okay";
+	};
+
+	wmac@480000 {
+		ralink,mtd-eeprom = <&factory 0>;
 	};
 
 	pci@10140000 {
@@ -54,7 +50,7 @@
 			read-only;
 		};
 
-		partition@40000 {
+		factory: partition@40000 {
 			reg = <0x00040000 0x00010000>;
 			label = "factory";
 			read-only;

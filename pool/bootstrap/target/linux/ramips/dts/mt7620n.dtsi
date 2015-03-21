@@ -223,8 +223,9 @@
 		#reset-cells = <1>;
 	};
 
-	ubsphy {
+	usbphy: usbphy {
 		compatible = "ralink,mt7620a-usbphy";
+		#phy-cells = <1>;
 
 		resets = <&rstctrl 22 &rstctrl 25>;
 		reset-names = "host", "device";
@@ -255,6 +256,9 @@
 		compatible = "ralink,mt7620a-gsw";
 		reg = <0x10110000 8000>;
 
+		resets = <&rstctrl 23>;
+		reset-names = "esw";
+
 		interrupt-parent = <&intc>;
 		interrupts = <17>;
 		ralink,port4 = "gmac";
@@ -267,6 +271,9 @@
 		interrupt-parent = <&intc>;
 		interrupts = <18>;
 
+		phys = <&usbphy 1>;
+		phy-names = "usb";
+
 		status = "disabled";
 	};
 
@@ -274,9 +281,22 @@
 		compatible = "ralink,rt3xxx-ohci";
 		reg = <0x101c1000 0x1000>;
 
+		phys = <&usbphy 1>;
+		phy-names = "usb";
+
 		interrupt-parent = <&intc>;
 		interrupts = <18>;
 
 		status = "disabled";
+	};
+
+	wmac@10180000 {
+		compatible = "ralink,rt7620-wmac", "ralink,rt2880-wmac";
+		reg = <0x10180000 40000>;
+
+		interrupt-parent = <&cpuintc>;
+		interrupts = <6>;
+
+		ralink,eeprom = "soc_wmac.eeprom";
 	};
 };

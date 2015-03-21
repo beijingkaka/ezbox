@@ -40,7 +40,6 @@ UCLIBC_TARGET_ARCH:=$(shell echo $(ARCH) | sed -e s'/-.*//' \
 GEN_CONFIG=$(SCRIPT_DIR)/kconfig.pl -n \
 	$(if $(wildcard $(CONFIG_DIR)/common),'+' $(CONFIG_DIR)/common) \
 	$(if $(CONFIG_UCLIBC_ENABLE_DEBUG),$(if $(wildcard $(CONFIG_DIR)/debug),'+' $(CONFIG_DIR)/debug)) \
-	$(if $(CONFIG_ENABLE_LOCALE),$(if $(wildcard $(CONFIG_DIR)/locale),'+' $(CONFIG_DIR)/locale)) \
 	$(CONFIG_DIR)/$(ARCH)$(strip \
 		$(if $(wildcard $(CONFIG_DIR)/$(ARCH).$(BOARD)),.$(BOARD), \
 			$(if $(CONFIG_MIPS64_ABI),.$(subst ",,$(CONFIG_MIPS64_ABI)), \
@@ -80,6 +79,8 @@ define Host/Configure
 		-e 's,^.*UCLIBC_HAS_SOFT_FLOAT.*,UCLIBC_HAS_SOFT_FLOAT=$(if $(CONFIG_SOFT_FLOAT),y,n),g' \
 		-e 's,^.*UCLIBC_HAS_SHADOW.*,UCLIBC_HAS_SHADOW=$(if $(CONFIG_SHADOW_PASSWORDS),y,n),g' \
 		-e 's,^.*UCLIBC_HAS_LOCALE.*,UCLIBC_HAS_LOCALE=$(if $(CONFIG_BUILD_NLS),y,n),g' \
+		-e 's,^.*UCLIBC_BUILD_ALL_LOCALE.*,UCLIBC_BUILD_ALL_LOCALE=$(if $(CONFIG_BUILD_NLS),y,n),g' \
+		-e 's,^.*UCLIBC_HAS_SSP.*,UCLIBC_HAS_SSP=$(if $(or $(CONFIG_PKG_CC_STACKPROTECTOR_REGULAR),$(CONFIG_PKG_CC_STACKPROTECTOR_STRONG)),y,n),g' \
 		$(HOST_BUILD_DIR)/.config.new
 	cmp -s $(HOST_BUILD_DIR)/.config.new $(HOST_BUILD_DIR)/.config.last || { \
 		cp $(HOST_BUILD_DIR)/.config.new $(HOST_BUILD_DIR)/.config && \

@@ -22,6 +22,7 @@
 
 #include <linux/platform_device.h>
 #include <linux/ar8216_platform.h>
+#include <linux/gpio.h>
 #include <linux/mtd/mtd.h>
 #include <linux/mtd/nand.h>
 #include <linux/platform/ar934x_nfc.h>
@@ -43,17 +44,19 @@
 
 #define NBG6716_GPIO_LED_INTERNET	18
 #define NBG6716_GPIO_LED_POWER		15
-#define NBG6716_GPIO_LED_USB0		4
-#define NBG6716_GPIO_LED_USB1		13
+#define NBG6716_GPIO_LED_USB1		4
+#define NBG6716_GPIO_LED_USB2		13
 #define NBG6716_GPIO_LED_WIFI2G		19
 #define NBG6716_GPIO_LED_WIFI5G		17
 #define NBG6716_GPIO_LED_WPS		21
 
 #define NBG6716_GPIO_BTN_RESET		23
 #define NBG6716_GPIO_BTN_RFKILL		1
-#define NBG6716_GPIO_BTN_USB0		14
 #define NBG6716_GPIO_BTN_USB1		0
+#define NBG6716_GPIO_BTN_USB2		14
 #define NBG6716_GPIO_BTN_WPS		22
+
+#define NBG6716_GPIO_USB_POWER		16
 
 #define NBG6716_KEYS_POLL_INTERVAL	20	/* msecs */
 #define NBG6716_KEYS_DEBOUNCE_INTERVAL	(3 * NBG6716_KEYS_POLL_INTERVAL)
@@ -75,13 +78,13 @@ static struct gpio_led nbg6716_leds_gpio[] __initdata = {
 		.active_low	= 1,
 	},
 	{
-		.name		= "zyxel:white:usb0",
-		.gpio		= NBG6716_GPIO_LED_USB0,
+		.name		= "zyxel:white:usb1",
+		.gpio		= NBG6716_GPIO_LED_USB1,
 		.active_low	= 1,
 	},
 	{
-		.name		= "zyxel:white:usb1",
-		.gpio		= NBG6716_GPIO_LED_USB1,
+		.name		= "zyxel:white:usb2",
+		.gpio		= NBG6716_GPIO_LED_USB2,
 		.active_low	= 1,
 	},
 	{
@@ -112,19 +115,11 @@ static struct gpio_keys_button nbg6716_gpio_keys[] __initdata = {
 	},
 	{
 		.desc		= "RFKILL button",
-		.type		= EV_KEY,
+		.type		= EV_SW,
 		.code		= KEY_RFKILL,
 		.debounce_interval = NBG6716_KEYS_DEBOUNCE_INTERVAL,
 		.gpio		= NBG6716_GPIO_BTN_RFKILL,
-		.active_low	= 1,
-	},
-	{
-		.desc		= "USB0 eject button",
-		.type		= EV_KEY,
-		.code		= BTN_0,
-		.debounce_interval = NBG6716_KEYS_DEBOUNCE_INTERVAL,
-		.gpio		= NBG6716_GPIO_BTN_USB0,
-		.active_low	= 1,
+		.active_low	= 0,
 	},
 	{
 		.desc		= "USB1 eject button",
@@ -132,6 +127,14 @@ static struct gpio_keys_button nbg6716_gpio_keys[] __initdata = {
 		.code		= BTN_1,
 		.debounce_interval = NBG6716_KEYS_DEBOUNCE_INTERVAL,
 		.gpio		= NBG6716_GPIO_BTN_USB1,
+		.active_low	= 1,
+	},
+	{
+		.desc		= "USB2 eject button",
+		.type		= EV_KEY,
+		.code		= BTN_2,
+		.debounce_interval = NBG6716_KEYS_DEBOUNCE_INTERVAL,
+		.gpio		= NBG6716_GPIO_BTN_USB2,
 		.active_low	= 1,
 	},
 	{
@@ -187,23 +190,6 @@ static void nbg6716_get_mac(const char *name, char *mac)
 		pr_err("no MAC address found for %s\n", name);
 }
 
-static void __init nbg6716_gmac_setup(void)
-{
-	void __iomem *base;
-	u32 t;
-
-	base = ioremap(QCA955X_GMAC_BASE, QCA955X_GMAC_SIZE);
-
-	t = __raw_readl(base + QCA955X_GMAC_REG_ETH_CFG);
-
-	t &= ~(QCA955X_ETH_CFG_RGMII_EN | QCA955X_ETH_CFG_GE0_SGMII);
-	t |= QCA955X_ETH_CFG_RGMII_EN;
-
-	__raw_writel(t, base + QCA955X_GMAC_REG_ETH_CFG);
-
-	iounmap(base);
-}
-
 static void __init nbg6716_common_setup(void)
 {
 	u8 *art = (u8 *) KSEG1ADDR(0x1f050000);
@@ -220,6 +206,10 @@ static void __init nbg6716_common_setup(void)
 	ath79_nfc_set_ecc_mode(AR934X_NFC_ECC_HW);
 	ath79_register_nfc();
 
+	gpio_request_one(NBG6716_GPIO_USB_POWER,
+		GPIOF_OUT_INIT_HIGH | GPIOF_EXPORT_DIR_FIXED,
+		"USB power");
+
 	ath79_register_usb();
 
 	nbg6716_get_mac("ethaddr=", tmpmac);
@@ -228,7 +218,7 @@ static void __init nbg6716_common_setup(void)
 
 	ath79_register_wmac(art + NBG6716_WMAC_CALDATA_OFFSET, tmpmac);
 
-	nbg6716_gmac_setup();
+	ath79_setup_qca955x_eth_cfg(QCA955X_ETH_CFG_RGMII_EN);
 
 	ath79_register_mdio(0, 0x0);
 

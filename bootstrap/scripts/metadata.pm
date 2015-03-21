@@ -2,7 +2,7 @@ package metadata;
 use base 'Exporter';
 use strict;
 use warnings;
-our @EXPORT = qw(%package %srcpackage %category %subdir %preconfig %features clear_packages parse_package_metadata get_multiline);
+our @EXPORT = qw(%package %srcpackage %category %subdir %preconfig %features %overrides clear_packages parse_package_metadata get_multiline);
 
 our %package;
 our %preconfig;
@@ -10,6 +10,7 @@ our %srcpackage;
 our %category;
 our %subdir;
 our %features;
+our %overrides;
 
 sub get_multiline {
 	my $fh = shift;
@@ -30,6 +31,7 @@ sub clear_packages() {
 	%srcpackage = ();
 	%category = ();
 	%features = ();
+	%overrides = ();
 }
 
 sub parse_package_metadata($) {
@@ -40,6 +42,7 @@ sub parse_package_metadata($) {
 	my $preconfig;
 	my $subdir;
 	my $src;
+	my $override;
 
 	open FILE, "<$file" or do {
 		warn "Cannot open '$file': $!\n";
@@ -54,7 +57,12 @@ sub parse_package_metadata($) {
 			$subdir =~ s/^package\///;
 			$subdir{$src} = $subdir;
 			$srcpackage{$src} = [];
+			$override = "";
 			undef $pkg;
+		};
+		/^Override: \s*(.+?)\s*$/ and do {
+			$override = $1;
+			$overrides{$src} = 1;
 		};
 		next unless $src;
 		/^Package:\s*(.+?)\s*$/ and do {
@@ -70,6 +78,7 @@ sub parse_package_metadata($) {
 			$pkg->{buildtypes} = [];
 			$pkg->{subdir} = $subdir;
 			$pkg->{tristate} = 1;
+			$pkg->{override} = $override;
 			$package{$1} = $pkg;
 			push @{$srcpackage{$src}}, $pkg;
 		};
@@ -97,6 +106,8 @@ sub parse_package_metadata($) {
 		/^Submenu: \s*(.+)\s*$/ and $pkg->{submenu} = $1;
 		/^Submenu-Depends: \s*(.+)\s*$/ and $pkg->{submenudep} = $1;
 		/^Source: \s*(.+)\s*$/ and $pkg->{source} = $1;
+		/^License: \s*(.+)\s*$/ and $pkg->{license} = $1;
+		/^LicenseFiles: \s*(.+)\s*$/ and $pkg->{licensefiles} = $1;
 		/^Default: \s*(.+)\s*$/ and $pkg->{default} = $1;
 		/^Provides: \s*(.+)\s*$/ and do {
 			my @vpkg = split /\s+/, $1;
@@ -113,12 +124,15 @@ sub parse_package_metadata($) {
 		};
 		/^Menu-Depends: \s*(.+)\s*$/ and $pkg->{mdepends} = [ split /\s+/, $1 ];
 		/^Depends: \s*(.+)\s*$/ and $pkg->{depends} = [ split /\s+/, $1 ];
+		/^Conflicts: \s*(.+)\s*$/ and $pkg->{conflicts} = [ split /\s+/, $1 ];
 		/^Hidden: \s*(.+)\s*$/ and $pkg->{hidden} = 1;
 		/^Build-Variant: \s*([\w\-]+)\s*/ and $pkg->{variant} = $1;
+		/^Default-Variant: .*/ and $pkg->{variant_default} = 1;
 		/^Build-Only: \s*(.+)\s*$/ and $pkg->{buildonly} = 1;
 		/^Build-Depends: \s*(.+)\s*$/ and $pkg->{builddepends} = [ split /\s+/, $1 ];
 		/^Build-Depends\/(\w+): \s*(.+)\s*$/ and $pkg->{"builddepends/$1"} = [ split /\s+/, $2 ];
 		/^Build-Types:\s*(.+)\s*$/ and $pkg->{buildtypes} = [ split /\s+/, $1 ];
+		/^Feed:\s*(.+?)\s*$/ and $pkg->{feed} = $1;
 		/^Category: \s*(.+)\s*$/ and do {
 			$pkg->{category} = $1;
 			defined $category{$1} or $category{$1} = {};
