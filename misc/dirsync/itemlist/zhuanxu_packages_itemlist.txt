@@ -1,0 +1,34 @@
+#########################
+# first move the modified
+# files to tmp/ directory
+#########################
+#########################
+# next do the diff action
+#########################
+#########################
+# package/feeds/packages/ directory
+#########################
+f:libs/alsa-lib/alsa-lib-1.0.28/|libs/alsa-lib/
+f:libs/expat/expat-2.1.0/|libs/expat/
+#f:libs/gettext-full/gettext-full-0.19.4/|libs/gettext-full/
+#f:libs/gmp/gmp-4.3.1/|libs/gmp/
+f:libs/gnutls/gnutls-3.4.1/|libs/gnutls/
+f:libs/intltool/intltool-0.40/|libs/intltool/
+f:libs/libcap/libcap-2.24/|libs/libcap/
+#f:libs/libcgroup/libcgroup-0.38/|libs/libcgroup/
+f:libs/libgcrypt/libgcrypt-1.6.1/|libs/libgcrypt/
+f:libs/libgpg-error/libgpg-error-1.12/|libs/libgpg-error/
+#f:libs/libiconv-full/libiconv-full-1.11.1/|libs/libiconv-full/
+#f:libs/libnetfilter-conntrack/libnetfilter-conntrack-0.9.1/|libs/libnetfilter-conntrack/
+#f:libs/libnfnetlink/libnfnetlink-1.0.0/|libs/libnfnetlink/
+#f:libs/libpthread-stubs/libpthread-stubs-0.1/|libs/libpthread-stubs/
+f:libs/libsndfile/libsndfile-1.0.25/|libs/libsndfile/
+#f:libs/popt/popt-1.7/|libs/popt
+f:libs/speex/speex-1.2rc1/|libs/speex/
+#f:net/aoetools/aoetools-32/|net/aoetools/
+#f:net/conntrack-tools/conntrack-tools-1.0.0/|net/conntrack-tools/
+f:sound/pulseaudio/pulseaudio-6.0/|sound/pulseaudio/
+#f:utils/apparmor/apparmor-2.8.1/|utils/apparmor/
+f:utils/cryptsetup/cryptsetup-1.6.7/|utils/cryptsetup/
+f:utils/lvm2/lvm2-2.02.119/|utils/lvm2/
+f:utils/lxc/lxc-1.1.1/|utils/lxc/

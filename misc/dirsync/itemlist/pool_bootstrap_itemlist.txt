@@ -16,9 +16,14 @@ f:package/devel/oprofile/oprofile-0.9.9/|package/devel/oprofile/
 f:package/devel/trace-cmd/trace-cmd-v2.4/|package/devel/trace-cmd/
 f:package/devel/valgrind/valgrind-3.10.0/|package/devel/valgrind/
 f:package/kernel/mac80211/mac80211-2015-03-09/|package/kernel/mac80211/
+f:package/libs/gettext-full/gettext-full-0.19.4/|package/libs/gettext-full/
+f:package/libs/gmp/gmp-6.0.0/|package/libs/gmp/
+f:package/libs/libiconv-full/libiconv-full-1.11.1/|package/libs/libiconv-full/
 f:package/libs/libjson-c/libjson-c-0.12/|package/libs/libjson-c/
 f:package/libs/libnl/libnl-3.2.21/|package/libs/libnl/
 f:package/libs/libnl-tiny/libnl-tiny-0.1/|package/libs/libnl-tiny/
+f:package/libs/libnetfilter-conntrack/libnetfilter-conntrack-1.0.4/|package/libs/libnetfilter-conntrack/
+f:package/libs/libnfnetlink/libnfnetlink-1.0.1/|package/libs/libnfnetlink/
 f:package/libs/libpcap/libpcap-1.5.3/|package/libs/libpcap/
 f:package/libs/ncurses/ncurses-5.9/|package/libs/ncurses/
 f:package/libs/openssl/openssl-1.0.2a/|package/libs/openssl/
