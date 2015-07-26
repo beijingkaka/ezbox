@@ -13,9 +13,9 @@ f:package/boot/uboot-lantiq/u-boot-2013.10/|package/boot/uboot-lantiq/
 f:package/devel/binutils/binutils/|package/devel/binutils/
 f:package/devel/gdb/gdb-7.8/|package/devel/gdb/
 f:package/devel/oprofile/oprofile-0.9.9/|package/devel/oprofile/
-f:package/devel/trace-cmd/trace-cmd-v2.4/|package/devel/trace-cmd/
-f:package/devel/valgrind/valgrind-3.10.0/|package/devel/valgrind/
-f:package/kernel/mac80211/mac80211-2015-03-09/|package/kernel/mac80211/
+f:package/devel/trace-cmd/trace-cmd-v2.4.2/|package/devel/trace-cmd/
+f:package/devel/valgrind/valgrind-3.10.1/|package/devel/valgrind/
+f:package/kernel/mac80211/mac80211-2015-07-21/|package/kernel/mac80211/
 f:package/libs/gettext-full/gettext-full-0.19.4/|package/libs/gettext-full/
 f:package/libs/gmp/gmp-6.0.0/|package/libs/gmp/
 f:package/libs/libiconv-full/libiconv-full-1.11.1/|package/libs/libiconv-full/
@@ -50,6 +50,7 @@ d:target/linux/ar71xx/
 d:target/linux/brcm47xx/
 d:target/linux/lantiq/
 d:target/linux/ramips/
+d:target/linux/sunxi/
 d:target/linux/uml/
 d:target/linux/x86/
-d:target/linux/x86_64/
+# d:target/linux/x86_64/
