@@ -44,6 +44,7 @@ f:package/network/utils/conntrack-tools/conntrack-tools-1.4.2/|package/network/u
 f:package/network/utils/iw/iw-3.17/|package/network/utils/iw/
 f:package/network/utils/wireless-tools/wireless-tools-29/|package/network/utils/wireless-tools/
 f:package/system/udev/udev-173/|package/system/udev/
+f:package/system/usign/usign-2015-05-08/|package/system/usign/
 f:package/utils/busybox/busybox-1.23.2/|package/utils/busybox/
 f:package/utils/e2fsprogs/e2fsprogs-1.42.12/|package/utils/e2fsprogs/
 f:package/utils/fuse/fuse-2.9.3/|package/utils/fuse/
