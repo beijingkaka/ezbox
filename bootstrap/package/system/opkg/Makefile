@@ -12,7 +12,7 @@ include $(INCLUDE_DIR)/feeds.mk
 PKG_NAME:=opkg
 PKG_REV:=9c97d5ecd795709c8584e972bfdf3aee3a5b846d
 PKG_VERSION:=$(PKG_REV)
-PKG_RELEASE:=7
+PKG_RELEASE:=8
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=$(PKG_REV)
@@ -64,6 +64,8 @@ endef
 
 define Package/opkg/conffiles
 /etc/opkg.conf
+/etc/opkg/keys/
+/etc/opkg/customfeeds.conf
 endef
 
 
@@ -110,29 +112,21 @@ MAKE_FLAGS = \
 define Package/opkg/Default/install
 	$(INSTALL_DIR) $(1)/usr/lib/opkg
 	$(INSTALL_DIR) $(1)/bin
-	$(INSTALL_DIR) $(1)/etc
+	$(INSTALL_DIR) $(1)/etc/opkg
+	$(INSTALL_DIR) $(1)/etc/uci-defaults
+	$(INSTALL_DATA) ./files/customfeeds.conf $(1)/etc/opkg/customfeeds.conf
 	$(INSTALL_DATA) ./files/opkg$(2).conf $(1)/etc/opkg.conf
-  ifneq ($(CONFIG_SIGNED_PACKAGES),)
-	echo "option check_signature 1" >> $(1)/etc/opkg.conf
-  endif
-  ifeq ($(CONFIG_PER_FEED_REPO),)
-	echo "src/gz %n %U" >> $(1)/etc/opkg.conf
-  else
-	for d in base $(FEEDS_ENABLED); do \
-		echo "src/gz %n_$$$$d %U/$$$$d" >> $(1)/etc/opkg.conf; \
-	done
-    ifneq ($(CONFIG_PER_FEED_REPO_ADD_DISABLED),)
-	for d in $(FEEDS_DISABLED); do \
-		echo "$(if $(CONFIG_PER_FEED_REPO_ADD_COMMENTED),# )src/gz %n_$$$$d %U/$$$$d" >> $(1)/etc/opkg.conf; \
-	done
-    endif
-  endif
-	$(VERSION_SED) $(1)/etc/opkg.conf
+	$(call FeedSourcesAppend,$(1)/etc/opkg/distfeeds.conf)
+	$(VERSION_SED) $(1)/etc/opkg/distfeeds.conf
+	$(INSTALL_BIN) ./files/20_migrate-feeds $(1)/etc/uci-defaults/
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/opkg-cl $(1)/bin/opkg
 endef
 
 define Package/opkg/install
 	$(call Package/opkg/Default/install,$(1),)
+  ifneq ($(CONFIG_SIGNED_PACKAGES),)
+	echo "option check_signature 1" >> $(1)/etc/opkg.conf
+  endif
 	mkdir $(1)/usr/sbin
 	$(INSTALL_BIN) ./files/opkg-key $(1)/usr/sbin/
 endef

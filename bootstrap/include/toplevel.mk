@@ -24,8 +24,8 @@ OPENWRTVERSION:=$(RELEASE)$(if $(REVISION), ($(REVISION)))
 export RELEASE
 export REVISION
 export OPENWRTVERSION
-export LD_LIBRARY_PATH:=$(subst ::,:,$(if $(LD_LIBRARY_PATH),$(LD_LIBRARY_PATH):)$(STAGING_DIR_HOST)/lib)
-export DYLD_LIBRARY_PATH:=$(subst ::,:,$(if $(DYLD_LIBRARY_PATH),$(DYLD_LIBRARY_PATH):)$(STAGING_DIR_HOST)/lib)
+export LD_LIBRARY_PATH:=$(subst ::,:,$(if $(LD_LIBRARY_PATH),$(LD_LIBRARY_PATH):)$(TOPDIR)/staging_dir/host/lib)
+export DYLD_LIBRARY_PATH:=$(subst ::,:,$(if $(DYLD_LIBRARY_PATH),$(DYLD_LIBRARY_PATH):)$(TOPDIR)/staging_dir/host/lib)
 export GIT_CONFIG_PARAMETERS='core.autocrlf=false'
 export MAKE_JOBSERVER=$(filter --jobserver%,$(MAKEFLAGS))
 
@@ -192,6 +192,20 @@ else
 	} )
 
 endif
+
+# update all feeds, re-create index files, install symlinks
+package/symlinks:
+	./scripts/feeds update -a
+	./scripts/feeds install -a
+
+# re-create index files, install symlinks
+package/symlinks-install:
+	./scripts/feeds update -i
+	./scripts/feeds install -a
+
+# remove all symlinks, don't touch ./feeds
+package/symlinks-clean:
+	./scripts/feeds uninstall -a
 
 help:
 	cat README
