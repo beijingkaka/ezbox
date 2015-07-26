@@ -10,6 +10,7 @@
 #########################
 f:package/boot/grub2/grub2-2.02~beta2/|package/boot/grub2/
 f:package/boot/uboot-lantiq/u-boot-2013.10/|package/boot/uboot-lantiq/
+f:package/boot/uboot-sunxi/uboot-sunxi-2015.01/|package/boot/uboot-sunxi/
 f:package/devel/binutils/binutils/|package/devel/binutils/
 f:package/devel/gdb/gdb-7.8/|package/devel/gdb/
 f:package/devel/oprofile/oprofile-0.9.9/|package/devel/oprofile/
