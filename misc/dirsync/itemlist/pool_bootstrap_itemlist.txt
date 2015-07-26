@@ -26,6 +26,7 @@ f:package/libs/libnl-tiny/libnl-tiny-0.1/|package/libs/libnl-tiny/
 f:package/libs/libnetfilter-conntrack/libnetfilter-conntrack-1.0.4/|package/libs/libnetfilter-conntrack/
 f:package/libs/libnetfilter-cthelper/libnetfilter-cthelper-1.0.0/|package/libs/libnetfilter-cthelper/
 f:package/libs/libnetfilter-cttimeout/libnetfilter-cttimeout-1.0.0/|package/libs/libnetfilter-cttimeout/
+f:package/libs/libnetfilter-queue/libnetfilter-queue-1.0.2/|package/libs/libnetfilter-queue/
 f:package/libs/libnfnetlink/libnfnetlink-1.0.1/|package/libs/libnfnetlink/
 f:package/libs/libpcap/libpcap-1.5.3/|package/libs/libpcap/
 f:package/libs/ncurses/ncurses-5.9/|package/libs/ncurses/
