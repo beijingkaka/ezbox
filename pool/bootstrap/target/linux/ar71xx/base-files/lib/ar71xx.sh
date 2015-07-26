@@ -38,7 +38,7 @@ wndr3700_board_detect() {
 		;;
 	"33373031")
 		# Use awk to remove everything after the first zero byte
-		model="$(ar71xx_get_mtd_offset_size_format art 41 32 %c | awk 'BEGIN{FS="[[:cntrl:]]"} {print $1; exit}')"
+		model="$(ar71xx_get_mtd_offset_size_format art 41 32 %c | LC_CTYPE=C awk -v 'FS=[^[:print:]]' '{print $1; exit}')"
 		case $model in
 		$'\xff'*)
 			if [ "${model:24:1}" = 'N' ]; then
@@ -107,6 +107,12 @@ tplink_board_detect() {
 	"015300"*)
 		model="EasyLink EL-MINI"
 		;;
+	"04440001"*)
+		model="BITMAIN ANTMINER S1"
+		;;
+	"04440003"*)
+		model="BITMAIN ANTMINER S3"
+		;;
 	"120000"*)
 		model="MERCURY MAC1200R"
 		;;
@@ -151,6 +157,10 @@ tplink_board_detect() {
 		;;
 	"083000"*)
 		model="TP-Link TL-WA830RE"
+
+		if [ "$hwver" = 'v10' ]; then
+			hwver='v1'
+		fi
 		;;
 	"084100"*)
 		model="TP-Link TL-WR841N/ND"
@@ -352,6 +362,12 @@ ar71xx_board_detect() {
 	*"AP135-020 reference board")
 		name="ap135-020"
 		;;
+	*"AP143 reference board")
+		name="ap143"
+		;;
+	*"AP147-010 reference board")
+		name="ap147-010"
+		;;
 	*AP81)
 		name="ap81"
 		;;
@@ -398,6 +414,9 @@ ar71xx_board_detect() {
 	*"DIR-615 rev. E4")
 		name="dir-615-e4"
 		;;
+	*"DIR-615 rev. I1")
+		name="dir-615-i1"
+		;;
 	*"DIR-825 rev. B1")
 		name="dir-825-b1"
 		;;
@@ -406,6 +425,12 @@ ar71xx_board_detect() {
 		;;
 	*"DIR-835 rev. A1")
 		name="dir-835-a1"
+		;;
+	*"dLAN pro 500 Wireless+")
+		name="dlan-pro-500-wp"
+		;;
+	*"dLAN pro 1200+ WiFi ac")
+		name="dlan-pro-1200-ac"
 		;;
 	*"Dragino v2")
 		name="dragino2"
@@ -425,6 +450,9 @@ ar71xx_board_detect() {
 	*"GL-CONNECT INET v1")
 		name="gl-inet"
 		gl_inet_board_detect
+		;;
+	*"EnGenius EPG5000")
+		name="epg5000"
 		;;
 	*"EnGenius ESR1750")
 		name="esr1750"
@@ -470,6 +498,12 @@ ar71xx_board_detect() {
 		;;
 	*"MAC1200R")
 		name="mc-mac1200r"
+		;;
+	*MR12)
+		name="mr12"
+		;;
+	*MR16)
+		name="mr16"
 		;;
 	*MR600v2)
 		name="mr600v2"
@@ -524,6 +558,9 @@ ar71xx_board_detect() {
 		;;
 	*"OM5P AN")
 		name="om5p-an"
+		;;
+	*"Onion Omega")
+		name="onion-omega"
 		;;
 	*PB42)
 		name="pb42"
@@ -620,6 +657,9 @@ ar71xx_board_detect() {
 		;;
 	*"Rocket M")
 		name="rocket-m"
+		;;
+	*"Rocket M TI")
+		name="rocket-m-ti"
 		;;
 	*"Rocket M XW")
 		name="rocket-m-xw"
@@ -759,7 +799,7 @@ ar71xx_board_detect() {
 	*"TL-WR710N v1")
 		name="tl-wr710n"
 		;;
-	*"TL-WR720N v3")
+	*"TL-WR720N"*)
 		name="tl-wr720n-v3"
 		;;
 	*"TL-MR10U")
@@ -806,6 +846,9 @@ ar71xx_board_detect() {
 		;;
 	*WPJ344)
 		name="wpj344"
+		;;
+	*WPJ531)
+		name="wpj531"
 		;;
 	*WPJ558)
 		name="wpj558"

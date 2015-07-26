@@ -179,11 +179,14 @@ platform_check_image() {
 	ap136-010 | \
 	ap136-020 | \
 	ap135-020 | \
+	ap147-010 | \
 	ap96 | \
 	bxu2000n-2-a1 | \
 	db120 | \
 	f9k1115v2 |\
 	hornet-ub | \
+	mr12 | \
+	mr16 | \
 	wpj558 | \
 	zcn-1523h-2 | \
 	zcn-1523h-5)
@@ -203,9 +206,13 @@ platform_check_image() {
 	dir-615-c1 | \
 	dir-615-e1 | \
 	dir-615-e4 | \
+	dir-615-i1 | \
 	dir-825-c1 | \
 	dir-835-a1 | \
+	dlan-pro-500-wp | \
+	dlan-pro-1200-ac | \
 	dragino2 | \
+	epg5000 | \
 	esr1750 | \
 	esr900 | \
 	ew-dorin | \
@@ -225,8 +232,10 @@ platform_check_image() {
 	nanostation-m | \
 	rocket-m | \
 	rocket-m-xw | \
+	rocket-m-ti | \
 	nanostation-m-xw | \
 	rw2458n | \
+	wpj531 | \
 	wndap360 | \
 	wpj344 | \
 	wzr-hp-g300nh2 | \
@@ -296,12 +305,15 @@ platform_check_image() {
 		return 1
 		;;
 
+	antminer-s1 | \
+	antminer-s3 | \
 	archer-c5 | \
 	archer-c7 | \
 	el-m150 | \
 	el-mini | \
 	gl-inet | \
 	mc-mac1200r | \
+	onion-omega | \
 	oolite | \
 	smart-300 | \
 	tl-mr10u | \
@@ -446,6 +458,19 @@ platform_check_image() {
 
 	echo "Sysupgrade is not yet supported on $board."
 	return 1
+}
+
+platform_pre_upgrade() {
+	local board=$(ar71xx_board_name)
+
+	case "$board" in
+	nbg6716 | \
+	r6100 | \
+	wndr3700v4 | \
+	wndr4300 )
+		nand_do_upgrade "$1"
+		;;
+	esac
 }
 
 platform_do_upgrade() {
